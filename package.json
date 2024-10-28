@@ -3,7 +3,9 @@
   "scripts": {
     "commit": "git add . && czg",
     "pretest": "tsc",
+    "build": "node-gyp rebuild",
     "test": "node ./test/test_binding.js",
+    "test:canvas": "node ./test/canvas.js",
     "prettier": "pnpm exec prettier . --write",
     "prepare": "husky",
     "lint": "eslint --fix"
