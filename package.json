@@ -1,0 +1,48 @@
+{
+  "main": "lib/binding.js",
+  "scripts": {
+    "commit": "git add . && czg",
+    "pretest": "tsc",
+    "test": "node ./test/test_binding.js",
+    "prettier": "pnpm exec prettier . --write",
+    "prepare": "husky",
+    "lint": "eslint --fix"
+  },
+  "gypfile": true,
+  "name": "skia",
+  "version": "1.0.0",
+  "description": "skia node banding",
+  "keywords": [
+    "skia",
+    "canvas",
+    "banding"
+  ],
+  "type": "commonjs",
+  "engines": {
+    "node": ">= 18"
+  },
+  "author": "2649078304@qq.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/js": "^9.13.0",
+    "@types/node": "^18.12.1",
+    "czg": "^1.10.1",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.2.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,md,json}": "eslint --fix"
+  }
+}

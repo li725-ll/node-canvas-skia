@@ -1,0 +1,12 @@
+* text=auto eol=crlf
+
+*.png              -text
+*.jpg              -text
+*.jpeg             -text
+*.pdf              -text
+*.svg              -text
+*.css linguist-detectable=true
+*.less linguist-detectable=true
+*.js linguist-detectable=true
+*.jsx linguist-detectable=true
+*.ts linguist-detectable=true
