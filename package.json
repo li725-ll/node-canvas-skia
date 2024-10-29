@@ -5,6 +5,7 @@
     "pretest": "tsc",
     "build": "node-gyp rebuild",
     "test": "node ./test/test_binding.js",
+    "test:canvas": "node ./test/canvas.js",
     "prettier": "pnpm exec prettier . --write",
     "prepare": "husky",
     "lint": "eslint --fix"
@@ -20,9 +21,9 @@
   ],
   "type": "commonjs",
   "engines": {
-    "node": "~10 >=10.20 || >=12.17"
+    "node": ">=18.12.1"
   },
-  "author": "2649078304@qq.com",
+  "author": "LMX",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
