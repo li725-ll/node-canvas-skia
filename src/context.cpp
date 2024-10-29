@@ -22,37 +22,37 @@ Napi::Object CanvasContext::CanvasContext2Object(const Napi::CallbackInfo &info,
 
 CanvasContext::CanvasContext(){}
 
-void CanvasContext::BeginPath(Napi::CallbackInfo &info)
+void CanvasContext::BeginPath(const Napi::CallbackInfo &info)
 {
   path = path.reset();
 }
 
-void CanvasContext::MoveTo(Napi::CallbackInfo &info)
+void CanvasContext::MoveTo(const Napi::CallbackInfo &info)
 {
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   path.moveTo(x, y);
 }
 
-void CanvasContext::LineTo(Napi::CallbackInfo &info)
+void CanvasContext::LineTo(const Napi::CallbackInfo &info)
 {
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   path.lineTo(x, y);
 }
 
-void CanvasContext::ClosePath(Napi::CallbackInfo &info)
+void CanvasContext::ClosePath(const Napi::CallbackInfo &info)
 {
   path.close();
 }
 
-void CanvasContext::Stroke(Napi::CallbackInfo &info)
+void CanvasContext::Stroke(const Napi::CallbackInfo &info)
 {
   canvas->drawPath(path, paint);
   path = path.reset();
 }
 
-void CanvasContext::Clear(Napi::CallbackInfo &info)
+void CanvasContext::Clear(const Napi::CallbackInfo &info)
 {
   SkColor color = info[0].As<Napi::Number>().Uint32Value();
   canvas->clear(color); // SK_ColorBLUE

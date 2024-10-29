@@ -10,7 +10,6 @@
 
 #include "context.h"
 
-void EmitImage(const char *path, sk_sp<SkSurface> surface);
 void draw(SkCanvas *canvas);
 
 class Canvas : public Napi::ObjectWrap<Canvas>

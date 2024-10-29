@@ -12,12 +12,12 @@ class CanvasContext
 public:
   static Napi::Object CanvasContext2Object(const Napi::CallbackInfo &info, SkCanvas *canvas);
 
-  static void BeginPath(Napi::CallbackInfo &info);
-  static void MoveTo(Napi::CallbackInfo &info);
-  static void LineTo(Napi::CallbackInfo &info);
-  static void ClosePath(Napi::CallbackInfo &info);
-  static void Stroke(Napi::CallbackInfo &info);
-  static void Clear(Napi::CallbackInfo &info);
+  static void BeginPath(const Napi::CallbackInfo &info);
+  static void MoveTo(const Napi::CallbackInfo &info);
+  static void LineTo(const Napi::CallbackInfo &info);
+  static void ClosePath(const Napi::CallbackInfo &info);
+  static void Stroke(const Napi::CallbackInfo &info);
+  static void Clear(const Napi::CallbackInfo &info);
 
   CanvasContext();
 };
