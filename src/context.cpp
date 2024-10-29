@@ -16,6 +16,7 @@ Napi::Object CanvasContext::CanvasContext2Object(const Napi::CallbackInfo &info,
   obj.Set(Napi::String::New(env, "closePath"), Napi::Function::New(env, CanvasContext::ClosePath));
   obj.Set(Napi::String::New(env, "stroke"), Napi::Function::New(env, CanvasContext::Stroke));
   obj.Set(Napi::String::New(env, "clear"), Napi::Function::New(env, CanvasContext::Clear));
+  obj.Set(Napi::String::New(env, "translate"), Napi::Function::New(env, CanvasContext::Translate));
 
   return obj;
 }
@@ -56,4 +57,11 @@ void CanvasContext::Clear(const Napi::CallbackInfo &info)
 {
   SkColor color = info[0].As<Napi::Number>().Uint32Value();
   canvas->clear(color); // SK_ColorBLUE
+}
+
+void CanvasContext::Translate(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  canvas->translate(x, y);
 }

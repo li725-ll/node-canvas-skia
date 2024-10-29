@@ -18,6 +18,7 @@ public:
   static void ClosePath(const Napi::CallbackInfo &info);
   static void Stroke(const Napi::CallbackInfo &info);
   static void Clear(const Napi::CallbackInfo &info);
+  static void Translate(const Napi::CallbackInfo &info);
 
   CanvasContext();
 };
