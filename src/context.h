@@ -19,6 +19,9 @@ public:
   static void Stroke(const Napi::CallbackInfo &info);
   static void Clear(const Napi::CallbackInfo &info);
   static void Translate(const Napi::CallbackInfo &info);
+  static void Rotate(const Napi::CallbackInfo &info);
+  static void StrokeStyle(const Napi::CallbackInfo &info);
+  static void LineWidth(const Napi::CallbackInfo &info);
 
   CanvasContext();
 };

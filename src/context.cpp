@@ -17,6 +17,9 @@ Napi::Object CanvasContext::CanvasContext2Object(const Napi::CallbackInfo &info,
   obj.Set(Napi::String::New(env, "stroke"), Napi::Function::New(env, CanvasContext::Stroke));
   obj.Set(Napi::String::New(env, "clear"), Napi::Function::New(env, CanvasContext::Clear));
   obj.Set(Napi::String::New(env, "translate"), Napi::Function::New(env, CanvasContext::Translate));
+  obj.Set(Napi::String::New(env, "strokeStyle"), Napi::Function::New(env, CanvasContext::StrokeStyle));
+  obj.Set(Napi::String::New(env, "lineWidth"), Napi::Function::New(env, CanvasContext::LineWidth));
+  obj.Set(Napi::String::New(env, "rotate"), Napi::Function::New(env, CanvasContext::Rotate));
 
   return obj;
 }
@@ -64,4 +67,22 @@ void CanvasContext::Translate(const Napi::CallbackInfo &info)
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   canvas->translate(x, y);
+}
+
+void CanvasContext::Rotate(const Napi::CallbackInfo &info)
+{
+  SkScalar angle = info[0].As<Napi::Number>().FloatValue();
+  canvas->rotate(angle);
+}
+
+void CanvasContext::StrokeStyle(const Napi::CallbackInfo &info)
+{
+  info[0].As<Napi::Number>().Uint32Value();
+  paint.setColor(SK_ColorRED);
+};
+
+void CanvasContext::LineWidth(const Napi::CallbackInfo &info)
+{
+  SkScalar width = info[0].As<Napi::Number>().FloatValue();
+  paint.setStrokeWidth(width);
 }
