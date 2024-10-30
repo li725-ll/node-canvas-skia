@@ -4,8 +4,10 @@
 
 #include <napi.h>
 #include <include/core/SkPath.h>
+#include <include/core/SkRect.h>
 #include <include/core/SkPaint.h>
 #include <include/core/SkCanvas.h>
+#include <include/core/SkStrokeRec.h>
 
 struct ContextAttributesStruct
 {
@@ -31,6 +33,7 @@ public:
   static void Rotate(const Napi::CallbackInfo &info);
   static void StrokeStyle(const Napi::CallbackInfo &info);
   static void LineWidth(const Napi::CallbackInfo &info);
+  static void Arc(const Napi::CallbackInfo &info);
 
   CanvasContext();
 };
