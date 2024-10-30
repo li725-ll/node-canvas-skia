@@ -1,5 +1,6 @@
-const { drawArc } = require("./arc.spec");
-const { drawLine } = require("./line.spec");
+const { drawArc } = require("./arc");
+const { drawLine } = require("./line");
+const { drawRect } = require("./rect");
 
 test("line", () => {
   drawLine();
@@ -7,4 +8,8 @@ test("line", () => {
 
 test("arc", () => {
   drawArc();
+});
+
+test("rect", () => {
+  drawRect();
 });

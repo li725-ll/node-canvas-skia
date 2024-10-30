@@ -6,7 +6,7 @@ function drawLine() {
   const scale = 256;
   const R = 0.45 * scale;
   const TAU = 6.2831853;
-
+  ctx.clear(skia.Utils.RGBA(255, 255, 255, 1));
   ctx.beginPath();
   ctx.moveTo(R, 0);
   for (let i = 1; i < 7; ++i) {
@@ -15,12 +15,11 @@ function drawLine() {
   }
 
   ctx.closePath();
-  ctx.clear(skia.Utils.RGBA(255, 255, 255, 1));
   ctx.translate(0.5 * scale, 0.5 * scale);
-  ctx.strokeStyle(1);
+  ctx.strokeStyle(skia.Utils.RGBA(255, 0, 0, 1));
   ctx.lineWidth(2);
   ctx.stroke();
-  console.log(canvas.saveAsImage("E:\\gitee\\node-skia\\test\\out\\line.jpg"));
+  canvas.saveAsImage("E:\\gitee\\node-skia\\test\\out\\line.jpg");
 }
 
 module.exports = {

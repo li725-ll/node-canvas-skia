@@ -2,7 +2,7 @@
 
 SkPath path;
 SkPaint paint;
-SkCanvas *canvas = nullptr;
+SkCanvas *canvas;
 
 Napi::Object CanvasContext::CanvasContext2Object(
   const Napi::CallbackInfo &info,
@@ -26,6 +26,7 @@ Napi::Object CanvasContext::CanvasContext2Object(
   obj.Set(Napi::String::New(env, "lineWidth"), Napi::Function::New(env, CanvasContext::LineWidth));
   obj.Set(Napi::String::New(env, "rotate"), Napi::Function::New(env, CanvasContext::Rotate));
   obj.Set(Napi::String::New(env, "arc"), Napi::Function::New(env, CanvasContext::Arc));
+  obj.Set(Napi::String::New(env, "strokeRect"), Napi::Function::New(env, CanvasContext::StrokeRect));
 
   return obj;
 }
@@ -83,8 +84,8 @@ void CanvasContext::Rotate(const Napi::CallbackInfo &info)
 
 void CanvasContext::StrokeStyle(const Napi::CallbackInfo &info)
 {
-  info[0].As<Napi::Number>().Uint32Value();
-  paint.setColor(SK_ColorRED);
+  SkColor color = info[0].As<Napi::Number>().Uint32Value();
+  paint.setColor(color);
 };
 
 void CanvasContext::LineWidth(const Napi::CallbackInfo &info)
@@ -98,9 +99,19 @@ void CanvasContext::Arc(const Napi::CallbackInfo &info)
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   SkScalar r = info[2].As<Napi::Number>().FloatValue();
-  SkScalar startAngle = info[2].As<Napi::Number>().FloatValue();
-  SkScalar sweepAngle = info[3].As<Napi::Number>().FloatValue();
-
+  SkScalar startAngle = info[3].As<Napi::Number>().FloatValue();
+  SkScalar sweepAngle = info[4].As<Napi::Number>().FloatValue();
   SkRect skRect = SkRect::MakeXYWH(x, y, r, r);
-  canvas->drawArc(skRect, startAngle, sweepAngle, true, paint);
+  path.addArc(skRect, startAngle, sweepAngle);
+}
+
+void CanvasContext::StrokeRect(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  SkScalar w = info[2].As<Napi::Number>().FloatValue();
+  SkScalar h = info[2].As<Napi::Number>().FloatValue();
+  paint.setStyle(SkPaint::kStroke_Style);
+  SkRect rect = SkRect::MakeXYWH(x, y, w, h);
+  canvas->drawRect(rect, paint);
 }

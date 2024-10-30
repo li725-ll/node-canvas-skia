@@ -10,8 +10,6 @@
 
 #include "context.h"
 
-void draw(SkCanvas *canvas);
-
 class Canvas : public Napi::ObjectWrap<Canvas>
 {
 private:

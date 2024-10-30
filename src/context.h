@@ -15,6 +15,14 @@ struct ContextAttributesStruct
   bool depth  = false;
 };
 
+struct UtilsPoolStruct
+{
+  SkPath path;
+  SkPaint paint;
+  SkCanvas *canvas;
+};
+
+
 class CanvasContext
 {
 public:
@@ -34,8 +42,10 @@ public:
   static void StrokeStyle(const Napi::CallbackInfo &info);
   static void LineWidth(const Napi::CallbackInfo &info);
   static void Arc(const Napi::CallbackInfo &info);
+  static void StrokeRect(const Napi::CallbackInfo &info);
 
   CanvasContext();
+  ~CanvasContext();
 };
 
 #endif
