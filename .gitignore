@@ -7,3 +7,4 @@ dist
 .cache
 .eslintcache
 .build
+test/out

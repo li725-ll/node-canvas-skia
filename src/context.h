@@ -7,10 +7,19 @@
 #include <include/core/SkPaint.h>
 #include <include/core/SkCanvas.h>
 
+struct ContextAttributesStruct
+{
+  bool antialias  = false;
+  bool depth  = false;
+};
+
 class CanvasContext
 {
 public:
-  static Napi::Object CanvasContext2Object(const Napi::CallbackInfo &info, SkCanvas *canvas);
+  static Napi::Object CanvasContext2Object(
+    const Napi::CallbackInfo &info,
+    SkCanvas *canvas,
+    ContextAttributesStruct *contextAttributes);
 
   static void BeginPath(const Napi::CallbackInfo &info);
   static void MoveTo(const Napi::CallbackInfo &info);

@@ -4,11 +4,16 @@ SkPath path;
 SkPaint paint;
 SkCanvas *canvas = nullptr;
 
-Napi::Object CanvasContext::CanvasContext2Object(const Napi::CallbackInfo &info, SkCanvas *sk_canvas)
+Napi::Object CanvasContext::CanvasContext2Object(
+  const Napi::CallbackInfo &info,
+  SkCanvas *skCanvas,
+  ContextAttributesStruct *contextAttributes)
 {
   Napi::Env env = info.Env();
   Napi::Object obj = Napi::Object::New(env);
-  canvas = sk_canvas;
+  canvas = skCanvas;
+
+  paint.setAntiAlias(contextAttributes->antialias);
 
   obj.Set(Napi::String::New(env, "beginPath"), Napi::Function::New(env, CanvasContext::BeginPath));
   obj.Set(Napi::String::New(env, "moveTo"), Napi::Function::New(env, CanvasContext::MoveTo));

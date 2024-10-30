@@ -1,7 +1,7 @@
 const skia = require("../build/Release/skia-native.node");
 
 const canvas = new skia.Canvas(256, 256);
-const ctx = canvas.getContext();
+const ctx = canvas.getContext("2d", { antialias: true });
 
 // ctx.beginPath();
 // console.log("begin path");
@@ -41,7 +41,7 @@ ctx.translate(0.5 * scale, 0.5 * scale)
 ctx.strokeStyle(1);
 ctx.lineWidth(2);
 ctx.stroke();
-console.log(canvas.saveAsImage("E:\\gitee\\node-skia\\test.jpg"));
+console.log(canvas.saveAsImage("E:\\gitee\\node-skia\\test\\out\\test.jpg"));
 
 
 /*
