@@ -14,7 +14,7 @@ class Canvas : public Napi::ObjectWrap<Canvas>
 {
 private:
   sk_sp<SkSurface> _surface;
-  Napi::Object _context;
+  Napi::ObjectReference _context;
 
   Napi::Value GetContext(const Napi::CallbackInfo &info);
   Napi::Value SaveAsImage(const Napi::CallbackInfo &info);

@@ -22,30 +22,35 @@ struct UtilsPoolStruct
   SkCanvas *canvas;
 };
 
-
-class CanvasContext
+class CanvasContext : public Napi::ObjectWrap<CanvasContext>
 {
+private:
+  SkPath _path;
+  SkPaint _paint;
+  SkCanvas *_canvas;
+  ContextAttributesStruct _contextAttributes;
+
 public:
-  static Napi::Object CanvasContext2Object(
-    const Napi::CallbackInfo &info,
-    SkCanvas *canvas,
-    ContextAttributesStruct *contextAttributes);
+  static Napi::Object CanvasContext2Object(Napi::Env env);
+  CanvasContext(const Napi::CallbackInfo &info);
 
-  static void BeginPath(const Napi::CallbackInfo &info);
-  static void MoveTo(const Napi::CallbackInfo &info);
-  static void LineTo(const Napi::CallbackInfo &info);
-  static void ClosePath(const Napi::CallbackInfo &info);
-  static void Stroke(const Napi::CallbackInfo &info);
-  static void Clear(const Napi::CallbackInfo &info);
-  static void Translate(const Napi::CallbackInfo &info);
-  static void Rotate(const Napi::CallbackInfo &info);
-  static void StrokeStyle(const Napi::CallbackInfo &info);
-  static void LineWidth(const Napi::CallbackInfo &info);
-  static void Arc(const Napi::CallbackInfo &info);
-  static void StrokeRect(const Napi::CallbackInfo &info);
+  void SetCanvas(SkCanvas *canvas);
+  void SetContextAttributes(bool antialias, bool depth);
 
-  CanvasContext();
-  ~CanvasContext();
+  Napi::Value BeginPath(const Napi::CallbackInfo &info);
+  Napi::Value MoveTo(const Napi::CallbackInfo &info);
+  Napi::Value LineTo(const Napi::CallbackInfo &info);
+  Napi::Value ClosePath(const Napi::CallbackInfo &info);
+  Napi::Value Stroke(const Napi::CallbackInfo &info);
+  Napi::Value Clear(const Napi::CallbackInfo &info);
+  Napi::Value Translate(const Napi::CallbackInfo &info);
+  Napi::Value Rotate(const Napi::CallbackInfo &info);
+  Napi::Value StrokeStyle(const Napi::CallbackInfo &info);
+  Napi::Value LineWidth(const Napi::CallbackInfo &info);
+  Napi::Value Arc(const Napi::CallbackInfo &info);
+  Napi::Value StrokeRect(const Napi::CallbackInfo &info);
+  Napi::Value FillRect(const Napi::CallbackInfo &info);
+  ~CanvasContext(){};
 };
 
 #endif

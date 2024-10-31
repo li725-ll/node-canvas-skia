@@ -16,12 +16,13 @@ Napi::Function Canvas::Init(Napi::Env env)
   return func;
 }
 
-Canvas::Canvas(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Canvas>(info)
+Canvas::Canvas(const Napi::CallbackInfo &info)
+: Napi::ObjectWrap<Canvas>(info), _context(Napi::Persistent(CanvasContext::CanvasContext2Object(info.Env())))
 {
   Napi::Env env = info.Env();
   int width = info[0].As<Napi::Number>().Int32Value();
   int height = info[1].As<Napi::Number>().Int32Value();
-  this->_surface = SkSurface::MakeRasterN32Premul(width, height);
+  _surface = SkSurface::MakeRasterN32Premul(width, height);
 }
 
 Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
@@ -41,12 +42,11 @@ Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
     return env.Null();
   }
 
-  this->_context = CanvasContext::CanvasContext2Object(
-      info,
-      this->_surface->getCanvas(),
-      &contextAttributes);
+  CanvasContext *context = CanvasContext::Unwrap(_context.Value().ToObject());
+  context->SetCanvas(_surface->getCanvas());
+  context->SetContextAttributes(contextAttributes.antialias, contextAttributes.depth);
 
-  return this->_context;
+  return _context.Value();
 }
 
 Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
@@ -54,7 +54,7 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
   const char *path = info[0].As<Napi::String>().Utf8Value().c_str();
 
-  sk_sp<SkImage> image = this->_surface.get()->makeImageSnapshot();
+  sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
   sk_sp<SkData> data = image->encodeToData(SkEncodedImageFormat::kJPEG, 90);
 
   FILE *f = fopen(path, "wb");
