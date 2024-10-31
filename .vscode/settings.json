@@ -1,0 +1,24 @@
+{
+  "files.associations": {
+    "array": "cpp",
+    "vector": "cpp",
+    "xstring": "cpp",
+    "xutility": "cpp",
+    "bitset": "cpp",
+    "memory": "cpp",
+    "optional": "cpp",
+    "random": "cpp",
+    "cmath": "cpp",
+    "atomic": "cpp",
+    "deque": "cpp",
+    "filesystem": "cpp",
+    "forward_list": "cpp",
+    "ios": "cpp",
+    "list": "cpp",
+    "system_error": "cpp",
+    "xhash": "cpp",
+    "xiosbase": "cpp",
+    "xtree": "cpp",
+    "ostream": "cpp"
+  }
+}

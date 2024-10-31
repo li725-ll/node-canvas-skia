@@ -1,4 +1,5 @@
 node_modules
 dist
 build
+library
 .DS_Store

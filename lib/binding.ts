@@ -1,3 +1,3 @@
-import { Skia } from "../build/Release/skia-native.node";
+import { createCanvas } from "../build/Release/skia-native.node";
 
-export { Skia };
+export { createCanvas };
