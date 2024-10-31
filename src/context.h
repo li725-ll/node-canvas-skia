@@ -1,4 +1,3 @@
-#pragma once
 #ifndef __CONTEXT_H__
 #define __CONTEXT_H__
 
@@ -33,6 +32,7 @@ private:
 public:
   static Napi::Object CanvasContext2Object(Napi::Env env);
   CanvasContext(const Napi::CallbackInfo &info);
+  ~CanvasContext() {};
 
   void SetCanvas(SkCanvas *canvas);
   void SetContextAttributes(bool antialias, bool depth);
@@ -49,8 +49,10 @@ public:
   Napi::Value LineWidth(const Napi::CallbackInfo &info);
   Napi::Value Arc(const Napi::CallbackInfo &info);
   Napi::Value StrokeRect(const Napi::CallbackInfo &info);
-  Napi::Value FillRect(const Napi::CallbackInfo &info);
-  ~CanvasContext(){};
+  Napi::Value LineCap(const Napi::CallbackInfo &info);
+  Napi::Value SetStrokeJoin(const Napi::CallbackInfo &info);
+  Napi::Value Fill(const Napi::CallbackInfo &info);
+  Napi::Value Rect(const Napi::CallbackInfo &info);
 };
 
 #endif

@@ -18,6 +18,7 @@
     "system_error": "cpp",
     "xhash": "cpp",
     "xiosbase": "cpp",
-    "xtree": "cpp"
+    "xtree": "cpp",
+    "ostream": "cpp"
   }
 }

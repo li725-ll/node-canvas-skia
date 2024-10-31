@@ -1,6 +1,6 @@
 {
   "recommendations": [
-    "kavod-io.vscode-jest-test-adapter",
+    "Orta.vscode-jest",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "EditorConfig.EditorConfig"
