@@ -24,7 +24,14 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("lineCap", &CanvasContext::LineCap, napi_enumerable),
               InstanceMethod("lineJoin", &CanvasContext::SetStrokeJoin, napi_enumerable),
               InstanceMethod("rect", &CanvasContext::Rect, napi_enumerable),
-              InstanceMethod("fill", &CanvasContext::Fill, napi_enumerable)})
+              InstanceMethod("fill", &CanvasContext::Fill, napi_enumerable),
+              InstanceMethod("isPointInPath", &CanvasContext::IsPointInPath, napi_enumerable),
+              InstanceMethod("scale", &CanvasContext::Scale, napi_enumerable),
+              InstanceMethod("arcTo", &CanvasContext::ArcTo, napi_enumerable),
+              InstanceMethod("setFont", &CanvasContext::SetFont, napi_enumerable),
+              InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
+              InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
+              InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable)})
       .New({});
 }
 
@@ -230,5 +237,52 @@ Napi::Value CanvasContext::Rect(const Napi::CallbackInfo &info)
   SkScalar h = info[3].As<Napi::Number>().FloatValue();
   _path.addRect(x, y, x + w, y + h);
 
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::IsPointInPath(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  bool result = _path.contains(x, y);
+  return Napi::Boolean::New(info.Env(), result);
+}
+
+Napi::Value CanvasContext::ArcTo(const Napi::CallbackInfo &info)
+{
+  SkScalar x1 = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y1 = info[1].As<Napi::Number>().FloatValue();
+  SkScalar x2 = info[2].As<Napi::Number>().FloatValue();
+  SkScalar y2 = info[3].As<Napi::Number>().FloatValue();
+  SkScalar radius = info[4].As<Napi::Number>().FloatValue();
+  _path.arcTo(x1, y1, x2, y2, radius);
+}
+
+Napi::Value CanvasContext::Scale(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  _canvas->scale(x, y);
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetFont(const Napi::CallbackInfo &info)
+{
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
+{
+
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
+{
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::MeasureText(const Napi::CallbackInfo &info)
+{
   return Napi::Value();
 }

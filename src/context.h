@@ -4,6 +4,7 @@
 #include <napi.h>
 #include <include/core/SkPath.h>
 #include <include/core/SkRect.h>
+#include <include/core/SkFont.h>
 #include <include/core/SkPaint.h>
 #include <include/core/SkCanvas.h>
 #include <include/core/SkStrokeRec.h>
@@ -14,16 +15,10 @@ struct ContextAttributesStruct
   bool depth  = false;
 };
 
-struct UtilsPoolStruct
-{
-  SkPath path;
-  SkPaint paint;
-  SkCanvas *canvas;
-};
-
 class CanvasContext : public Napi::ObjectWrap<CanvasContext>
 {
 private:
+  SkFont _font;
   SkPath _path;
   SkPaint _paint;
   SkCanvas *_canvas;
@@ -53,6 +48,13 @@ public:
   Napi::Value SetStrokeJoin(const Napi::CallbackInfo &info);
   Napi::Value Fill(const Napi::CallbackInfo &info);
   Napi::Value Rect(const Napi::CallbackInfo &info);
+  Napi::Value IsPointInPath(const Napi::CallbackInfo &info);
+  Napi::Value ArcTo(const Napi::CallbackInfo &info);
+  Napi::Value Scale(const Napi::CallbackInfo &info);
+  Napi::Value SetFont(const Napi::CallbackInfo &info);
+  Napi::Value StrokeText(const Napi::CallbackInfo &info);
+  Napi::Value FillText(const Napi::CallbackInfo &info);
+  Napi::Value MeasureText(const Napi::CallbackInfo &info);
 };
 
 #endif
