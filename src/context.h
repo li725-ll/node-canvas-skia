@@ -6,7 +6,10 @@
 #include <include/core/SkRect.h>
 #include <include/core/SkFont.h>
 #include <include/core/SkPaint.h>
+#include <include/core/SkImage.h>
 #include <include/core/SkCanvas.h>
+#include <include/core/SkFontMgr.h>
+#include <include/core/SkTextBlob.h>
 #include <include/core/SkStrokeRec.h>
 
 struct ContextAttributesStruct
@@ -22,6 +25,7 @@ private:
   SkPath _path;
   SkPaint _paint;
   SkCanvas *_canvas;
+  sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
 
 public:
@@ -55,6 +59,7 @@ public:
   Napi::Value StrokeText(const Napi::CallbackInfo &info);
   Napi::Value FillText(const Napi::CallbackInfo &info);
   Napi::Value MeasureText(const Napi::CallbackInfo &info);
+  Napi::Value GetFonts(const Napi::CallbackInfo &info);
 };
 
 #endif

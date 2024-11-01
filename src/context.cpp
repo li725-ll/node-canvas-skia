@@ -1,6 +1,6 @@
-#include "context.h"
 #include <iostream>
 
+#include "context.h"
 Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
 {
   Napi::Object obj = Napi::Object::New(env);
@@ -31,12 +31,14 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("setFont", &CanvasContext::SetFont, napi_enumerable),
               InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
               InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
-              InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable)})
+              InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
+              InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable)})
       .New({});
 }
 
 CanvasContext::CanvasContext(const Napi::CallbackInfo &info) : Napi::ObjectWrap<CanvasContext>(info)
 {
+  _fontMgr = SkFontMgr::RefDefault();
 }
 
 void CanvasContext::SetCanvas(SkCanvas *canvas)
@@ -76,7 +78,6 @@ Napi::Value CanvasContext::LineTo(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::ClosePath(const Napi::CallbackInfo &info)
 {
   _path.close();
-  return Napi::Value();
   return Napi::Value();
 }
 
@@ -256,6 +257,7 @@ Napi::Value CanvasContext::ArcTo(const Napi::CallbackInfo &info)
   SkScalar y2 = info[3].As<Napi::Number>().FloatValue();
   SkScalar radius = info[4].As<Napi::Number>().FloatValue();
   _path.arcTo(x1, y1, x2, y2, radius);
+  return Napi::Value();
 }
 
 Napi::Value CanvasContext::Scale(const Napi::CallbackInfo &info)
@@ -268,21 +270,76 @@ Napi::Value CanvasContext::Scale(const Napi::CallbackInfo &info)
 
 Napi::Value CanvasContext::SetFont(const Napi::CallbackInfo &info)
 {
+  SkFontStyle fontStyle;
+
+  std::string fontFamily = info[0].As<Napi::String>().Utf8Value();
+  SkScalar fontSize = info[1].As<Napi::Number>().FloatValue();
+
+  sk_sp<SkTypeface> typeface = _fontMgr->legacyMakeTypeface(fontFamily.c_str(), fontStyle.Bold());
+
+  _font.setTypeface(typeface);
+  _font.setSize(fontSize);
+  _font.setHinting(SkFontHinting::kNormal);
+  _font.setEdging(SkFont::Edging::kAntiAlias);
+  _font.setSubpixel(true);
   return Napi::Value();
 }
 
 Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
 {
+  std::string text = info[0].As<Napi::String>().Utf8Value();
+  SkScalar x = info[1].As<Napi::Number>().FloatValue();
+  SkScalar y = info[2].As<Napi::Number>().FloatValue();
+  // SkScalar maxWidth = info[3].As<Napi::Number>().FloatValue();
 
+  _paint.setStyle(SkPaint::kStroke_Style);
+  _canvas->drawString(text.c_str(), x, y, _font, _paint);
   return Napi::Value();
 }
 
 Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
 {
+  std::string text = info[0].As<Napi::String>().Utf8Value();
+  SkScalar x = info[1].As<Napi::Number>().FloatValue();
+  SkScalar y = info[2].As<Napi::Number>().FloatValue();
+  // SkScalar maxWidth = info[3].As<Napi::Number>().FloatValue();
+
+  _paint.setStyle(SkPaint::kFill_Style);
+  _canvas->drawString(text.c_str(), x, y, _font, _paint);
   return Napi::Value();
 }
 
 Napi::Value CanvasContext::MeasureText(const Napi::CallbackInfo &info)
 {
   return Napi::Value();
+}
+
+Napi::Value CanvasContext::GetFonts(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::Array result = Napi::Array::New(env);
+
+  for (int i = 0; i < _fontMgr->countFamilies(); ++i)
+  {
+    SkString familyName;
+    Napi::Object font = Napi::Object::New(env);
+
+    _fontMgr->getFamilyName(i, &familyName);
+    sk_sp<SkFontStyleSet> styleSet(_fontMgr->createStyleSet(i));
+
+    int N = styleSet->count();
+    for (int j = 0; j < N; ++j)
+    {
+      SkFontStyle fontStyle;
+      SkString style;
+      styleSet->getStyle(j, &fontStyle, &style);
+
+      font.Set("family", familyName.c_str());
+      font.Set("weight", fontStyle.weight());
+      font.Set("style", style.c_str());
+
+      result.Set(i, font);
+    }
+  }
+  return result;
 }
