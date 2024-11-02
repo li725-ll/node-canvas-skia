@@ -11,7 +11,6 @@
         [
           'os=="win"' and 'target_arch=="x64"',
           {
-            'defines': ['windows_dbr'],
             'libraries': [
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12allocator.lib',
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\expat.lib',
@@ -35,6 +34,43 @@
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12.lib',
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3dcompiler.lib',
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\OpenGL32.lib'
+            ]
+          }
+        ],
+        [
+          'os=="drawin"' and 'target_arch=="arm64"',
+          {
+            "xcode_settings":{
+              "FRAMEWORK_SEARCH_PATHS":[
+                "/System/Library/Frameworks/Metal.framework",
+                "/System/Library/Frameworks/MetalKit.framework"
+              ],
+              "OTHER_CFLAGS":[
+                "-I/System/Library/Frameworks/Metal.framework/Headers",
+                "-I/System/Library/Frameworks/MetalKit.framework/Headers"
+              ]
+            },
+            'libraries': [
+              '-framework Metal',
+              '-framework MetalKit',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libdng_sdk.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libexpat.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libfreetype2.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libharfbuzz.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libicu.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libjpeg.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libparticles.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libpng.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libskia.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libskottie.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libskparagraph.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libskresources.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libsksg.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libskshaper.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libsvg.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libwebp_sse41.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libwebp.a',
+              '../library/Skia-m93-87e8842e8c-macos-Release-arm64/out/Release-arm64/libzlib.a'
             ]
           }
         ]

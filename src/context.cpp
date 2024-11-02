@@ -3,8 +3,6 @@
 #include "context.h"
 Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
 {
-  Napi::Object obj = Napi::Object::New(env);
-
   return DefineClass(
              env,
              "CanvasContext",
