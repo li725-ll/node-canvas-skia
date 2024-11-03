@@ -4,8 +4,6 @@ node-skia是一个skia的node绑定，旨在桌面应用中可以利用GPU加速
 
 ## 安装
 
-
-
 ## 示例
 
 ```js
@@ -15,30 +13,30 @@ const skia = require("node-skia");
 ## API
 
 1. Canvas
-   + getContext
-   + saveAsImage
+   - getContext
+   - saveAsImage
 2. CanvasContext
-   + beginPath
-   + moveTo
-   + lineTo
-   + closePath
-   + stroke
-   + clear
-   + translate
-   + rotate
-   + strokeStyle
-   + lineWidth
-   + arc
-   + strokeRect
-   + lineCap
-   + setStrokeJoin
-   + fill
-   + rect
-   + isPointInPath
-   + scale
-   + arcTo
-   + setFont
-   + strokeText
-   + fillText
-   + measureText
-   + getFonts
+   - beginPath
+   - moveTo
+   - lineTo
+   - closePath
+   - stroke
+   - clear
+   - translate
+   - rotate
+   - strokeStyle
+   - lineWidth
+   - arc
+   - strokeRect
+   - lineCap
+   - setStrokeJoin
+   - fill
+   - rect
+   - isPointInPath
+   - scale
+   - arcTo
+   - setFont
+   - strokeText
+   - fillText
+   - measureText
+   - getFonts

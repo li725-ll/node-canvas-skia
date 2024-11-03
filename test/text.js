@@ -6,7 +6,6 @@ const ctx = canvas.getContext("2d", { antialias: true });
 
 function getFonts() {
   const result = ctx.getFonts();
-
 }
 
 function drawStrokeText() {
@@ -30,7 +29,6 @@ function drawText(outputPath) {
   drawFileText();
   canvas.saveAsImage(path.resolve(outputPath, "text.jpg"));
 }
-
 
 module.exports = {
   drawText

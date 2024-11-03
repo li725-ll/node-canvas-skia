@@ -1,5 +1,5 @@
 {
-  "main": "lib/binding.js",
+  "main": "lib/index.js",
   "scripts": {
     "commit": "git add . && czg",
     "pretest": "tsc",

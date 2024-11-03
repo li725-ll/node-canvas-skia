@@ -20,7 +20,7 @@ function drawHeptagram() {
   ctx.strokeStyle(skia.Utils.RGBA(255, 0, 0, 1));
   ctx.lineWidth(2);
   ctx.stroke();
-  ctx.translate(- 0.5 * scale, - 0.5 * scale);
+  ctx.translate(-0.5 * scale, -0.5 * scale);
 }
 
 function drawStraightLine() {
@@ -92,7 +92,6 @@ function drawRect() {
 }
 
 function drawJoinLine() {
-
   ctx.strokeStyle(skia.Utils.RGBA(255, 0, 0, 1));
   ctx.lineWidth(20);
   ctx.beginPath();
@@ -133,7 +132,7 @@ function drawHeptagramFill() {
   ctx.fillStyle(skia.Utils.RGBA(255, 0, 255, 1));
   ctx.lineWidth(2);
   ctx.fill();
-  ctx.translate(- 0.5 * scale, - 0.5 * scale);
+  ctx.translate(-0.5 * scale, -0.5 * scale);
 }
 
 function drawTriangleFill() {
@@ -158,7 +157,7 @@ function testLine(outputPath) {
   drawStraightLine(); // draw a straight line
   drawVerticalLine(); // draw a vertical line
   drawCapLine(); // draw a cap line
-  drawTriangleLine() // draw a triangle line
+  drawTriangleLine(); // draw a triangle line
   drawArcLine(); // draw an arc line
   drawRect(); // draw a rectangle
   drawJoinLine(); // draw a join line
