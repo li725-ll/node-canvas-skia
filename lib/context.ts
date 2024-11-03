@@ -1,3 +1,5 @@
+import Utils from "./utils";
+
 export class CanvasContext {
   private context: any;
   public fillStyle: string = "#000000"; // color|gradient|pattern
@@ -34,7 +36,9 @@ export class CanvasContext {
     | "xor" = "source-over";
 
   constructor(ctx: any) {
+    const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
     this.context = ctx;
+    this.context.clear(initColor);
   }
   public createLinearGradient(x0: number, y0: number, x1: number, y1: number) {
     return { x0, y0, x1, y1 };
@@ -61,7 +65,7 @@ export class CanvasContext {
   }
 
   public rect(x: number, y: number, width: number, height: number) {
-    return { x, y, width, height };
+    this.context.rect(x, y, width, height);
   }
   public fillRect(x: number, y: number, width: number, height: number) {
     return { x, y, width, height };
@@ -70,16 +74,31 @@ export class CanvasContext {
     return { x, y, width, height };
   }
 
-  public fill() {}
-  public stroke() {}
-
-  public beginPath() {}
-  public moveTo(x: number, y: number) {
-    return { x, y };
+  public fill() {
+    const color = Utils.string2RGBA(this.fillStyle);
+    this.context.fillStyle(color);
+    this.context.fill();
   }
-  public closePath() {}
+  public stroke() {
+    const color = Utils.string2RGBA(this.strokeStyle);
+    this.context.lineCap(this.lineCap);
+    this.context.lineJoin(this.lineJoin);
+    this.context.lineWidth(this.lineWidth);
+    this.context.strokeStyle(color);
+    this.context.stroke();
+  }
+
+  public beginPath() {
+    this.context.beginPath();
+  }
+  public moveTo(x: number, y: number) {
+    this.context.moveTo(x, y);
+  }
+  public closePath() {
+    this.context.closePath();
+  }
   public lineTo(x: number, y: number) {
-    return { x, y };
+    this.context.lineTo(x, y);
   }
   public clip() {}
   public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
@@ -103,24 +122,24 @@ export class CanvasContext {
     eAngle: number,
     counterclockwise: boolean = true
   ) {
-    return { x, y, r, sAngle, eAngle, counterclockwise };
+    this.context.arc(x, y, r, sAngle, eAngle, counterclockwise);
   }
 
   public arcTo(x1: number, y1: number, x2: number, y2: number, r: number) {
-    return { x1, y1, x2, y2, r };
+    this.context.arcTo(x1, y1, x2, y2, r);
   }
 
   public isPointInPath(x: number, y: number) {
-    return { x, y };
+    this.context.isPointInPath(x, y);
   }
   public scale(scalewidth: number, scaleheight: number) {
-    return { scalewidth, scaleheight };
+    this.context.scale(scalewidth, scaleheight);
   }
   public rotate(angle: number) {
-    return { angle };
+    this.context.rotate(angle);
   }
   public translate(x: number, y: number) {
-    return { x, y };
+    this.context.translate(x, y);
   }
   public transform(
     a: number,
@@ -130,7 +149,7 @@ export class CanvasContext {
     e: number,
     f: number
   ) {
-    return { a, b, c, d, e, f };
+    this.context.transform(a, b, c, d, e, f);
   }
   public setTransform(
     a: number,
@@ -143,21 +162,35 @@ export class CanvasContext {
     return { a, b, c, d, e, f };
   }
 
-  fillText(text: string, x: number, y: number, maxWidth: number) {
-    return { text, x, y, maxWidth };
+  public fillText(text: string, x: number, y: number, maxWidth: number) {
+    this.context.fillText(text, x, y, maxWidth);
   }
 
-  strokeText(text: string, x: number, y: number, maxWidth: number) {
-    return { text, x, y, maxWidth };
+  public strokeText(text: string, x: number, y: number, maxWidth: number) {
+    this.context.strokeText(text, x, y, maxWidth);
   }
 
-  measureText(text: string): number {
-    console.log({ text });
-    return 0;
+  public measureText(text: string) {
+    this.context.measureText(text);
   }
 
-  drawImage(image: unknown, width: number, height: number) {
+  public strokeRect(x: number, y: number, width: number, height: number) {
+    const font = Utils.string2Font(this.font);
+    console.log(font);
+    this.context.setFont(...font);
+    this.context.strokeRect(x, y, width, height);
+  }
+
+  public drawImage(image: unknown, width: number, height: number) {
     return { image, width, height };
+  }
+
+  public getFonts(): {
+    family: string;
+    weight: string;
+    style: "Plain" | "Heavy" | "Regular" | "Bold Italic" | "Bold"; // TODO: add more
+  }[] {
+    return this.context.getFonts();
   }
 }
 

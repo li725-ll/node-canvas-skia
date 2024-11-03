@@ -32,7 +32,7 @@ export class Canvas {
 
   public restore() {}
 
-  public SaveAsImage(path: string) {
+  public saveAsImage(path: string) {
     this.skiaCanvas.saveAsImage(path);
   }
 }
