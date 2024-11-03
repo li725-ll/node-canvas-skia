@@ -12,7 +12,8 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      "linebreak-style": [0, "windows"]
+      "linebreak-style": [0, "windows"],
+      "@typescript-eslint/no-explicit-any": 0
     }
   }
 ];

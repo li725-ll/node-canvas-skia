@@ -1,4 +1,5 @@
 export class CanvasContext {
+  private context: any;
   public fillStyle: string = "#000000"; // color|gradient|pattern
   public strokeStyle: string = "#000000"; // color|gradient|pattern
   public shadowColor: string = "#000000"; // color
@@ -31,6 +32,10 @@ export class CanvasContext {
     | "lighter"
     | "copy"
     | "xor" = "source-over";
+
+  constructor(ctx: any) {
+    this.context = ctx;
+  }
   public createLinearGradient(x0: number, y0: number, x1: number, y1: number) {
     return { x0, y0, x1, y1 };
   }
@@ -155,3 +160,5 @@ export class CanvasContext {
     return { image, width, height };
   }
 }
+
+export default CanvasContext;

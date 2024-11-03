@@ -1,5 +1,5 @@
 const path = require("path");
-const skia = require("../build/Release/skia-native.node");
+const skia = require("../dist");
 
 const canvas = new skia.Canvas(800, 800);
 const ctx = canvas.getContext("2d", { antialias: true });
