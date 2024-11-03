@@ -60,6 +60,7 @@ public:
   Napi::Value FillText(const Napi::CallbackInfo &info);
   Napi::Value MeasureText(const Napi::CallbackInfo &info);
   Napi::Value GetFonts(const Napi::CallbackInfo &info);
+  Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
 };
 
 #endif

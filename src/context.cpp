@@ -30,7 +30,8 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
               InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
               InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
-              InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable)})
+              InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable)}),
+              InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
       .New({});
 }
 
@@ -340,4 +341,9 @@ Napi::Value CanvasContext::GetFonts(const Napi::CallbackInfo &info)
     }
   }
   return result;
+}
+
+Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info) 
+{
+  return return Napi::Value();
 }
