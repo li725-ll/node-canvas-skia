@@ -4,6 +4,7 @@ const { drawArc } = require("./arc");
 const { testLine } = require("./line");
 const { drawRect } = require("./rect");
 const { drawText } = require("./text");
+const { testGradinent } = require("./gradient");
 
 const outputPath = path.resolve(__dirname, "output");
 
@@ -25,4 +26,8 @@ test("text", () => {
 
 test("rect", () => {
   drawRect(outputPath);
+});
+
+test("gradient", () => {
+  testGradinent(outputPath);
 });

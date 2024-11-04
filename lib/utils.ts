@@ -1,16 +1,28 @@
 import skia from "./binding";
 
 export class Utils {
-  public static string2RGBA(color: string): number {
+  public static string2RGBA(color: string): {
+    value: number;
+    type: "RGBA" | "RGB" | "SHADER";
+  } {
     const value = color.toUpperCase();
-    let result;
+    const result: {
+      value: number;
+      type: "RGBA" | "RGB" | "SHADER";
+    } = { value: 0, type: "RGBA" };
     if (value.startsWith("RGBA")) {
+      result.type = "RGBA";
       const temp = value.match(/\d+/g);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
-      result = skia.SkiaUtils.RGBA(...temp!.map(Number));
+      result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
+    if (value.startsWith("#SHADER")) {
+      result.type = "SHADER";
+      result.value = parseInt(value.replace("#SHADER", ""));
+    }
+
     return result;
   }
 

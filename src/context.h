@@ -1,17 +1,24 @@
 #ifndef __CONTEXT_H__
 #define __CONTEXT_H__
 
-#include <napi.h>
 #include <map>
+#include <napi.h>
+#include <vector>
+#include <string>
 #include <include/core/SkPath.h>
 #include <include/core/SkRect.h>
 #include <include/core/SkFont.h>
 #include <include/core/SkPaint.h>
 #include <include/core/SkImage.h>
+#include <include/core/SkColor.h>
 #include <include/core/SkCanvas.h>
+#include <include/core/SkShader.h>
 #include <include/core/SkFontMgr.h>
 #include <include/core/SkTextBlob.h>
-#include <include/core/SkStrokeRec.h>
+#include <include/effects/SkGradientShader.h>
+#include <include/effects/SkDiscretePathEffect.h>
+
+#include "gradient.h"
 
 struct ContextAttributesStruct
 {
@@ -29,6 +36,7 @@ private:
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
   std::map<std::string, sk_sp<SkTypeface>> _fontMap;
+  std::map<int, Napi::Object> _shaderMap;
 
 public:
   static Napi::Object CanvasContext2Object(Napi::Env env);
@@ -63,6 +71,7 @@ public:
   Napi::Value FillText(const Napi::CallbackInfo &info);
   Napi::Value MeasureText(const Napi::CallbackInfo &info);
   Napi::Value GetFonts(const Napi::CallbackInfo &info);
+  Napi::Value SetShader(const Napi::CallbackInfo &info);
   Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
 };
 

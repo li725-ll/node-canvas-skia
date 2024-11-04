@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'skia-native',
-      'sources': [ 'src/main.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp' ],
+      'sources': [ 'src/main.cpp', 'src/gradient.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp' ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
         "library/Skia-m93-87e8842e8c-windows-Release-x64"

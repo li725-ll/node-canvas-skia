@@ -38,10 +38,15 @@ export class CanvasContext {
   constructor(ctx: any) {
     const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
     this.context = ctx;
-    this.context.clear(initColor);
+    this.context.clear(initColor.value);
   }
-  public createLinearGradient(x0: number, y0: number, x1: number, y1: number) {
-    return { x0, y0, x1, y1 };
+  public createLinearGradient(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number
+  ): string {
+    return this.context.createLinearGradient(x0, y0, x1, y1);
   }
   public createPattern(
     image: unknown,
@@ -56,8 +61,8 @@ export class CanvasContext {
     x1: number,
     y1: number,
     r1: number
-  ) {
-    return { x0, y0, r0, x1, y1, r1 };
+  ): string {
+    return this.context.createRadialGradient(x0, y0, r0, x1, y1, r1);
   }
   public addColorStop(stop: number, color: string) {
     // 介于 0.0 与 1.0 之间的值，表示渐变中开始与结束之间的位置。
@@ -76,15 +81,38 @@ export class CanvasContext {
 
   public fill() {
     const color = Utils.string2RGBA(this.fillStyle);
-    this.context.fillStyle(color);
+    console.log("dd", color);
+    switch (color.type) {
+      case "RGBA":
+        this.context.fillStyle(color.value);
+        break;
+      case "RGB":
+        this.context.set(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
+
     this.context.fill();
   }
   public stroke() {
     const color = Utils.string2RGBA(this.strokeStyle);
+    switch (color.type) {
+      case "RGBA":
+        this.context.strokeStyle(color.value);
+        break;
+      case "RGB":
+        this.context.set(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
+
     this.context.lineCap(this.lineCap);
     this.context.lineJoin(this.lineJoin);
     this.context.lineWidth(this.lineWidth);
-    this.context.strokeStyle(color);
     this.context.stroke();
   }
 
