@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "context.h"
+#include "utils.h"
 Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
 {
   return DefineClass(
@@ -28,11 +29,11 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("arcTo", &CanvasContext::ArcTo, napi_enumerable),
               InstanceMethod("setFont", &CanvasContext::SetFont, napi_enumerable),
               InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
+              InstanceMethod("loadFont", &CanvasContext::LoadFont, napi_enumerable),
               InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
               InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
               InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable),
-              InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable)
-              })
+              InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable)})
       .New({});
 }
 
@@ -271,17 +272,31 @@ Napi::Value CanvasContext::Scale(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::SetFont(const Napi::CallbackInfo &info)
 {
   SkFontStyle fontStyle;
+  sk_sp<SkTypeface> typeface;
 
   std::string fontFamily = info[0].As<Napi::String>().Utf8Value();
   SkScalar fontSize = info[1].As<Napi::Number>().FloatValue();
 
-  sk_sp<SkTypeface> typeface = _fontMgr->legacyMakeTypeface(fontFamily.c_str(), fontStyle.Bold());
+  if(_fontMap.size() > 0) {
+    auto it = _fontMap.find(fontFamily);
+    if (it != _fontMap.end())
+    {
+      typeface = it->second;
+    }
+    else
+    {
+      typeface = _fontMgr->legacyMakeTypeface(fontFamily.c_str(), fontStyle);
+    }
+  } else {
+    typeface = _fontMgr->legacyMakeTypeface(fontFamily.c_str(), fontStyle);
+  }
 
   _font.setTypeface(typeface);
   _font.setSize(fontSize);
   _font.setHinting(SkFontHinting::kNormal);
   _font.setEdging(SkFont::Edging::kAntiAlias);
   _font.setSubpixel(true);
+
   return Napi::Value();
 }
 
@@ -311,6 +326,17 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
 
 Napi::Value CanvasContext::MeasureText(const Napi::CallbackInfo &info)
 {
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::LoadFont(const Napi::CallbackInfo &info)
+{
+  std::string fontPath = info[0].As<Napi::String>().Utf8Value();
+  std::string fontName = info[1].As<Napi::String>().Utf8Value();
+
+  sk_sp<SkTypeface> font = _fontMgr->makeFromFile(fontPath.c_str(), 0);
+
+  _fontMap.insert({fontName, font});
   return Napi::Value();
 }
 
@@ -344,7 +370,7 @@ Napi::Value CanvasContext::GetFonts(const Napi::CallbackInfo &info)
   return result;
 }
 
-Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info) 
+Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
 {
   return Napi::Value();
 }

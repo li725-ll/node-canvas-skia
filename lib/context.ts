@@ -163,21 +163,24 @@ export class CanvasContext {
   }
 
   public fillText(text: string, x: number, y: number, maxWidth: number) {
+    const font = Utils.string2Font(this.font);
+    this.context.setFont(...font);
     this.context.fillText(text, x, y, maxWidth);
   }
 
   public strokeText(text: string, x: number, y: number, maxWidth: number) {
+    const font = Utils.string2Font(this.font);
+    this.context.setFont(...font);
     this.context.strokeText(text, x, y, maxWidth);
   }
 
   public measureText(text: string) {
+    const font = Utils.string2Font(this.font);
+    this.context.setFont(...font);
     this.context.measureText(text);
   }
 
   public strokeRect(x: number, y: number, width: number, height: number) {
-    const font = Utils.string2Font(this.font);
-    console.log(font);
-    this.context.setFont(...font);
     this.context.strokeRect(x, y, width, height);
   }
 
@@ -191,6 +194,10 @@ export class CanvasContext {
     style: "Plain" | "Heavy" | "Regular" | "Bold Italic" | "Bold"; // TODO: add more
   }[] {
     return this.context.getFonts();
+  }
+
+  public loadFont(fontPath: string, fontName: string) {
+    return this.context.loadFont(fontPath, fontName);
   }
 }
 

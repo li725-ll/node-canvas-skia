@@ -4,7 +4,7 @@
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
-    "test": "jest",
+    "test": "pnpm run pretest && jest",
     "prettier": "pnpm exec prettier . --write",
     "prepare": "husky",
     "lint": "eslint --fix"

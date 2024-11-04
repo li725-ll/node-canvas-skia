@@ -2,6 +2,7 @@
 #define __CONTEXT_H__
 
 #include <napi.h>
+#include <map>
 #include <include/core/SkPath.h>
 #include <include/core/SkRect.h>
 #include <include/core/SkFont.h>
@@ -27,6 +28,7 @@ private:
   SkCanvas *_canvas;
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
+  std::map<std::string, sk_sp<SkTypeface>> _fontMap;
 
 public:
   static Napi::Object CanvasContext2Object(Napi::Env env);
@@ -56,6 +58,7 @@ public:
   Napi::Value ArcTo(const Napi::CallbackInfo &info);
   Napi::Value Scale(const Napi::CallbackInfo &info);
   Napi::Value SetFont(const Napi::CallbackInfo &info);
+  Napi::Value LoadFont(const Napi::CallbackInfo &info);
   Napi::Value StrokeText(const Napi::CallbackInfo &info);
   Napi::Value FillText(const Napi::CallbackInfo &info);
   Napi::Value MeasureText(const Napi::CallbackInfo &info);
