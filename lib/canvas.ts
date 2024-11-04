@@ -1,14 +1,23 @@
+import skia from "./binding";
+import CanvasContext from "./context";
+
 export class Canvas {
   width: number;
   height: number;
+  skiaCanvas: any;
 
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
+    this.skiaCanvas = new skia.SkiaCanvas(width, height);
   }
 
-  public getContext(type: "2d") {
-    return type;
+  public getContext(
+    contextType: "2d",
+    contextAttributes: { antialias: boolean; depth: boolean }
+  ): CanvasContext {
+    const ctx = this.skiaCanvas.getContext(contextType, contextAttributes);
+    return new CanvasContext(ctx);
   }
 
   public toDataURL() {
@@ -20,5 +29,12 @@ export class Canvas {
   }
 
   public save() {}
+
   public restore() {}
+
+  public saveAsImage(path: string) {
+    this.skiaCanvas.saveAsImage(path);
+  }
 }
+
+export default Canvas;
