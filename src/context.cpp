@@ -31,10 +31,14 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
               InstanceMethod("loadFont", &CanvasContext::LoadFont, napi_enumerable),
               InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
+              InstanceMethod("fillRect", &CanvasContext::FillRect, napi_enumerable),
               InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
               InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable),
               InstanceMethod("setShader", &CanvasContext::SetShader, napi_enumerable),
-              InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable)})
+              InstanceMethod("setTextAlign", &CanvasContext::SetTextAlign, napi_enumerable),
+              InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
+              InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
+              InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})
       .New({});
 }
 
@@ -309,7 +313,8 @@ Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
   // SkScalar maxWidth = info[3].As<Napi::Number>().FloatValue();
 
   _paint.setStyle(SkPaint::kStroke_Style);
-  _canvas->drawString(text.c_str(), x, y, _font, _paint);
+  SkScalar start = ApplyTextAlign(text, x);
+  _canvas->drawString(text.c_str(), start, y, _font, _paint);
   return Napi::Value();
 }
 
@@ -321,13 +326,21 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
   // SkScalar maxWidth = info[3].As<Napi::Number>().FloatValue();
 
   _paint.setStyle(SkPaint::kFill_Style);
-  _canvas->drawString(text.c_str(), x, y, _font, _paint);
+  SkScalar start = ApplyTextAlign(text, x);
+  _canvas->drawString(text.c_str(), start, y, _font, _paint);
   return Napi::Value();
 }
 
 Napi::Value CanvasContext::MeasureText(const Napi::CallbackInfo &info)
 {
-  return Napi::Value();
+  Napi::Object result = Napi::Object::New(info.Env());
+
+  std::string text = info[0].As<Napi::String>().Utf8Value();
+  _paint.setStyle(SkPaint::kFill_Style);
+  SkScalar width = _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+  result.Set("width", Napi::Number::New(info.Env(), width));
+
+  return result;
 }
 
 Napi::Value CanvasContext::LoadFont(const Napi::CallbackInfo &info)
@@ -381,7 +394,7 @@ Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
   SkScalar y1 = info[3].As<Napi::Number>().FloatValue();
 
   int id = _shaderMap.size();
-  GradientArea gradientArea = {0, x0, x1, 0, y0, y1, 0};
+  GradientArea gradientArea = {0, x0, y0, 0, x1, y1, 0};
   Napi::Function func = Gradient::Init(env);
   Napi::Object gradient = func.New({});
   Gradient* gradientUnWrap = Gradient::Unwrap(gradient);
@@ -390,6 +403,43 @@ Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
   _shaderMap.insert({id, gradientUnWrap});
 
   return gradient;
+}
+
+Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+
+  SkScalar x0 = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y0 = info[1].As<Napi::Number>().FloatValue();
+  SkScalar r0 = info[2].As<Napi::Number>().FloatValue();
+  SkScalar x1 = info[3].As<Napi::Number>().FloatValue();
+  SkScalar y1 = info[4].As<Napi::Number>().FloatValue();
+  SkScalar r1 = info[5].As<Napi::Number>().FloatValue();
+
+  int id = _shaderMap.size();
+  GradientArea gradientArea = {1, x0, y0, r0, x1, y1, r1};
+  Napi::Function func = Gradient::Init(env);
+  Napi::Object gradient = func.New({});
+  Gradient *gradientUnWrap = Gradient::Unwrap(gradient);
+  gradientUnWrap->SetId("#shader" + std::to_string(id));
+  gradientUnWrap->SetGradientArea(gradientArea);
+  _shaderMap.insert({id, gradientUnWrap});
+
+  return gradient;
+}
+
+Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  SkScalar w = info[2].As<Napi::Number>().FloatValue();
+  SkScalar h = info[3].As<Napi::Number>().FloatValue();
+  _canvas->save();
+  SkRect rectToClear = SkRect::MakeXYWH(x, y, w, h);
+  _canvas->clipRect(rectToClear, SkClipOp::kIntersect);
+  _canvas->drawColor(SK_ColorWHITE, SkBlendMode::kSrcOver);
+  _canvas->restore();
+  return Napi::Value();
 }
 
 Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
@@ -401,19 +451,130 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
   {
     Gradient *gradient = it->second;
     GradientArea gradientArea = gradient->GetGradientArea();
-    SkPoint points[2] = {SkPoint::Make(gradientArea.x0, gradientArea.y0), SkPoint::Make(gradientArea.x1, gradientArea.y1)};
-    std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
-    std::vector<SkColor> colors;
-    std::vector<SkScalar> stops;
-    for (auto& stop : gradientStop)
-    {
-      colors.push_back(stop.color);
-      stops.push_back(stop.offset);
-    }
 
-    sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(points, colors.data(), stops.data(), 2, SkTileMode::kClamp, 0, nullptr);
-    _paint.setShader(skShader);
+    if(gradientArea.type == 0)
+    {
+      SkPoint points[2] =
+      {
+        SkPoint::Make(gradientArea.x0, gradientArea.y0),
+        SkPoint::Make(gradientArea.x1, gradientArea.y1)
+      };
+      std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
+      std::vector<SkColor> colors;
+      std::vector<SkScalar> stops;
+      for (auto& stop : gradientStop)
+      {
+        colors.push_back(stop.color);
+        stops.push_back(stop.offset);
+      }
+
+      sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(
+        points,
+        colors.data(),
+        stops.data(),
+        2,
+        SkTileMode::kClamp,
+        0,
+        nullptr
+      );
+      _paint.setShader(skShader);
+    }
+    else
+    {
+      std::cout << "TwoPoint" << std::endl;
+      SkPoint startPoint = SkPoint::Make(gradientArea.x0, gradientArea.y0);
+      SkPoint endPoint = SkPoint::Make(gradientArea.x1, gradientArea.y1);
+
+      std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
+      std::vector<SkColor> colors;
+      std::vector<SkScalar> stops;
+      for (auto &stop : gradientStop)
+      {
+        colors.push_back(stop.color);
+        stops.push_back(stop.offset);
+      }
+
+      sk_sp<SkShader> skShader = SkGradientShader::MakeTwoPointConical(
+        startPoint,
+        gradientArea.r0,
+        endPoint,
+        gradientArea.r1,
+        colors.data(),
+        stops.data(),
+        2,
+        SkTileMode::kClamp,
+        0,
+        nullptr
+      );
+      _paint.setShader(skShader);
+    }
   }
+
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetTextAlign(const Napi::CallbackInfo &info)
+{
+  std::string textAlign = info[0].As<Napi::String>().Utf8Value();
+  if (textAlign == "center")
+  {
+    _textAlign = TextAlign::CENTER;
+  }
+  else if (textAlign == "end")
+  {
+    _textAlign = TextAlign::END;
+  }
+  else if (textAlign == "left")
+  {
+    _textAlign = TextAlign::LEFT;
+  }
+  else if (textAlign == "right")
+  {
+    _textAlign = TextAlign::RIGHT;
+  }
+  return Napi::Value();
+}
+
+SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
+{
+  switch (_textAlign)
+  {
+    case TextAlign::START:
+    {
+      return x;
+    }
+    case TextAlign::LEFT:
+    {
+    return x;
+    }
+    case TextAlign::END:
+    {
+      return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+    }
+    case TextAlign::RIGHT:
+    {
+      return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+    }
+    case TextAlign::CENTER:
+    {
+      return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) / 2);
+    }
+    default:
+    {
+      return x;
+    }
+  }
+}
+
+Napi::Value CanvasContext::FillRect(const Napi::CallbackInfo &info)
+{
+  SkScalar x = info[0].As<Napi::Number>().FloatValue();
+  SkScalar y = info[1].As<Napi::Number>().FloatValue();
+  SkScalar w = info[2].As<Napi::Number>().FloatValue();
+  SkScalar h = info[3].As<Napi::Number>().FloatValue();
+
+  _paint.setStyle(SkPaint::kFill_Style);
+  _canvas->drawRect(SkRect::MakeXYWH(x, y, w, h), _paint);
 
   return Napi::Value();
 }

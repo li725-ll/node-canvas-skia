@@ -3,8 +3,8 @@ import Gradient from "./gradient";
 
 export class CanvasContext {
   private context: any;
-  public fillStyle: string = "#000000"; // color|gradient|pattern
-  public strokeStyle: string = "#000000"; // color|gradient|pattern
+  public fillStyle: string | Gradient = "#000000"; // color|gradient|pattern
+  public strokeStyle: string | Gradient = "#000000"; // color|gradient|pattern
   public shadowColor: string = "#000000"; // color
   public lineJoin: "bevel" | "round" | "miter" = "miter"; // bevel斜角round圆角miter尖角
   public shadowBlur: number = 0;
@@ -70,14 +70,32 @@ export class CanvasContext {
     this.context.rect(x, y, width, height);
   }
   public fillRect(x: number, y: number, width: number, height: number) {
-    return { x, y, width, height };
+    const value =
+      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
+    const color = Utils.string2RGBA(value);
+
+    switch (color.type) {
+      case "RGBA":
+        this.context.fillStyle(color.value);
+        break;
+      case "RGB":
+        this.context.set(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
+
+    this.context.fillRect(x, y, width, height);
   }
   public clearRect(x: number, y: number, width: number, height: number) {
-    return { x, y, width, height };
+    this.context.clearRect(x, y, width, height);
   }
 
   public fill() {
-    const color = Utils.string2RGBA(this.fillStyle);
+    const value =
+      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
+    const color = Utils.string2RGBA(value);
 
     switch (color.type) {
       case "RGBA":
@@ -94,7 +112,11 @@ export class CanvasContext {
     this.context.fill();
   }
   public stroke() {
-    const color = Utils.string2RGBA(this.strokeStyle);
+    const value =
+      this.strokeStyle instanceof Gradient
+        ? this.strokeStyle.id
+        : this.strokeStyle;
+    const color = Utils.string2RGBA(value);
     switch (color.type) {
       case "RGBA":
         this.context.strokeStyle(color.value);
@@ -190,19 +212,20 @@ export class CanvasContext {
   public fillText(text: string, x: number, y: number, maxWidth: number) {
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
+    this.context.setTextAlign(this.textAlign);
     this.context.fillText(text, x, y, maxWidth);
   }
 
   public strokeText(text: string, x: number, y: number, maxWidth: number) {
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
+    this.context.setTextAlign(this.textAlign);
     this.context.strokeText(text, x, y, maxWidth);
   }
-
-  public measureText(text: string) {
+  public measureText(text: string): { width: number } {
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
-    this.context.measureText(text);
+    return this.context.measureText(text);
   }
 
   public strokeRect(x: number, y: number, width: number, height: number) {

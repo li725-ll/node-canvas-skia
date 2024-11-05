@@ -9,7 +9,7 @@ export class Gradient {
   private y1: number;
   private r1: number;
   private gradient: any;
-  public id: number;
+  public id: string;
 
   static createRadialGradient(
     x0: number,

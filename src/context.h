@@ -26,6 +26,15 @@ struct ContextAttributesStruct
   bool depth  = false;
 };
 
+enum TextAlign
+{
+  LEFT,
+  RIGHT,
+  END,
+  START,
+  CENTER
+};
+
 class CanvasContext : public Napi::ObjectWrap<CanvasContext>
 {
 private:
@@ -33,13 +42,15 @@ private:
   SkPath _path;
   SkPaint _paint;
   SkCanvas *_canvas;
+  TextAlign _textAlign = TextAlign::LEFT;
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
   std::map<std::string, sk_sp<SkTypeface>> _fontMap;
   std::map<int, Gradient *> _shaderMap;
 
-public:
-  static Napi::Object CanvasContext2Object(Napi::Env env);
+  SkScalar ApplyTextAlign(std::string text, SkScalar x);
+
+public : static Napi::Object CanvasContext2Object(Napi::Env env);
   CanvasContext(const Napi::CallbackInfo &info);
   ~CanvasContext() {};
 
@@ -52,6 +63,7 @@ public:
   Napi::Value ClosePath(const Napi::CallbackInfo &info);
   Napi::Value Stroke(const Napi::CallbackInfo &info);
   Napi::Value Clear(const Napi::CallbackInfo &info);
+  Napi::Value ClearRect(const Napi::CallbackInfo &info);
   Napi::Value Translate(const Napi::CallbackInfo &info);
   Napi::Value Rotate(const Napi::CallbackInfo &info);
   Napi::Value StrokeStyle(const Napi::CallbackInfo &info);
@@ -73,6 +85,9 @@ public:
   Napi::Value GetFonts(const Napi::CallbackInfo &info);
   Napi::Value SetShader(const Napi::CallbackInfo &info);
   Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
+  Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
+  Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
+  Napi::Value FillRect(const Napi::CallbackInfo &info);
 };
 
 #endif

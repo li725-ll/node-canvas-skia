@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { drawArc } = require("./arc");
 const { testLine } = require("./line");
-const { drawRect } = require("./rect");
+const { testRect } = require("./rect");
 const { drawText } = require("./text");
 const { testGradinent } = require("./gradient");
 
@@ -25,7 +25,7 @@ test("text", () => {
 });
 
 test("rect", () => {
-  drawRect(outputPath);
+  testRect(outputPath);
 });
 
 test("gradient", () => {

@@ -34,12 +34,30 @@ function drawFillFontText() {
   ctx.fillText("中国智造", 450, 300);
 }
 
+function drawFontAlignText() {
+  ctx.strokeStyle = "rgba(0,255,255,1)";
+  ctx.textAlign = "center";
+  ctx.font = "60px Reejipinbo";
+  ctx.fillText("Hello Skia", 400, 400);
+  ctx.textAlign = "end";
+  ctx.strokeText("中国智造", 800, 500);
+}
+
+
+function measureText() {
+  ctx.font = "60px Reejipinbo";
+  const result = ctx.measureText("Hello Skia");
+  console.log(result);
+}
+
 function drawText(outputPath) {
   getFonts();
   loadFont();
   drawStrokeText();
   drawFileText();
   drawFillFontText();
+  measureText();
+  drawFontAlignText();
   canvas.saveAsImage(path.resolve(outputPath, "text.jpg"));
 }
 
