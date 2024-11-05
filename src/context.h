@@ -36,7 +36,7 @@ private:
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
   std::map<std::string, sk_sp<SkTypeface>> _fontMap;
-  std::map<int, Napi::Object> _shaderMap;
+  std::map<int, Gradient *> _shaderMap;
 
 public:
   static Napi::Object CanvasContext2Object(Napi::Env env);

@@ -5,11 +5,12 @@ export class Utils {
     value: number;
     type: "RGBA" | "RGB" | "SHADER";
   } {
-    const value = color.toUpperCase();
+    const value = String(color).toUpperCase();
     const result: {
       value: number;
       type: "RGBA" | "RGB" | "SHADER";
     } = { value: 0, type: "RGBA" };
+
     if (value.startsWith("RGBA")) {
       result.type = "RGBA";
       const temp = value.match(/\d+/g);
@@ -18,6 +19,7 @@ export class Utils {
       }
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
+
     if (value.startsWith("#SHADER")) {
       result.type = "SHADER";
       result.value = parseInt(value.replace("#SHADER", ""));

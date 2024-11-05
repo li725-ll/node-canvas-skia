@@ -384,9 +384,10 @@ Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
   GradientArea gradientArea = {0, x0, x1, 0, y0, y1, 0};
   Napi::Function func = Gradient::Init(env);
   Napi::Object gradient = func.New({});
-  gradient.Set("id", "#shader" + std::to_string(id));
-  _shaderMap.insert(std::make_pair(id, gradient));
-  Gradient::Unwrap(gradient)->SetGradientArea(gradientArea);
+  Gradient* gradientUnWrap = Gradient::Unwrap(gradient);
+  gradientUnWrap->SetId("#shader" + std::to_string(id));
+  gradientUnWrap->SetGradientArea(gradientArea);
+  _shaderMap.insert({id, gradientUnWrap});
 
   return gradient;
 }
@@ -398,24 +399,20 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
   auto it = _shaderMap.find(shader);
   if (it != _shaderMap.end())
   {
-    Napi::Object gradient = it->second;
-    if (gradient.Get("id").As<Napi::Number>().Int32Value() == 0)
+    Gradient *gradient = it->second;
+    GradientArea gradientArea = gradient->GetGradientArea();
+    SkPoint points[2] = {SkPoint::Make(gradientArea.x0, gradientArea.y0), SkPoint::Make(gradientArea.x1, gradientArea.y1)};
+    std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
+    std::vector<SkColor> colors;
+    std::vector<SkScalar> stops;
+    for (auto& stop : gradientStop)
     {
-      Gradient* unwrapGradient = Gradient::Unwrap(gradient);
-      GradientArea gradientArea = unwrapGradient->GetGradientArea();
-      SkPoint points[2] = {SkPoint::Make(gradientArea.x0, gradientArea.y0), SkPoint::Make(gradientArea.x1, gradientArea.y1)};
-      std::vector<GradientStop> gradientStop = unwrapGradient->GetGradientStops();
-      std::vector<SkColor> colors;
-      std::vector<SkScalar> stops;
-      for (auto& stop : gradientStop)
-      {
-        colors.push_back(stop.color);
-        stops.push_back(stop.offset);
-      }
-
-      sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(points, colors.data(), stops.data(), 2, SkTileMode::kClamp, 0, nullptr);
-      _paint.setShader(skShader);
+      colors.push_back(stop.color);
+      stops.push_back(stop.offset);
     }
+
+    sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(points, colors.data(), stops.data(), 2, SkTileMode::kClamp, 0, nullptr);
+    _paint.setShader(skShader);
   }
 
   return Napi::Value();

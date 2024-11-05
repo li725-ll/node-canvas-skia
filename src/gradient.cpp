@@ -1,11 +1,12 @@
 #include "gradient.h"
+#include <iostream>
 
 Napi::Function Gradient::Init(Napi::Env env)
 {
   Napi::Function func = DefineClass(
       env,
       "Gradient",
-      {InstanceAccessor("id", &Gradient::GetId, &Gradient::SetId, napi_default),
+      {InstanceMethod("getId", &Gradient::GetId, napi_enumerable),
        InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -33,12 +34,17 @@ Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
   stop.offset = offset;
 
   _ColorStop.push_back(stop);
-
   return Napi::Value();
 }
+
 Napi::Value Gradient::GetId(const Napi::CallbackInfo &info)
 {
-  return _id;
+  return Napi::String::New(info.Env(), _id);
+}
+
+void Gradient::SetId(std::string id)
+{
+  _id = id;
 }
 
 void Gradient::SetGradientArea(GradientArea gradientArea)

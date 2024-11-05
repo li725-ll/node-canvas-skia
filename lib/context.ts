@@ -1,4 +1,5 @@
 import Utils from "./utils";
+import Gradient from "./gradient";
 
 export class CanvasContext {
   private context: any;
@@ -45,8 +46,8 @@ export class CanvasContext {
     y0: number,
     x1: number,
     y1: number
-  ): string {
-    return this.context.createLinearGradient(x0, y0, x1, y1);
+  ): Gradient {
+    return Gradient.createLinearGradient(x0, y0, x1, y1, this.context);
   }
   public createPattern(
     image: unknown,
@@ -61,12 +62,8 @@ export class CanvasContext {
     x1: number,
     y1: number,
     r1: number
-  ): string {
-    return this.context.createRadialGradient(x0, y0, r0, x1, y1, r1);
-  }
-  public addColorStop(stop: number, color: string) {
-    // 介于 0.0 与 1.0 之间的值，表示渐变中开始与结束之间的位置。
-    return { stop, color };
+  ): Gradient {
+    return Gradient.createRadialGradient(x0, y0, r0, x1, y1, r1, this.context);
   }
 
   public rect(x: number, y: number, width: number, height: number) {
@@ -81,7 +78,7 @@ export class CanvasContext {
 
   public fill() {
     const color = Utils.string2RGBA(this.fillStyle);
-    console.log("dd", color);
+
     switch (color.type) {
       case "RGBA":
         this.context.fillStyle(color.value);

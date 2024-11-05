@@ -27,11 +27,9 @@ struct GradientStop
 class Gradient : public Napi::ObjectWrap<Gradient>
 {
 private:
-  Napi::String _id;
+  std::string _id;
   GradientArea _gradientArea;
   std::vector<GradientStop> _ColorStop;
-
-  void SetId(const Napi::CallbackInfo &info, const Napi::Value &value) {};
   Napi::Value GetId(const Napi::CallbackInfo &info);
 
 public:
@@ -39,6 +37,7 @@ public:
   Gradient(const Napi::CallbackInfo &info);
   ~Gradient() {};
   Napi::Value AddColorStop(const Napi::CallbackInfo &info);
+  void SetId(std::string id);
   void SetGradientArea(GradientArea gradientArea);
   GradientArea GetGradientArea();
   std::vector<GradientStop> GetGradientStops();
