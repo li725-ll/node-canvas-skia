@@ -11,19 +11,24 @@
   },
   "gypfile": true,
   "name": "skia",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "skia node banding",
   "keywords": [
     "skia",
     "canvas",
     "banding"
   ],
+  "types": "dist/index.d.ts",
+  "files": [
+    "build",
+    "dist"
+  ],
   "type": "commonjs",
   "engines": {
     "node": ">=18.12.1"
   },
   "author": "LMX",
-  "license": "MIT",
+  "license": "BSD-3-Clause license",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",

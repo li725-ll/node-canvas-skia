@@ -59,7 +59,7 @@ export class Gradient {
     this.id = this.gradient.getId();
   }
 
-  addColorStop(offset: number, color: string): void {
+  public addColorStop(offset: number, color: string): void {
     const rgba = Utils.string2RGBA(color);
     this.gradient.addColorStop(offset, rgba.value);
   }

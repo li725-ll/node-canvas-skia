@@ -7,7 +7,7 @@ switch (platform) {
     break;
   case "darwin":
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    skia = require("../build/Release/skia-native-mac-x64.node");
+    skia = require("../build/Release/skia-native-drawin-arm64.node");
     break;
   default:
     throw new Error("Unsupported platform");

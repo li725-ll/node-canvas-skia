@@ -1,26 +1,26 @@
 # node-skia (alpha)
 
-node-skia是一个skia的node绑定，旨在桌面应用中可以利用GPU加速图像绘制。我们期望实现与web canvas相同的api。
+Node skia is a skia node binding designed to enable GPU accelerated image rendering in desktop applications. We expect to implement the same API as web canvas.
 
-> 注：还未完全稳定目前测试阶段
+> Note: It has not yet fully stabilized and is currently in the testing phase
 
-## 安装
+## Install
 
 ```shell
 npm install node-skia
 ```
 
-## 平台兼容
+## Platform
 
-|    平台     |  兼容  |
-| :---------: | :----: |
-| Windows-x64 |  兼容  |
-| Windows-x86 | 未兼容 |
-| Macos-arm64 |  兼容  |
-|  Macos-x64  | 未兼容 |
-|    Linux    | 未兼容 |
+|  plateform  | compatible |
+| :---------: | :--------: |
+| Windows-x64 |    true    |
+| Windows-x86 |   false    |
+| Macos-arm64 |    true    |
+|  Macos-x64  |   false    |
+|    Linux    |   false    |
 
-## 示例
+## Example
 
 ```js
 const skia = require("node-skia");
@@ -144,4 +144,3 @@ canvas.saveAsImage(path.resolve(outputPath, "heptagram.jpg"));
 > (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 >
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
