@@ -1,5 +1,6 @@
 build
 coverage
+prebuild
 node_modules
 dist
 .DS_Store

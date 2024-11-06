@@ -1,16 +1,17 @@
 {
   'targets': [
     {
-      'target_name': 'skia-native',
-      'sources': [ 'src/main.cpp', 'src/gradient.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp' ],
-      'include_dirs': [
-        "<!@(node -p \"require('node-addon-api').include\")",
-        "library/Skia-m93-87e8842e8c-windows-Release-x64"
-      ],
+        'target_name': 'skia-native',
+        'sources': [ 'src/main.cpp', 'src/gradient.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp' ],
+        'include_dirs': [
+            "<!@(node -p \"require('node-addon-api').include\")"
+        ],
       'conditions': [
         [
           'os=="win"' and 'target_arch=="x64"',
           {
+            'include_dirs': ["library/Skia-m93-87e8842e8c-windows-Release-x64"],
+            'target_name': 'skia-native-win-x64',
             'libraries': [
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12allocator.lib',
               '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\expat.lib',
@@ -40,6 +41,8 @@
         [
           'os=="drawin"' and 'target_arch=="arm64"',
           {
+            'target_name': 'skia-native-drawin-arm64',
+            'include_dirs': ["library/Skia-m93-87e8842e8c-macos-Release-arm64"],
             "xcode_settings":{
               "FRAMEWORK_SEARCH_PATHS":[
                 "/System/Library/Frameworks/Metal.framework",

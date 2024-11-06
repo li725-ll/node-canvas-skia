@@ -7,3 +7,7 @@ end_of_line = crlf
 indent_style = space
 indent_size = 2
 max_line_length = 80
+
+[*.gyp]
+tab_width = 4
+indent_size = 4
