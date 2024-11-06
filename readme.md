@@ -1,29 +1,33 @@
-# node-skia (alpha)
+# node-canvas-skia (alpha)
 
-node-skia是一个skia的node绑定，旨在桌面应用中可以利用GPU加速图像绘制。我们期望实现与web canvas相同的api。
+node-canvas-skia is a skia node binding designed to enable GPU accelerated image rendering in desktop applications. We expect to implement the same API as web canvas.
 
-> 注：还未完全稳定目前测试阶段
+> Note: 
+>
+> 1. It has not yet fully stabilized and is currently in the testing phase.
+> 2. GPU rendering has not been released yet.
 
-## 安装
+## Install
 
 ```shell
-npm install node-skia
+npm install node-canvas-skia
 ```
 
-## 平台兼容
+## Platform
 
-|    平台     |  兼容  |
-| :---------: | :----: |
-| Windows-x64 |  兼容  |
-| Windows-x86 | 未兼容 |
-| Macos-arm64 |  兼容  |
-|  Macos-x64  | 未兼容 |
-|    Linux    | 未兼容 |
+|  plateform  | compatible |
+| :---------: | :--------: |
+| Windows-x64 |    true    |
+| Windows-x86 |   false    |
+| Macos-arm64 |    true    |
+|  Macos-x64  |   false    |
+|    Linux    |   false    |
 
-## 示例
+## Example
 
 ```js
-const skia = require("node-skia");
+const path = require("path");
+const skia = require("node-canvas-skia");
 
 const canvas = new skia.Canvas(256, 256);
 const ctx = canvas.getContext("2d", { antialias: true });
@@ -44,7 +48,7 @@ ctx.lineWidth = 2;
 ctx.stroke();
 ctx.translate(-0.5 * scale, -0.5 * scale);
 
-canvas.saveAsImage(path.resolve(outputPath, "heptagram.jpg"));
+canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
 ```
 
 ## API
@@ -93,55 +97,28 @@ canvas.saveAsImage(path.resolve(outputPath, "heptagram.jpg"));
 
 > Copyright (c) 2011 The node-skia Authors. All rights reserved.
 >
-> 
->
 > Redistribution and use in source and binary forms, with or without
->
 > modification, are permitted provided that the following conditions are
->
 > met:
 >
-> 
->
 >   \* Redistributions of source code must retain the above copyright
->
 > notice, this list of conditions and the following disclaimer.
->
 >   \* Redistributions in binary form must reproduce the above
->
 > copyright notice, this list of conditions and the following disclaimer
->
 > in the documentation and/or other materials provided with the
->
 > distribution.
->
 >   \* Neither the name of Google Inc. nor the names of its
->
 > contributors may be used to endorse or promote products derived from
->
 > this software without specific prior written permission.
 >
-> 
->
 > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
->
 > "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
->
 > LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
->
 > A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
->
 > OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
->
 > SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
->
 > LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
->
 > DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
->
 > THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
->
 > (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
->
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
