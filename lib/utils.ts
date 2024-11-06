@@ -18,11 +18,24 @@ export class Utils {
         throw new Error("Invalid color format");
       }
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
+    } else if (value.startsWith("RGB")) {
+      result.type = "RGB";
+      const temp = value.match(/\d+/g);
+      if (!temp || temp!.length < 3) {
+        throw new Error("Invalid color format");
+      }
+      result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
 
     if (value.startsWith("#SHADER")) {
       result.type = "SHADER";
       result.value = parseInt(value.replace("#SHADER", ""));
+    }
+
+    if (result.value == 0 && result.type == "RGBA") {
+      throw new Error(
+        "Invalid color format, currently only supports RGBA, RGB, Gradient formats"
+      );
     }
 
     return result;

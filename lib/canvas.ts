@@ -2,9 +2,9 @@ import skia from "./binding";
 import CanvasContext from "./context";
 
 export class Canvas {
-  width: number;
-  height: number;
-  skiaCanvas: any;
+  public width: number;
+  public height: number;
+  private skiaCanvas: any;
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -14,10 +14,13 @@ export class Canvas {
 
   public getContext(
     contextType: "2d",
-    contextAttributes: { antialias: boolean; depth: boolean }
+    contextAttributes: { antialias: boolean; depth: boolean } = {
+      depth: false,
+      antialias: false
+    }
   ): CanvasContext {
     const ctx = this.skiaCanvas.getContext(contextType, contextAttributes);
-    return new CanvasContext(ctx);
+    return new CanvasContext(ctx, this);
   }
 
   public toDataURL() {

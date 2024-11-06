@@ -1,8 +1,10 @@
 import Utils from "./utils";
 import Gradient from "./gradient";
+import Canvas from "./canvas";
 
 export class CanvasContext {
   private context: any;
+  public canvas: Canvas;
   public fillStyle: string | Gradient = "#000000"; // color|gradient|pattern
   public strokeStyle: string | Gradient = "#000000"; // color|gradient|pattern
   public shadowColor: string = "#000000"; // color
@@ -36,7 +38,8 @@ export class CanvasContext {
     | "copy"
     | "xor" = "source-over";
 
-  constructor(ctx: any) {
+  constructor(ctx: any, canvas: Canvas) {
+    this.canvas = canvas;
     const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
     this.context = ctx;
     this.context.clear(initColor.value);
