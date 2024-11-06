@@ -15,6 +15,7 @@
 #include <include/core/SkShader.h>
 #include <include/core/SkFontMgr.h>
 #include <include/core/SkTextBlob.h>
+#include <include/core/SkSamplingOptions.h>
 #include <include/effects/SkGradientShader.h>
 #include <include/effects/SkDiscretePathEffect.h>
 
@@ -88,6 +89,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
   Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
   Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
   Napi::Value FillRect(const Napi::CallbackInfo &info);
+  Napi::Value DrawImage(const Napi::CallbackInfo &info);
 };
 
 #endif

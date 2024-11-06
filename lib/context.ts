@@ -232,8 +232,8 @@ export class CanvasContext {
     this.context.strokeRect(x, y, width, height);
   }
 
-  public drawImage(image: unknown, width: number, height: number) {
-    return { image, width, height };
+  public drawImage(image: string, dx: number, dy: number) {
+    return this.context.drawImage(image, dx, dy);
   }
 
   public getFonts(): {

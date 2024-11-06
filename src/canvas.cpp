@@ -7,7 +7,8 @@ Napi::Function Canvas::Init(Napi::Env env)
       env,
       "Canvas",
       {InstanceMethod("getContext", &Canvas::GetContext),
-       InstanceMethod("saveAsImage", &Canvas::SaveAsImage)});
+       InstanceMethod("saveAsImage", &Canvas::SaveAsImage),
+       InstanceMethod("toBuffer", &Canvas::ToBuffer)});
 
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -52,12 +53,84 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
   std::string path = info[0].As<Napi::String>().Utf8Value();
+  std::string format = info[1].As<Napi::String>().Utf8Value();
+  int quality = info[2].As<Napi::Number>().Int32Value();
+
+  SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+
+  if (format == "bmp")
+  {
+    imageFormat = SkEncodedImageFormat::kBMP;
+  } else if (format == "gif") {
+    imageFormat = SkEncodedImageFormat::kGIF;
+  } else if (format == "ico") {
+    imageFormat = SkEncodedImageFormat::kICO;
+  } else if (format == "png") {
+    imageFormat = SkEncodedImageFormat::kPNG;
+  } else if (format == "wbmp") {
+    imageFormat = SkEncodedImageFormat::kWBMP;
+  } else if (format == "webp") {
+    imageFormat = SkEncodedImageFormat::kWEBP;
+  } else
+  {
+    Napi::Error::New(env, "Unsupported image format").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
 
   sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
-  sk_sp<SkData> data = image->encodeToData(SkEncodedImageFormat::kJPEG, 90);
+  sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
 
   FILE *f = fopen(path.c_str(), "wb");
   fwrite(data->data(), data->size(), 1, f);
   fclose(f);
   return Napi::Boolean::New(env, true);
+}
+
+Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+
+  std::string format = info[0].As<Napi::String>().Utf8Value();
+  int quality = info[1].As<Napi::Number>().Int32Value();
+
+  SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+
+  if (format == "bmp")
+  {
+    imageFormat = SkEncodedImageFormat::kBMP;
+  }
+  else if (format == "gif")
+  {
+    imageFormat = SkEncodedImageFormat::kGIF;
+  }
+  else if (format == "ico")
+  {
+    imageFormat = SkEncodedImageFormat::kICO;
+  }
+  else if (format == "png")
+  {
+    imageFormat = SkEncodedImageFormat::kPNG;
+  }
+  else if (format == "wbmp")
+  {
+    imageFormat = SkEncodedImageFormat::kWBMP;
+  }
+  else if (format == "webp")
+  {
+    imageFormat = SkEncodedImageFormat::kWEBP;
+  }
+  else
+  {
+    Napi::Error::New(env, "Unsupported image format").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
+  sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
+
+  Napi::Buffer<uint8_t> buffer = Napi::Buffer<uint8_t>::New(env, data->size());
+  buffer.Set("length", data->size());
+  memcpy(buffer.Data(), data->data(), data->size());
+
+  return buffer;
 }

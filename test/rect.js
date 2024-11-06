@@ -19,11 +19,14 @@ function drawClearRect() {
   ctx.clearRect(50, 50, 100, 100);
 }
 
+
 function testRect(outputPath) {
   drawRect();
   drawFillRect();
   drawClearRect();
   canvas.saveAsImage(path.resolve(outputPath, "rect.jpg"));
+  const result = canvas.toBuffer();
+  console.log(result);
 }
 
 module.exports = {

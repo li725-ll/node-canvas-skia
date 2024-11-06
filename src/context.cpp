@@ -37,6 +37,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("setShader", &CanvasContext::SetShader, napi_enumerable),
               InstanceMethod("setTextAlign", &CanvasContext::SetTextAlign, napi_enumerable),
               InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
+              InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
               InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
               InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})
       .New({});
@@ -576,5 +577,17 @@ Napi::Value CanvasContext::FillRect(const Napi::CallbackInfo &info)
   _paint.setStyle(SkPaint::kFill_Style);
   _canvas->drawRect(SkRect::MakeXYWH(x, y, w, h), _paint);
 
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::DrawImage(const Napi::CallbackInfo &info)
+{
+  std::string path = info[0].As<Napi::String>().Utf8Value();
+  SkScalar x = info[1].As<Napi::Number>().FloatValue();
+  SkScalar y = info[2].As<Napi::Number>().FloatValue();
+
+  sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
+
+  _canvas->drawImage(image, x, y);
   return Napi::Value();
 }

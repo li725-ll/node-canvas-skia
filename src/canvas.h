@@ -18,10 +18,11 @@ private:
 
   Napi::Value GetContext(const Napi::CallbackInfo &info);
   Napi::Value SaveAsImage(const Napi::CallbackInfo &info);
-
+  Napi::Value ToBuffer(const Napi::CallbackInfo &info);
 public:
   static Napi::Function Init(Napi::Env env);
   Canvas(const Napi::CallbackInfo &info);
+
 };
 
 #endif
