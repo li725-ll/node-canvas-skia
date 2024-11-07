@@ -3,12 +3,12 @@ import skia from "./binding";
 export class Utils {
   public static string2RGBA(color: string): {
     value: number;
-    type: "RGBA" | "RGB" | "SHADER";
+    type: "RGBA" | "RGB" | "SHADER" | "HEX";
   } {
     const value = String(color).toUpperCase();
     const result: {
       value: number;
-      type: "RGBA" | "RGB" | "SHADER";
+      type: "RGBA" | "RGB" | "SHADER" | "HEX";
     } = { value: 0, type: "RGBA" };
 
     if (value.startsWith("RGBA")) {
@@ -31,6 +31,27 @@ export class Utils {
     if (value.startsWith("#SHADER")) {
       result.type = "SHADER";
       result.value = parseInt(value.replace("#SHADER", ""));
+    } else if (value.startsWith("#")) {
+      result.type = "HEX";
+      const temp = value.slice(1);
+      let middleValue;
+      if (temp.length === 3) {
+        middleValue = temp.split("").map((v) => v.repeat(2));
+      } else {
+        try {
+          middleValue = temp.match(/.{1,2}/g)!;
+        } catch {
+          throw new Error("Invalid color format");
+        }
+      }
+
+      if (middleValue.length === 3) {
+        result.value = skia.SkiaUtils.RGBA(
+          ...[...middleValue!.map((item) => parseInt(item, 16)), 1]
+        );
+      } else {
+        throw new Error("Invalid color format");
+      }
     }
 
     if (result.value == 0 && result.type == "RGBA") {
