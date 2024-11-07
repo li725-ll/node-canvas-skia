@@ -11,8 +11,8 @@ function drawRect() {
 }
 
 function drawFillRect() {
-  ctx.fillStyle = "rgba(255,0,0,1)";
-  ctx.fillRect(10, 10, 100, 100);
+  ctx.fillStyle = "rgba(255,0,0,0.5)";
+  ctx.fillRect(60, 60, 100, 100);
 }
 
 function drawClearRect() {

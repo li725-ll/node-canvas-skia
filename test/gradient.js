@@ -6,8 +6,8 @@ const ctx = canvas.getContext("2d", { antialias: true });
 
 function drawLinearGradientRect() {
   const gradient = ctx.createLinearGradient(256, 0, 512, 0);
-  gradient.addColorStop(0, "rgba(0,255,255,1)");
-  gradient.addColorStop(1.0, "rgba(255,0,255,1)");
+  gradient.addColorStop(0, "rgba(0,255,255,0.1)");
+  gradient.addColorStop(1.0, "rgba(255,0,255,0.5)");
 
   ctx.fillStyle = gradient;
   ctx.beginPath();
@@ -22,7 +22,7 @@ function drawRadialGradientRect() {
 
   ctx.fillStyle = gradient;
   ctx.beginPath();
-  ctx.rect(0, 0, 256, 256);
+  ctx.fillRect(0, 0, 256, 256);
   ctx.fill();
 }
 

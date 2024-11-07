@@ -17,14 +17,22 @@ export class Utils {
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
-      result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
+      const middleValue = temp!.map(Number);
+      if (temp!.length > 4) {
+        middleValue[3] = Math.round(parseFloat(`0.${middleValue[4]}`) * 255);
+        middleValue.pop();
+      } else {
+        middleValue[3] = middleValue[3] * 255;
+      }
+
+      result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
       result.type = "RGB";
       const temp = value.match(/\d+/g);
       if (!temp || temp!.length < 3) {
         throw new Error("Invalid color format");
       }
-      temp.push("1");
+      temp.push("255");
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
 
@@ -47,7 +55,7 @@ export class Utils {
 
       if (middleValue.length === 3) {
         result.value = skia.SkiaUtils.RGBA(
-          ...[...middleValue!.map((item) => parseInt(item, 16)), 1]
+          ...[...middleValue!.map((item) => parseInt(item, 16)), 255]
         );
       } else {
         throw new Error("Invalid color format");

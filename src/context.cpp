@@ -149,7 +149,7 @@ Napi::Value CanvasContext::StrokeRect(const Napi::CallbackInfo &info)
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   SkScalar w = info[2].As<Napi::Number>().FloatValue();
-  SkScalar h = info[2].As<Napi::Number>().FloatValue();
+  SkScalar h = info[3].As<Napi::Number>().FloatValue();
   _paint.setStyle(SkPaint::kStroke_Style);
   SkRect rect = SkRect::MakeXYWH(x, y, w, h);
   _canvas->drawRect(rect, _paint);
@@ -483,7 +483,6 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
     }
     else
     {
-      std::cout << "TwoPoint" << std::endl;
       SkPoint startPoint = SkPoint::Make(gradientArea.x0, gradientArea.y0);
       SkPoint endPoint = SkPoint::Make(gradientArea.x1, gradientArea.y1);
 

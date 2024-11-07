@@ -73,25 +73,7 @@ export class CanvasContext {
     this.context.rect(x, y, width, height);
   }
   public fillRect(x: number, y: number, width: number, height: number) {
-    const value =
-      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
-    const color = Utils.string2RGBA(value);
-
-    switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.fillStyle(color.value);
-        break;
-      case "HEX":
-        this.context.fillStyle(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleFillColor();
     this.context.fillRect(x, y, width, height);
   }
   public clearRect(x: number, y: number, width: number, height: number) {
@@ -99,48 +81,11 @@ export class CanvasContext {
   }
 
   public fill() {
-    const value =
-      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
-    const color = Utils.string2RGBA(value);
-
-    switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.fillStyle(color.value);
-        break;
-      case "HEX":
-        this.context.fillStyle(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleFillColor();
     this.context.fill();
   }
   public stroke() {
-    const value =
-      this.strokeStyle instanceof Gradient
-        ? this.strokeStyle.id
-        : this.strokeStyle;
-    const color = Utils.string2RGBA(value);
-    switch (color.type) {
-      case "RGBA":
-        this.context.strokeStyle(color.value);
-        break;
-      case "RGB":
-        this.context.strokeStyle(color.value);
-        break;
-      case "HEX":
-        this.context.fillStyle(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleStrokeColor();
     this.context.lineCap(this.lineCap);
     this.context.lineJoin(this.lineJoin);
     this.context.lineWidth(this.lineWidth);
@@ -222,6 +167,7 @@ export class CanvasContext {
   }
 
   public fillText(text: string, x: number, y: number, maxWidth: number) {
+    this.handleFillColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
@@ -229,6 +175,7 @@ export class CanvasContext {
   }
 
   public strokeText(text: string, x: number, y: number, maxWidth: number) {
+    this.handleStrokeColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
@@ -241,6 +188,7 @@ export class CanvasContext {
   }
 
   public strokeRect(x: number, y: number, width: number, height: number) {
+    this.handleStrokeColor();
     this.context.strokeRect(x, y, width, height);
   }
 
@@ -294,6 +242,48 @@ export class CanvasContext {
 
   public loadFont(fontPath: string, fontName: string) {
     return this.context.loadFont(fontPath, fontName);
+  }
+
+  private handleStrokeColor() {
+    const value =
+      this.strokeStyle instanceof Gradient
+        ? this.strokeStyle.id
+        : this.strokeStyle;
+    const color = Utils.string2RGBA(value);
+    switch (color.type) {
+      case "RGBA":
+        this.context.strokeStyle(color.value);
+        break;
+      case "RGB":
+        this.context.strokeStyle(color.value);
+        break;
+      case "HEX":
+        this.context.strokeStyle(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
+  }
+
+  private handleFillColor() {
+    const value =
+      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
+    const color = Utils.string2RGBA(value);
+    switch (color.type) {
+      case "RGBA":
+        this.context.fillStyle(color.value);
+        break;
+      case "RGB":
+        this.context.fillStyle(color.value);
+        break;
+      case "HEX":
+        this.context.fillStyle(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
   }
 }
 

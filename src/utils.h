@@ -1,6 +1,7 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <napi.h>
 #include <include/core/SkColor.h>
 
 class Utils {
