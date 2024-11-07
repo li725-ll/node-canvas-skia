@@ -121,6 +121,7 @@ Napi::Value CanvasContext::Rotate(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::StrokeStyle(const Napi::CallbackInfo &info)
 {
   SkColor color = info[0].As<Napi::Number>().Uint32Value();
+  _paint.setShader(nullptr);
   _paint.setColor(color);
   return Napi::Value();
 };
@@ -471,14 +472,13 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
       }
 
       sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(
-        points,
-        colors.data(),
-        stops.data(),
-        2,
-        SkTileMode::kClamp,
-        0,
-        nullptr
-      );
+          points,
+          colors.data(),
+          stops.data(),
+          colors.size(),
+          SkTileMode::kClamp,
+          0,
+          nullptr);
       _paint.setShader(skShader);
     }
     else
@@ -496,17 +496,16 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
       }
 
       sk_sp<SkShader> skShader = SkGradientShader::MakeTwoPointConical(
-        startPoint,
-        gradientArea.r0,
-        endPoint,
-        gradientArea.r1,
-        colors.data(),
-        stops.data(),
-        2,
-        SkTileMode::kClamp,
-        0,
-        nullptr
-      );
+          startPoint,
+          gradientArea.r0,
+          endPoint,
+          gradientArea.r1,
+          colors.data(),
+          stops.data(),
+          stops.size(),
+          SkTileMode::kClamp,
+          0,
+          nullptr);
       _paint.setShader(skShader);
     }
   }
