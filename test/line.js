@@ -16,7 +16,7 @@ function drawHeptagram() {
   }
   ctx.closePath();
   ctx.translate(0.5 * scale, 0.5 * scale);
-  ctx.strokeStyle = "rgba(255,0,0,1)";
+  ctx.strokeStyle = "rgb(255,0,0)";
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.translate(-0.5 * scale, -0.5 * scale);

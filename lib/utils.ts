@@ -24,6 +24,7 @@ export class Utils {
       if (!temp || temp!.length < 3) {
         throw new Error("Invalid color format");
       }
+      temp.push("1");
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
 

@@ -82,7 +82,7 @@ export class CanvasContext {
         this.context.fillStyle(color.value);
         break;
       case "RGB":
-        this.context.set(color.value);
+        this.context.fillStyle(color.value);
         break;
       case "SHADER":
         this.context.setShader(color.value);
@@ -105,7 +105,7 @@ export class CanvasContext {
         this.context.fillStyle(color.value);
         break;
       case "RGB":
-        this.context.set(color.value);
+        this.context.fillStyle(color.value);
         break;
       case "SHADER":
         this.context.setShader(color.value);
@@ -125,7 +125,7 @@ export class CanvasContext {
         this.context.strokeStyle(color.value);
         break;
       case "RGB":
-        this.context.set(color.value);
+        this.context.strokeStyle(color.value);
         break;
       case "SHADER":
         this.context.setShader(color.value);
