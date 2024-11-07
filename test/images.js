@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d", { antialias: true });
 
 
 function drawImage() {
-  ctx.drawImage(path.resolve(__dirname, "./images/cat.jpg"), 0, 0);
+  ctx.drawImage(path.resolve(__dirname, "./images/cat.jpg"), 0, 0, 256, 256);
 }
 
 function testImage(outputPath) {

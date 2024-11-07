@@ -90,6 +90,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
   Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
   Napi::Value FillRect(const Napi::CallbackInfo &info);
   Napi::Value DrawImage(const Napi::CallbackInfo &info);
+  Napi::Value DrawImageWH(const Napi::CallbackInfo &info);
 };
 
 #endif

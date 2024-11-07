@@ -56,7 +56,7 @@ export class Utils {
 
     if (result.value == 0 && result.type == "RGBA") {
       throw new Error(
-        "Invalid color format, currently only supports RGBA, RGB, Gradient formats"
+        "Invalid color format, color names are currently not supported"
       );
     }
 

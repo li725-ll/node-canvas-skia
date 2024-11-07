@@ -244,8 +244,44 @@ export class CanvasContext {
     this.context.strokeRect(x, y, width, height);
   }
 
-  public drawImage(image: string, dx: number, dy: number) {
-    return this.context.drawImage(image, dx, dy);
+  public drawImage(image: string, dx: number, dy: number): void;
+  public drawImage(
+    image: string,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(
+    image: string,
+    sx: number,
+    sy: number,
+    sWidth: number,
+    sHeight: number,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(image: string, x: number, y: number, ...arg: any): void {
+    if (arg.length === 0) {
+      this.context.drawImage(image, x, y);
+    } else if (arg.length === 2) {
+      this.context.drawImageWH(image, x, y, arg[0], arg[1]);
+    } else if (arg.length === 6) {
+      throw new Error("Not implemented yet");
+      // this.context.drawImage(
+      //   image,
+      //   x,
+      //   y,
+      //   arg[0],
+      //   arg[1],
+      //   arg[2],
+      //   arg[3],
+      //   arg[4],
+      //   arg[5]
+      // );
+    }
   }
 
   public getFonts(): {
