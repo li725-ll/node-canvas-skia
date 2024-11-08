@@ -56,7 +56,7 @@ export class Gradient {
       this.gradient = context.createLinearGradient(x0, y0, x1, y1);
     }
 
-    this.id = this.gradient.getId();
+    this.id = "#shader0";
   }
 
   public addColorStop(offset: number, color: string): void {

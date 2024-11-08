@@ -44,7 +44,8 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
       .New({});
 }
 
-CanvasContext::CanvasContext(const Napi::CallbackInfo &info) : Napi::ObjectWrap<CanvasContext>(info)
+CanvasContext::CanvasContext(const Napi::CallbackInfo &info)
+  : Napi::ObjectWrap<CanvasContext>(info), _gradient(Napi::Persistent(Gradient::Init(info.Env())))
 {
   _fontMgr = SkFontMgr::RefDefault();
 }
@@ -390,27 +391,26 @@ Napi::Value CanvasContext::GetFonts(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
+  Napi::HandleScope scope(info.Env());
 
   SkScalar x0 = info[0].As<Napi::Number>().FloatValue();
   SkScalar y0 = info[1].As<Napi::Number>().FloatValue();
   SkScalar x1 = info[2].As<Napi::Number>().FloatValue();
   SkScalar y1 = info[3].As<Napi::Number>().FloatValue();
 
-  int id = _shaderMap.size();
   GradientArea gradientArea = {0, x0, y0, 0, x1, y1, 0};
-  Napi::Function func = Gradient::Init(env);
-  Napi::Object gradient = func.New({});
-  Gradient* gradientUnWrap = Gradient::Unwrap(gradient);
-  gradientUnWrap->SetId("#shader" + std::to_string(id));
-  gradientUnWrap->SetGradientArea(gradientArea);
-  _shaderMap.insert({id, gradientUnWrap});
 
-  return gradient;
+  Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value().ToObject());
+  gradientUnWrap->Reset();
+  gradientUnWrap->SetGradientArea(gradientArea);
+
+  return _gradient.Value();
 }
 
 Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
+  Napi::HandleScope scope(info.Env());
 
   SkScalar x0 = info[0].As<Napi::Number>().FloatValue();
   SkScalar y0 = info[1].As<Napi::Number>().FloatValue();
@@ -419,16 +419,13 @@ Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
   SkScalar y1 = info[4].As<Napi::Number>().FloatValue();
   SkScalar r1 = info[5].As<Napi::Number>().FloatValue();
 
-  int id = _shaderMap.size();
   GradientArea gradientArea = {1, x0, y0, r0, x1, y1, r1};
-  Napi::Function func = Gradient::Init(env);
-  Napi::Object gradient = func.New({});
-  Gradient *gradientUnWrap = Gradient::Unwrap(gradient);
-  gradientUnWrap->SetId("#shader" + std::to_string(id));
-  gradientUnWrap->SetGradientArea(gradientArea);
-  _shaderMap.insert({id, gradientUnWrap});
 
-  return gradient;
+  Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value().ToObject());
+  gradientUnWrap->Reset();
+  gradientUnWrap->SetGradientArea(gradientArea);
+
+  return _gradient.Value();
 }
 
 Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
@@ -442,72 +439,67 @@ Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
   _canvas->clipRect(rectToClear, SkClipOp::kIntersect);
   _canvas->drawColor(SK_ColorWHITE, SkBlendMode::kSrcOver);
   _canvas->restore();
+
   return Napi::Value();
 }
 
 Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
 {
   int shader = info[0].As<Napi::Number>().Int32Value();
+  Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value().ToObject());
+  GradientArea gradientArea = gradientUnWrap->GetGradientArea();
 
-  auto it = _shaderMap.find(shader);
-  if (it != _shaderMap.end())
+  if (gradientArea.type == 0)
   {
-    Gradient *gradient = it->second;
-    GradientArea gradientArea = gradient->GetGradientArea();
-
-    if(gradientArea.type == 0)
+    SkPoint points[2] =
+        {
+            SkPoint::Make(gradientArea.x0, gradientArea.y0),
+            SkPoint::Make(gradientArea.x1, gradientArea.y1)};
+    std::vector<GradientStop> gradientStop = gradientUnWrap->GetGradientStops();
+    std::vector<SkColor> colors;
+    std::vector<SkScalar> stops;
+    for (auto &stop : gradientStop)
     {
-      SkPoint points[2] =
-      {
-        SkPoint::Make(gradientArea.x0, gradientArea.y0),
-        SkPoint::Make(gradientArea.x1, gradientArea.y1)
-      };
-      std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
-      std::vector<SkColor> colors;
-      std::vector<SkScalar> stops;
-      for (auto& stop : gradientStop)
-      {
-        colors.push_back(stop.color);
-        stops.push_back(stop.offset);
-      }
-
-      sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(
-          points,
-          colors.data(),
-          stops.data(),
-          colors.size(),
-          SkTileMode::kClamp,
-          0,
-          nullptr);
-      _paint.setShader(skShader);
+      colors.push_back(stop.color);
+      stops.push_back(stop.offset);
     }
-    else
+
+    sk_sp<SkShader> skShader = SkGradientShader::MakeLinear(
+        points,
+        colors.data(),
+        stops.data(),
+        colors.size(),
+        SkTileMode::kClamp,
+        0,
+        nullptr);
+    _paint.setShader(skShader);
+  }
+  else
+  {
+    SkPoint startPoint = SkPoint::Make(gradientArea.x0, gradientArea.y0);
+    SkPoint endPoint = SkPoint::Make(gradientArea.x1, gradientArea.y1);
+
+    std::vector<GradientStop> gradientStop = gradientUnWrap->GetGradientStops();
+    std::vector<SkColor> colors;
+    std::vector<SkScalar> stops;
+    for (auto &stop : gradientStop)
     {
-      SkPoint startPoint = SkPoint::Make(gradientArea.x0, gradientArea.y0);
-      SkPoint endPoint = SkPoint::Make(gradientArea.x1, gradientArea.y1);
-
-      std::vector<GradientStop> gradientStop = gradient->GetGradientStops();
-      std::vector<SkColor> colors;
-      std::vector<SkScalar> stops;
-      for (auto &stop : gradientStop)
-      {
-        colors.push_back(stop.color);
-        stops.push_back(stop.offset);
-      }
-
-      sk_sp<SkShader> skShader = SkGradientShader::MakeTwoPointConical(
-          startPoint,
-          gradientArea.r0,
-          endPoint,
-          gradientArea.r1,
-          colors.data(),
-          stops.data(),
-          stops.size(),
-          SkTileMode::kClamp,
-          0,
-          nullptr);
-      _paint.setShader(skShader);
+      colors.push_back(stop.color);
+      stops.push_back(stop.offset);
     }
+
+    sk_sp<SkShader> skShader = SkGradientShader::MakeTwoPointConical(
+        startPoint,
+        gradientArea.r0,
+        endPoint,
+        gradientArea.r1,
+        colors.data(),
+        stops.data(),
+        stops.size(),
+        SkTileMode::kClamp,
+        0,
+        nullptr);
+    _paint.setShader(skShader);
   }
 
   return Napi::Value();

@@ -47,7 +47,7 @@ private:
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
   std::map<std::string, sk_sp<SkTypeface>> _fontMap;
-  std::map<int, Gradient *> _shaderMap;
+  Napi::ObjectReference _gradient;
 
   SkScalar ApplyTextAlign(std::string text, SkScalar x);
 
