@@ -6,10 +6,16 @@ export class Canvas {
   public height: number;
   private skiaCanvas: any;
 
-  constructor(width: number, height: number) {
+  constructor(width: number, height: number, gpu: string | boolean = false) {
     this.width = width;
     this.height = height;
-    this.skiaCanvas = new skia.SkiaCanvas(width, height);
+    let GPU: number = 0;
+    if (gpu === true) {
+      GPU = 1;
+    } else if (gpu === false) {
+      GPU = 0;
+    }
+    this.skiaCanvas = new skia.SkiaCanvas(width, height, GPU);
   }
 
   public getContext(

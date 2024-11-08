@@ -1,5 +1,5 @@
+#include <iostream>
 #include "canvas.h"
-#include "context.h"
 
 Napi::Function Canvas::Init(Napi::Env env)
 {
@@ -20,9 +20,30 @@ Napi::Function Canvas::Init(Napi::Env env)
 Canvas::Canvas(const Napi::CallbackInfo &info)
 : Napi::ObjectWrap<Canvas>(info), _context(Napi::Persistent(CanvasContext::CanvasContext2Object(info.Env())))
 {
+  Napi::Env env = info.Env();
+
   int width = info[0].As<Napi::Number>().Int32Value();
   int height = info[1].As<Napi::Number>().Int32Value();
-  _surface = SkSurface::MakeRasterN32Premul(width, height);
+  int GPU = info[2].As<Napi::Number>().Int32Value(); // 0: CPU, 1: GPU, 2: Auto
+  if(GPU == 0 ) {
+    _surface = SkSurface::MakeRasterN32Premul(width, height);
+  } else if (GPU == 1) {
+    CreateOpenGLContext();
+
+    sk_sp<GrDirectContext> context = GrDirectContext::MakeGL();
+    if (!context)
+    {
+      Napi::TypeError::New(env, "OpenGL context retrieval failed").ThrowAsJavaScriptException();
+      return;
+    }
+    SkImageInfo info = SkImageInfo::MakeN32Premul(width, height);
+    _surface = SkSurface::MakeRenderTarget(context.get(), SkBudgeted::kNo, info);
+    if (!_surface)
+    {
+      Napi::TypeError::New(env, "SkSurface::MakeRenderTarget returned null").ThrowAsJavaScriptException();
+      return;
+    }
+  }
 }
 
 Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)

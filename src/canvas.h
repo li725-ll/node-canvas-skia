@@ -5,10 +5,14 @@
 #include <napi.h>
 #include <include/core/SkData.h>
 #include <include/core/SkImage.h>
+#include <include/core/SkTypes.h>
 #include <include/core/SkCanvas.h>
 #include <include/core/SkSurface.h>
+#include <include/gpu/GrDirectContext.h>
+#include <include/gpu/gl/GrGLInterface.h>
 
 #include "context.h"
+#include "opengl.h"
 
 class Canvas : public Napi::ObjectWrap<Canvas>
 {
@@ -22,7 +26,6 @@ private:
 public:
   static Napi::Function Init(Napi::Env env);
   Canvas(const Napi::CallbackInfo &info);
-
 };
 
 #endif
