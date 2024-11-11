@@ -1,7 +1,7 @@
 const path = require("path");
 const skia = require("../dist");
 
-const canvas = new skia.Canvas(512, 256);
+const canvas = new skia.Canvas(512, 512);
 const ctx = canvas.getContext("2d", { antialias: true });
 
 function drawLinearGradientRect() {
@@ -33,9 +33,25 @@ function drawRadialGradientRect() {
   ctx.fill();
 }
 
+// createConicGradient
+function drawConicGradientRect() {
+  const gradient = ctx.createConicGradient(0, 128, 384); // 384
+  gradient.addColorStop(0, "#f00");
+  gradient.addColorStop(0.25, "#f0f");
+  gradient.addColorStop(0.5, "#ff0");
+  gradient.addColorStop(0.75, "#0f0");
+  gradient.addColorStop(1, "#00f");
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.fillRect(0, 256, 256, 256);
+  ctx.fill();
+}
+
 function testGradinent(outputPath) {
   drawRadialGradientRect();
   drawLinearGradientRect();
+  drawConicGradientRect();
   canvas.saveAsImage(path.resolve(outputPath, "gradient.jpg"));
 }
 

@@ -69,6 +69,10 @@ export class CanvasContext {
     return Gradient.createRadialGradient(x0, y0, r0, x1, y1, r1, this.context);
   }
 
+  public createConicGradient(startAngle: number, x: number, y: number) {
+    return Gradient.createConicGradient(startAngle, x, y, this.context);
+  }
+
   public rect(x: number, y: number, width: number, height: number) {
     this.context.rect(x, y, width, height);
   }

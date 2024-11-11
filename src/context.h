@@ -87,6 +87,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
   Napi::Value SetShader(const Napi::CallbackInfo &info);
   Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
   Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
+  Napi::Value CreateConicGradient(const Napi::CallbackInfo &info);
   Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
   Napi::Value FillRect(const Napi::CallbackInfo &info);
   Napi::Value DrawImage(const Napi::CallbackInfo &info);

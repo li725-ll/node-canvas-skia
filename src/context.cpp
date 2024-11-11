@@ -39,6 +39,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
               InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
               InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
+              InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
               InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
               InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})
       .New({});
@@ -428,6 +429,23 @@ Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
   return _gradient.Value();
 }
 
+Napi::Value CanvasContext::CreateConicGradient(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(info.Env());
+
+  SkScalar startAngle = info[0].As<Napi::Number>().FloatValue();
+  SkScalar x = info[1].As<Napi::Number>().FloatValue();
+  SkScalar y = info[2].As<Napi::Number>().FloatValue();
+  GradientArea gradientArea = {2, startAngle, x, y};
+
+  Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value().ToObject());
+  gradientUnWrap->Reset();
+  gradientUnWrap->SetGradientArea(gradientArea);
+
+  return _gradient.Value();
+}
+
 Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
 {
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
@@ -474,7 +492,7 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
         nullptr);
     _paint.setShader(skShader);
   }
-  else
+  else if (gradientArea.type == 1)
   {
     SkPoint startPoint = SkPoint::Make(gradientArea.x0, gradientArea.y0);
     SkPoint endPoint = SkPoint::Make(gradientArea.x1, gradientArea.y1);
@@ -497,6 +515,29 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
         stops.data(),
         stops.size(),
         SkTileMode::kClamp,
+        0,
+        nullptr);
+    _paint.setShader(skShader);
+  } else
+  {
+    std::vector<GradientStop> gradientStop = gradientUnWrap->GetGradientStops();
+    std::vector<SkColor> colors;
+    std::vector<SkScalar> stops;
+    for (auto &stop : gradientStop)
+    {
+      colors.push_back(stop.color);
+      stops.push_back(stop.offset);
+    }
+
+    sk_sp<SkShader> skShader = SkGradientShader::MakeSweep(
+        gradientArea.y0,
+        gradientArea.r0,
+        colors.data(),
+        stops.data(),
+        stops.size(),
+        SkTileMode::kClamp,
+        gradientArea.x0,
+        360.0,
         0,
         nullptr);
     _paint.setShader(skShader);

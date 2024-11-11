@@ -9,7 +9,7 @@
 
 struct GradientArea
 {
-  int type = 0; //0 line 1 circle
+  int type = 0; //0 line 1 circle 2 ellipse
   SkScalar x0 = 0;
   SkScalar y0 = 0;
   SkScalar r0 = 0;
