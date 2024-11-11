@@ -1,8 +1,10 @@
 import Utils from "./utils";
 import Gradient from "./gradient";
+import Canvas from "./canvas";
 
 export class CanvasContext {
   private context: any;
+  public canvas: Canvas;
   public fillStyle: string | Gradient = "#000000"; // color|gradient|pattern
   public strokeStyle: string | Gradient = "#000000"; // color|gradient|pattern
   public shadowColor: string = "#000000"; // color
@@ -36,7 +38,8 @@ export class CanvasContext {
     | "copy"
     | "xor" = "source-over";
 
-  constructor(ctx: any) {
+  constructor(ctx: any, canvas: Canvas) {
+    this.canvas = canvas;
     const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
     this.context = ctx;
     this.context.clear(initColor.value);
@@ -66,26 +69,15 @@ export class CanvasContext {
     return Gradient.createRadialGradient(x0, y0, r0, x1, y1, r1, this.context);
   }
 
+  public createConicGradient(startAngle: number, x: number, y: number) {
+    return Gradient.createConicGradient(startAngle, x, y, this.context);
+  }
+
   public rect(x: number, y: number, width: number, height: number) {
     this.context.rect(x, y, width, height);
   }
   public fillRect(x: number, y: number, width: number, height: number) {
-    const value =
-      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
-    const color = Utils.string2RGBA(value);
-
-    switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.set(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleFillColor();
     this.context.fillRect(x, y, width, height);
   }
   public clearRect(x: number, y: number, width: number, height: number) {
@@ -93,42 +85,11 @@ export class CanvasContext {
   }
 
   public fill() {
-    const value =
-      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
-    const color = Utils.string2RGBA(value);
-
-    switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.set(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleFillColor();
     this.context.fill();
   }
   public stroke() {
-    const value =
-      this.strokeStyle instanceof Gradient
-        ? this.strokeStyle.id
-        : this.strokeStyle;
-    const color = Utils.string2RGBA(value);
-    switch (color.type) {
-      case "RGBA":
-        this.context.strokeStyle(color.value);
-        break;
-      case "RGB":
-        this.context.set(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
-    }
-
+    this.handleStrokeColor();
     this.context.lineCap(this.lineCap);
     this.context.lineJoin(this.lineJoin);
     this.context.lineWidth(this.lineWidth);
@@ -209,14 +170,16 @@ export class CanvasContext {
     return { a, b, c, d, e, f };
   }
 
-  public fillText(text: string, x: number, y: number, maxWidth: number) {
+  public fillText(text: string, x: number, y: number, maxWidth?: number) {
+    this.handleFillColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
     this.context.fillText(text, x, y, maxWidth);
   }
 
-  public strokeText(text: string, x: number, y: number, maxWidth: number) {
+  public strokeText(text: string, x: number, y: number, maxWidth?: number) {
+    this.handleStrokeColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
@@ -229,11 +192,64 @@ export class CanvasContext {
   }
 
   public strokeRect(x: number, y: number, width: number, height: number) {
+    this.handleStrokeColor();
     this.context.strokeRect(x, y, width, height);
   }
 
-  public drawImage(image: string, dx: number, dy: number) {
-    return this.context.drawImage(image, dx, dy);
+  public drawImage(image: string, dx: number, dy: number): void;
+  public drawImage(
+    image: string,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(
+    image: Buffer,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(
+    image: string,
+    sx: number,
+    sy: number,
+    sWidth: number,
+    sHeight: number,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(
+    image: string | Buffer,
+    x: number,
+    y: number,
+    ...arg: any
+  ): void {
+    if (arg.length === 0) {
+      this.context.drawImage(image, x, y);
+    } else if (arg.length === 2) {
+      if (image instanceof Buffer) {
+        this.context.DrawImageBuffer(image, x, y, arg[0], arg[1]);
+      } else {
+        this.context.drawImageWH(image, x, y, arg[0], arg[1]);
+      }
+    } else if (arg.length === 6) {
+      throw new Error("Not implemented yet");
+      // this.context.drawImage(
+      //   image,
+      //   x,
+      //   y,
+      //   arg[0],
+      //   arg[1],
+      //   arg[2],
+      //   arg[3],
+      //   arg[4],
+      //   arg[5]
+      // );
+    }
   }
 
   public getFonts(): {
@@ -246,6 +262,48 @@ export class CanvasContext {
 
   public loadFont(fontPath: string, fontName: string) {
     return this.context.loadFont(fontPath, fontName);
+  }
+
+  private handleStrokeColor() {
+    const value =
+      this.strokeStyle instanceof Gradient
+        ? this.strokeStyle.id
+        : this.strokeStyle;
+    const color = Utils.string2RGBA(value);
+    switch (color.type) {
+      case "RGBA":
+        this.context.strokeStyle(color.value);
+        break;
+      case "RGB":
+        this.context.strokeStyle(color.value);
+        break;
+      case "HEX":
+        this.context.strokeStyle(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
+  }
+
+  private handleFillColor() {
+    const value =
+      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
+    const color = Utils.string2RGBA(value);
+    switch (color.type) {
+      case "RGBA":
+        this.context.fillStyle(color.value);
+        break;
+      case "RGB":
+        this.context.fillStyle(color.value);
+        break;
+      case "HEX":
+        this.context.fillStyle(color.value);
+        break;
+      case "SHADER":
+        this.context.setShader(color.value);
+        break;
+    }
   }
 }
 

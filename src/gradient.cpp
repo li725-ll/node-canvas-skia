@@ -1,21 +1,21 @@
 #include "gradient.h"
 #include <iostream>
 
-Napi::Function Gradient::Init(Napi::Env env)
+Napi::Object Gradient::Init(Napi::Env env)
 {
   Napi::Function func = DefineClass(
       env,
       "Gradient",
-      {InstanceMethod("getId", &Gradient::GetId, napi_enumerable),
-       InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
+      {InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
   env.SetInstanceData(constructor);
 
-  return func;
+  return func.New({});
 }
 
 Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){}
+Gradient::~Gradient(){}
 
 Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
 {
@@ -37,16 +37,6 @@ Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
   return Napi::Value();
 }
 
-Napi::Value Gradient::GetId(const Napi::CallbackInfo &info)
-{
-  return Napi::String::New(info.Env(), _id);
-}
-
-void Gradient::SetId(std::string id)
-{
-  _id = id;
-}
-
 void Gradient::SetGradientArea(GradientArea gradientArea)
 {
   _gradientArea = gradientArea;
@@ -60,4 +50,10 @@ GradientArea Gradient::GetGradientArea()
 std::vector<GradientStop> Gradient::GetGradientStops()
 {
   return _ColorStop;
+}
+
+void Gradient::Reset()
+{
+  _gradientArea = GradientArea();
+  _ColorStop.clear();
 }

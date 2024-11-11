@@ -6,9 +6,10 @@
         "${workspaceFolder}/**",
         "${vcpkgRoot}/x64-windows/include",
         "${vcpkgRoot}/x64-windows-static/include",
+        "${workspaceFolder}/library/glfw-3.4.bin.WIN64/include",
         "${workspaceFolder}/library/Skia-m93-87e8842e8c-windows-Release-x64"
       ],
-      "defines": ["_DEBUG", "UNICODE", "_UNICODE", "NAPI_VERSION=8"],
+      "defines": ["_DEBUG", "UNICODE", "_UNICODE", "NAPI_VERSION=8", "SK_GL"],
       "windowsSdkVersion": "10.0.22621.0",
       "compilerPath": "cl.exe",
       "cStandard": "c17",

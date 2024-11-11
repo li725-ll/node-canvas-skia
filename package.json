@@ -1,5 +1,7 @@
 {
-  "main": "lib/index.js",
+  "name": "node-canvas-skia",
+  "version": "1.0.0-alpha.4",
+  "main": "dist/index.js",
   "scripts": {
     "commit": "git add . && czg",
     "pretest": "tsc",
@@ -7,16 +9,15 @@
     "test": "pnpm run pretest && jest",
     "prettier": "pnpm exec prettier . --write",
     "prepare": "husky",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "publish": "npm publish"
   },
   "gypfile": true,
-  "name": "skia",
-  "version": "1.0.0-alpha.0",
   "description": "skia node banding",
   "keywords": [
     "skia",
     "canvas",
-    "banding"
+    "binding"
   ],
   "types": "dist/index.d.ts",
   "files": [
