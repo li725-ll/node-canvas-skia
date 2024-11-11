@@ -2,7 +2,7 @@
 
 node-canvas-skia is a skia node binding designed to enable GPU accelerated image rendering in desktop applications. We expect to implement the same API as web canvas.
 
-> Note: 
+> Note:
 >
 > 1. It has not yet fully stabilized and is currently in the testing phase.
 > 2. GPU rendering has not been released yet.
@@ -57,6 +57,8 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - getContext
    - saveAsImage
    - toBuffer
+   - save
+   - restore
 2. CanvasContext
    - beginPath
    - moveTo
@@ -85,6 +87,7 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - getFonts
    - createLinearGradient
    - createRadialGradient
+   - createConicGradient
    - fillRect
    - clearRect
    - strokeRect

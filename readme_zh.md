@@ -57,6 +57,8 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - getContext
    - saveAsImage
    - toBuffer
+   - save
+   - restore
 2. CanvasContext
    - beginPath
    - moveTo
@@ -85,6 +87,7 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - getFonts
    - createLinearGradient
    - createRadialGradient
+   - createConicGradient
    - fillRect
    - clearRect
    - strokeRect
@@ -121,4 +124,3 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
 > THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 > (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
