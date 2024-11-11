@@ -39,7 +39,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
               InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
               InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
-              InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
+              InstanceMethod("DrawImageBuffer", &CanvasContext::DrawImageBuffer, napi_enumerable),
               InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
               InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
               InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})
@@ -622,6 +622,22 @@ Napi::Value CanvasContext::DrawImage(const Napi::CallbackInfo &info)
   sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
 
   _canvas->drawImage(image, x, y);
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::DrawImageBuffer(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+  uint8_t* data = info[0].As<Napi::Buffer<uint8_t>>().Data();
+  size_t size = info[0].As<Napi::Buffer<uint8_t>>().Length();
+  SkScalar x = info[1].As<Napi::Number>().FloatValue();
+  SkScalar y = info[2].As<Napi::Number>().FloatValue();
+  SkScalar w = info[3].As<Napi::Number>().FloatValue();
+  SkScalar h = info[4].As<Napi::Number>().FloatValue();
+
+  sk_sp<SkData> skdata = SkData::MakeFromMalloc(data, size);
+  sk_sp<SkImage> image = SkImage::MakeFromEncoded(skdata);
+  SkRect dst = SkRect::MakeXYWH(x, y, w, h);
+  _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
   return Napi::Value();
 }
 

@@ -205,6 +205,13 @@ export class CanvasContext {
     dHeight: number
   ): void;
   public drawImage(
+    image: Buffer,
+    dx: number,
+    dy: number,
+    dWidth: number,
+    dHeight: number
+  ): void;
+  public drawImage(
     image: string,
     sx: number,
     sy: number,
@@ -215,11 +222,20 @@ export class CanvasContext {
     dWidth: number,
     dHeight: number
   ): void;
-  public drawImage(image: string, x: number, y: number, ...arg: any): void {
+  public drawImage(
+    image: string | Buffer,
+    x: number,
+    y: number,
+    ...arg: any
+  ): void {
     if (arg.length === 0) {
       this.context.drawImage(image, x, y);
     } else if (arg.length === 2) {
-      this.context.drawImageWH(image, x, y, arg[0], arg[1]);
+      if (image instanceof Buffer) {
+        this.context.DrawImageBuffer(image, x, y, arg[0], arg[1]);
+      } else {
+        this.context.drawImageWH(image, x, y, arg[0], arg[1]);
+      }
     } else if (arg.length === 6) {
       throw new Error("Not implemented yet");
       // this.context.drawImage(
