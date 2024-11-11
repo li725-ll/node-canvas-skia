@@ -8,7 +8,9 @@ Napi::Function Canvas::Init(Napi::Env env)
       "Canvas",
       {InstanceMethod("getContext", &Canvas::GetContext),
        InstanceMethod("saveAsImage", &Canvas::SaveAsImage),
-       InstanceMethod("toBuffer", &Canvas::ToBuffer)});
+       InstanceMethod("toBuffer", &Canvas::ToBuffer),
+       InstanceMethod("save", &Canvas::Save),
+       InstanceMethod("restore", &Canvas::Restore)});
 
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -70,6 +72,18 @@ Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
   return _context.Value();
 }
 
+Napi::Value Canvas::Save(const Napi::CallbackInfo &info)
+{
+  _surface->getCanvas()->save();
+  return Napi::Value();
+}
+
+Napi::Value Canvas::Restore(const Napi::CallbackInfo &info)
+{
+  _surface->getCanvas()->restore();
+  return Napi::Value();
+}
+
 Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
@@ -79,17 +93,10 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 
   SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
 
-  if (format == "bmp")
-  {
-    imageFormat = SkEncodedImageFormat::kBMP;
-  } else if (format == "gif") {
-    imageFormat = SkEncodedImageFormat::kGIF;
-  } else if (format == "ico") {
-    imageFormat = SkEncodedImageFormat::kICO;
-  } else if (format == "png") {
+  if (format == "png") {
     imageFormat = SkEncodedImageFormat::kPNG;
-  } else if (format == "wbmp") {
-    imageFormat = SkEncodedImageFormat::kWBMP;
+  } else if (format == "jpg") {
+    imageFormat = SkEncodedImageFormat::kJPEG;
   } else if (format == "webp") {
     imageFormat = SkEncodedImageFormat::kWEBP;
   } else
@@ -116,25 +123,13 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
 
   SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
 
-  if (format == "bmp")
-  {
-    imageFormat = SkEncodedImageFormat::kBMP;
-  }
-  else if (format == "gif")
-  {
-    imageFormat = SkEncodedImageFormat::kGIF;
-  }
-  else if (format == "ico")
-  {
-    imageFormat = SkEncodedImageFormat::kICO;
-  }
-  else if (format == "png")
+  if (format == "png")
   {
     imageFormat = SkEncodedImageFormat::kPNG;
   }
-  else if (format == "wbmp")
+  else if (format == "jpg")
   {
-    imageFormat = SkEncodedImageFormat::kWBMP;
+    imageFormat = SkEncodedImageFormat::kJPEG;
   }
   else if (format == "webp")
   {

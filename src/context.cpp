@@ -39,6 +39,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
               InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
               InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
+              InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
               InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
               InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
               InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})

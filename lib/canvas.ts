@@ -33,20 +33,21 @@ export class Canvas {
     return "data:image/png;base64,";
   }
 
-  public toBuffer(
-    type: "bmp" | "gif" | "ico" | "png" | "wbmp" | "webp" = "png",
-    quality: number = 30
-  ) {
+  public toBuffer(type: "png" | "jpg" | "webp" = "png", quality: number = 30) {
     return this.skiaCanvas.toBuffer(type, quality);
   }
 
-  public save() {}
+  public save() {
+    return this.skiaCanvas.save();
+  }
 
-  public restore() {}
+  public restore() {
+    return this.skiaCanvas.restore();
+  }
 
   public saveAsImage(
     path: string,
-    type: "bmp" | "gif" | "ico" | "png" | "wbmp" | "webp" = "png",
+    type: "png" | "jpg" | "webp" = "png",
     quality: number = 30
   ) {
     this.skiaCanvas.saveAsImage(path, type, quality);
