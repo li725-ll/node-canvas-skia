@@ -1,5 +1,5 @@
+#include <iostream>
 #include "canvas.h"
-#include "context.h"
 
 Napi::Function Canvas::Init(Napi::Env env)
 {
@@ -8,7 +8,9 @@ Napi::Function Canvas::Init(Napi::Env env)
       "Canvas",
       {InstanceMethod("getContext", &Canvas::GetContext),
        InstanceMethod("saveAsImage", &Canvas::SaveAsImage),
-       InstanceMethod("toBuffer", &Canvas::ToBuffer)});
+       InstanceMethod("toBuffer", &Canvas::ToBuffer),
+       InstanceMethod("save", &Canvas::Save),
+       InstanceMethod("restore", &Canvas::Restore)});
 
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -20,9 +22,30 @@ Napi::Function Canvas::Init(Napi::Env env)
 Canvas::Canvas(const Napi::CallbackInfo &info)
 : Napi::ObjectWrap<Canvas>(info), _context(Napi::Persistent(CanvasContext::CanvasContext2Object(info.Env())))
 {
+  Napi::Env env = info.Env();
+
   int width = info[0].As<Napi::Number>().Int32Value();
   int height = info[1].As<Napi::Number>().Int32Value();
-  _surface = SkSurface::MakeRasterN32Premul(width, height);
+  int GPU = info[2].As<Napi::Number>().Int32Value(); // 0: CPU, 1: GPU, 2: Auto
+  if(GPU == 0 ) {
+    _surface = SkSurface::MakeRasterN32Premul(width, height);
+  } else if (GPU == 1) {
+    CreateOpenGLContext();
+
+    sk_sp<GrDirectContext> context = GrDirectContext::MakeGL();
+    if (!context)
+    {
+      Napi::TypeError::New(env, "OpenGL context retrieval failed").ThrowAsJavaScriptException();
+      return;
+    }
+    SkImageInfo info = SkImageInfo::MakeN32Premul(width, height);
+    _surface = SkSurface::MakeRenderTarget(context.get(), SkBudgeted::kNo, info);
+    if (!_surface)
+    {
+      Napi::TypeError::New(env, "SkSurface::MakeRenderTarget returned null").ThrowAsJavaScriptException();
+      return;
+    }
+  }
 }
 
 Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
@@ -49,6 +72,18 @@ Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
   return _context.Value();
 }
 
+Napi::Value Canvas::Save(const Napi::CallbackInfo &info)
+{
+  _surface->getCanvas()->save();
+  return Napi::Value();
+}
+
+Napi::Value Canvas::Restore(const Napi::CallbackInfo &info)
+{
+  _surface->getCanvas()->restore();
+  return Napi::Value();
+}
+
 Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
@@ -58,17 +93,10 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 
   SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
 
-  if (format == "bmp")
-  {
-    imageFormat = SkEncodedImageFormat::kBMP;
-  } else if (format == "gif") {
-    imageFormat = SkEncodedImageFormat::kGIF;
-  } else if (format == "ico") {
-    imageFormat = SkEncodedImageFormat::kICO;
-  } else if (format == "png") {
+  if (format == "png") {
     imageFormat = SkEncodedImageFormat::kPNG;
-  } else if (format == "wbmp") {
-    imageFormat = SkEncodedImageFormat::kWBMP;
+  } else if (format == "jpg") {
+    imageFormat = SkEncodedImageFormat::kJPEG;
   } else if (format == "webp") {
     imageFormat = SkEncodedImageFormat::kWEBP;
   } else
@@ -95,25 +123,13 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
 
   SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
 
-  if (format == "bmp")
-  {
-    imageFormat = SkEncodedImageFormat::kBMP;
-  }
-  else if (format == "gif")
-  {
-    imageFormat = SkEncodedImageFormat::kGIF;
-  }
-  else if (format == "ico")
-  {
-    imageFormat = SkEncodedImageFormat::kICO;
-  }
-  else if (format == "png")
+  if (format == "png")
   {
     imageFormat = SkEncodedImageFormat::kPNG;
   }
-  else if (format == "wbmp")
+  else if (format == "jpg")
   {
-    imageFormat = SkEncodedImageFormat::kWBMP;
+    imageFormat = SkEncodedImageFormat::kJPEG;
   }
   else if (format == "webp")
   {

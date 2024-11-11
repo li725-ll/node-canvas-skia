@@ -9,7 +9,7 @@
 
 struct GradientArea
 {
-  int type = 0; //0 line 1 circle
+  int type = 0; //0 line 1 circle 2 ellipse
   SkScalar x0 = 0;
   SkScalar y0 = 0;
   SkScalar r0 = 0;
@@ -27,20 +27,18 @@ struct GradientStop
 class Gradient : public Napi::ObjectWrap<Gradient>
 {
 private:
-  std::string _id;
   GradientArea _gradientArea;
   std::vector<GradientStop> _ColorStop;
-  Napi::Value GetId(const Napi::CallbackInfo &info);
 
 public:
-  static Napi::Function Init(Napi::Env env);
+  static Napi::Object Init(Napi::Env env);
   Gradient(const Napi::CallbackInfo &info);
-  ~Gradient() {};
+  ~Gradient();
   Napi::Value AddColorStop(const Napi::CallbackInfo &info);
-  void SetId(std::string id);
   void SetGradientArea(GradientArea gradientArea);
   GradientArea GetGradientArea();
   std::vector<GradientStop> GetGradientStops();
+  void Reset();
 };
 
 #endif

@@ -1,7 +1,7 @@
 import Utils from "./utils";
 
 export class Gradient {
-  private type: "radial" | "linear";
+  private type: "radial" | "linear" | "conic";
   private x0: number;
   private y0: number;
   private r0: number;
@@ -33,8 +33,17 @@ export class Gradient {
     return new Gradient("linear", x0, y0, 0, x1, y1, 0, context);
   }
 
+  static createConicGradient(
+    startAngle: number,
+    x: number,
+    y: number,
+    context: any
+  ) {
+    return new Gradient("conic", startAngle, x, y, 0, 0, 0, context);
+  }
+
   private constructor(
-    type: "radial" | "linear",
+    type: "radial" | "linear" | "conic",
     x0: number,
     y0: number,
     r0: number,
@@ -54,9 +63,11 @@ export class Gradient {
       this.gradient = context.createRadialGradient(x0, y0, r0, x1, y1, r1);
     } else if (type === "linear") {
       this.gradient = context.createLinearGradient(x0, y0, x1, y1);
+    } else if (type === "conic") {
+      this.gradient = context.createConicGradient(x0, y0, r0);
     }
 
-    this.id = this.gradient.getId();
+    this.id = "#shader0";
   }
 
   public addColorStop(offset: number, color: string): void {

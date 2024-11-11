@@ -16,7 +16,7 @@ function drawHeptagram() {
   }
   ctx.closePath();
   ctx.translate(0.5 * scale, 0.5 * scale);
-  ctx.strokeStyle = "rgba(255,0,0,1)";
+  ctx.strokeStyle = "rgb(255,0,0)";
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.translate(-0.5 * scale, -0.5 * scale);
@@ -35,7 +35,7 @@ function drawVerticalLine() {
   ctx.beginPath();
   ctx.moveTo(200, 50);
   ctx.lineTo(300, 50);
-  ctx.strokeStyle = "rgba(0,255,0,1)";
+  ctx.strokeStyle = "#00ff00";
   ctx.lineWidth = 2;
   ctx.stroke();
 }
@@ -43,7 +43,7 @@ function drawVerticalLine() {
 function drawArcLine() {
   ctx.beginPath();
   ctx.arc(350, 50, 40, 0, 360);
-  ctx.strokeStyle = "rgba(255,0,0,1)";
+  ctx.strokeStyle = "#f00";
   ctx.lineWidth = 2;
   ctx.stroke();
 }

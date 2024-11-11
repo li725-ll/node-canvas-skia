@@ -47,7 +47,7 @@ private:
   sk_sp<SkFontMgr> _fontMgr;
   ContextAttributesStruct _contextAttributes;
   std::map<std::string, sk_sp<SkTypeface>> _fontMap;
-  std::map<int, Gradient *> _shaderMap;
+  Napi::ObjectReference _gradient;
 
   SkScalar ApplyTextAlign(std::string text, SkScalar x);
 
@@ -87,9 +87,12 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
   Napi::Value SetShader(const Napi::CallbackInfo &info);
   Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
   Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
+  Napi::Value CreateConicGradient(const Napi::CallbackInfo &info);
   Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
   Napi::Value FillRect(const Napi::CallbackInfo &info);
   Napi::Value DrawImage(const Napi::CallbackInfo &info);
+  Napi::Value DrawImageBuffer(const Napi::CallbackInfo &info);
+  Napi::Value DrawImageWH(const Napi::CallbackInfo &info);
 };
 
 #endif

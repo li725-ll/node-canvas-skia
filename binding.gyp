@@ -2,7 +2,7 @@
   'targets': [
     {
         'target_name': 'skia-native',
-        'sources': [ 'src/main.cpp', 'src/gradient.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp' ],
+        'sources': [ 'src/main.cpp', 'src/gradient.cpp', 'src/utils.cpp', 'src/canvas.cpp', 'src/context.cpp', 'src/opengl.cpp' ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"
         ],
@@ -10,31 +10,32 @@
         [
           'os=="win"' and 'target_arch=="x64"',
           {
-            'include_dirs': ["library/Skia-m93-87e8842e8c-windows-Release-x64"],
+            'include_dirs': ["library/Skia-m93-87e8842e8c-windows-Release-x64", "library/glfw-3.4.bin.WIN64/include"],
             'target_name': 'skia-native-win-x64',
             'libraries': [
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12allocator.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\expat.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\freetype2.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\harfbuzz.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\icu.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libjpeg.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libpng.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libwebp_sse41.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libwebp.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\particles.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skia.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skottie.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skparagraph.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skresources.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\sksg.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skshaper.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\spirv_cross.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\svg.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\zlib.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3dcompiler.lib',
-              '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\OpenGL32.lib'
+                '..\\library\\glfw-3.4.bin.WIN64\\lib-vc2022\\glfw3_mt.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12allocator.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\expat.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\freetype2.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\harfbuzz.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\icu.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libjpeg.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libpng.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libwebp_sse41.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\libwebp.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\particles.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skia.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skottie.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skparagraph.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skresources.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\sksg.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\skshaper.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\spirv_cross.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\svg.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\zlib.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3dcompiler.lib',
+                '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\OpenGL32.lib'
             ]
           }
         ],
@@ -89,7 +90,7 @@
       'msvs_settings': {
         'VCCLCompilerTool': { 'ExceptionHandling': 1 },
       },
-      'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'NAPI_VERSION=8' ]
+      'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'NAPI_VERSION=8', "SK_GL" ]
     }
   ]
 }
