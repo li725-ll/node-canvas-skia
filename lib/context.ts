@@ -166,7 +166,7 @@ export class CanvasContext {
     return { a, b, c, d, e, f };
   }
 
-  public fillText(text: string, x: number, y: number, maxWidth: number) {
+  public fillText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleFillColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
@@ -174,7 +174,7 @@ export class CanvasContext {
     this.context.fillText(text, x, y, maxWidth);
   }
 
-  public strokeText(text: string, x: number, y: number, maxWidth: number) {
+  public strokeText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleStrokeColor();
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
