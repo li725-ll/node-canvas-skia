@@ -96,6 +96,14 @@ export class CanvasContext {
     this.context.stroke();
   }
 
+  public save() {
+    this.canvas.save();
+  }
+
+  public restore() {
+    this.canvas.restore();
+  }
+
   public beginPath() {
     this.context.beginPath();
   }

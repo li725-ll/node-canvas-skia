@@ -25,3 +25,14 @@ Napi::Value Utils::RGBA(const Napi::CallbackInfo &info)
 
   return Napi::Number::New(env, SkColorSetARGB(a, r, g, b));
 }
+
+Napi::Value Utils::ColorMap(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::Object obj = Napi::Object::New(env);
+
+  obj.Set("AliceBlue", Napi::Number::New(env, SkColorSetRGB(0xF0, 0xF8, 0xFF)));
+  obj.Set("AntiqueWhite ", Napi::Number::New(env, SkColorSetRGB(0xFA, 0xEB, 0xD7)));
+
+  return obj;
+}
