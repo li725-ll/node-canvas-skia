@@ -66,6 +66,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
   Napi::Value Clear(const Napi::CallbackInfo &info);
   Napi::Value ClearRect(const Napi::CallbackInfo &info);
   Napi::Value Translate(const Napi::CallbackInfo &info);
+  Napi::Value SetTransform(const Napi::CallbackInfo &info);
   Napi::Value Rotate(const Napi::CallbackInfo &info);
   Napi::Value StrokeStyle(const Napi::CallbackInfo &info);
   Napi::Value LineWidth(const Napi::CallbackInfo &info);

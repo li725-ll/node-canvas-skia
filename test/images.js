@@ -11,7 +11,7 @@ function drawImage() {
 }
 
 function drawImageBuffer() {
-  const data = fs.readFileSync(path.resolve(__dirname, "./images/cat.jpg"))
+  const data = fs.readFileSync(path.resolve(__dirname, "./images/cat.jpg"));
   ctx.drawImage(data, 100, 0, 200, 200);
 }
 

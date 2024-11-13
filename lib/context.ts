@@ -40,9 +40,13 @@ export class CanvasContext {
 
   constructor(ctx: any, canvas: Canvas) {
     this.canvas = canvas;
-    const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
+    const initColor = Utils.string2RGBA("rgba(0,0,0,0)");
     this.context = ctx;
     this.context.clear(initColor.value);
+  }
+
+  public clear(color: string) {
+    this.context.clear(color);
   }
   public createLinearGradient(
     x0: number,
@@ -175,7 +179,7 @@ export class CanvasContext {
     e: number,
     f: number
   ) {
-    return { a, b, c, d, e, f };
+    this.context.setTransform(a, b, c, d, e, f);
   }
 
   public fillText(text: string, x: number, y: number, maxWidth?: number) {

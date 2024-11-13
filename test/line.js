@@ -54,7 +54,7 @@ function drawTriangleLine() {
   ctx.lineTo(490, 90);
   ctx.lineTo(410, 90);
   ctx.closePath();
-  ctx.strokeStylevv = "rgba(0,0,255,1)";
+  ctx.strokeStyle = "rgba(0,0,255,1)";
   ctx.lineWidth = 1;
   ctx.stroke();
 }

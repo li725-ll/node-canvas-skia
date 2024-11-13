@@ -7,9 +7,9 @@ export class Utils {
   } {
     const value = String(color).toUpperCase();
     const result: {
-      value: number;
+      value: number | null;
       type: "RGBA" | "RGB" | "SHADER" | "HEX";
-    } = { value: 0, type: "RGBA" };
+    } = { value: null, type: "RGBA" };
 
     if (value.startsWith("RGBA")) {
       result.type = "RGBA";
@@ -62,13 +62,13 @@ export class Utils {
       }
     }
 
-    if (result.value == 0 && result.type == "RGBA") {
+    if (result.value == null && result.type == "RGBA") {
       throw new Error(
         "Invalid color format, color names are currently not supported"
       );
     }
 
-    return result;
+    return result as { value: number; type: "RGBA" | "RGB" | "SHADER" | "HEX" };
   }
 
   public static string2Font(font: string): any {

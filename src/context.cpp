@@ -14,6 +14,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
               InstanceMethod("stroke", &CanvasContext::Stroke, napi_enumerable),
               InstanceMethod("clear", &CanvasContext::Clear, napi_enumerable),
               InstanceMethod("translate", &CanvasContext::Translate, napi_enumerable),
+              InstanceMethod("setTransform", &CanvasContext::SetTransform, napi_enumerable),
               InstanceMethod("strokeStyle", &CanvasContext::StrokeStyle, napi_enumerable),
               InstanceMethod("fillStyle", &CanvasContext::StrokeStyle, napi_enumerable),
               InstanceMethod("lineWidth", &CanvasContext::LineWidth, napi_enumerable),
@@ -111,6 +112,22 @@ Napi::Value CanvasContext::Translate(const Napi::CallbackInfo &info)
   SkScalar x = info[0].As<Napi::Number>().FloatValue();
   SkScalar y = info[1].As<Napi::Number>().FloatValue();
   _canvas->translate(x, y);
+  return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetTransform(const Napi::CallbackInfo &info)
+{
+  SkScalar a = info[0].As<Napi::Number>().FloatValue();
+  SkScalar b = info[1].As<Napi::Number>().FloatValue();
+  SkScalar c = info[2].As<Napi::Number>().FloatValue();
+  SkScalar d = info[3].As<Napi::Number>().FloatValue();
+  SkScalar e = info[4].As<Napi::Number>().FloatValue();
+  SkScalar f = info[5].As<Napi::Number>().FloatValue();
+
+  SkMatrix matrix;
+  matrix.setAll(a, b, e, c, d, f, 0, 0, 1);
+  _canvas->setMatrix(matrix);
+
   return Napi::Value();
 }
 
@@ -456,7 +473,7 @@ Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
   _canvas->save();
   SkRect rectToClear = SkRect::MakeXYWH(x, y, w, h);
   _canvas->clipRect(rectToClear, SkClipOp::kIntersect);
-  _canvas->drawColor(SK_ColorWHITE, SkBlendMode::kSrcOver);
+  _canvas->drawColor(0, SkBlendMode::kClear);
   _canvas->restore();
 
   return Napi::Value();
@@ -634,7 +651,7 @@ Napi::Value CanvasContext::DrawImageBuffer(const Napi::CallbackInfo &info) {
   SkScalar w = info[3].As<Napi::Number>().FloatValue();
   SkScalar h = info[4].As<Napi::Number>().FloatValue();
 
-  sk_sp<SkData> skdata = SkData::MakeFromMalloc(data, size);
+  sk_sp<SkData> skdata = SkData::MakeWithCopy(data, size);
   sk_sp<SkImage> image = SkImage::MakeFromEncoded(skdata);
   SkRect dst = SkRect::MakeXYWH(x, y, w, h);
   _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
