@@ -1,181 +1,28 @@
 import skia from "./binding";
-
-type VAL =
-  | "black"
-  | "silver"
-  | "silver"
-  | "gray"
-  | "white"
-  | "maroon"
-  | "red"
-  | "purple"
-  | "fuchsia"
-  | "green"
-  | "lime"
-  | "olive"
-  | "yellow"
-  | "navy"
-  | "blue"
-  | "teal"
-  | "Teal"
-  | "aqua"
-  | "aliceblue"
-  | "antiquewhite"
-  | "aquamarine"
-  | "azure"
-  | "beige"
-  | "bisque"
-  | "blanchedalmond"
-  | "blueviolet"
-  | "brown"
-  | "burlywood"
-  | "cadetblue"
-  | "chartreuse"
-  | "chocolate"
-  | "coral"
-  | "cornflowerblue"
-  | "cornsilk"
-  | "crimson"
-  | "cyan"
-  | "darkblue"
-  | "darkcyan"
-  | "darkgoldenrod"
-  | "darkgray"
-  | "darkgreen"
-  | "darkgrey"
-  | "darkkhaki"
-  | "darkmagenta"
-  | "darkolivegreen"
-  | "darkorange"
-  | "darkorchid"
-  | "darkred"
-  | "darksalmon"
-  | "darkseagreen"
-  | "darkslateblue"
-  | "darkslategray"
-  | "darkslategrey"
-  | "darkturquoise"
-  | "darkviolet"
-  | "deeppink"
-  | "deepskyblue"
-  | "dimgray"
-  | "dimgrey"
-  | "dodgerblue"
-  | "firebrick"
-  | "floralwhite"
-  | "forestgreen"
-  | "fuchsia"
-  | "gainsboro"
-  | "ghostwhite"
-  | "gold"
-  | "goldenrod"
-  | "greenyellow"
-  | "grey"
-  | "honeydew"
-  | "hotpink"
-  | "indianred"
-  | "indigo"
-  | "ivory"
-  | "khaki"
-  | "lavender"
-  | "lavenderblush"
-  | "lawngreen"
-  | "lemonchiffon"
-  | "lightblue"
-  | "lightcoral"
-  | "lightcyan"
-  | "lightgoldenrodyellow"
-  | "lightgray"
-  | "lightgreen"
-  | "lightgrey"
-  | "lightpink"
-  | "lightsalmon"
-  | "lightseagreen"
-  | "lightskyblue"
-  | "lightslategray"
-  | "lightslategrey"
-  | "lightsteelblue"
-  | "lightyellow"
-  | "limegreen"
-  | "magenta"
-  | "mediumaquamarine"
-  | "mediumblue"
-  | "mediumorchid"
-  | "mediumpurple"
-  | "mediumseagreen"
-  | "mediumslateblue"
-  | "mediumspringgreen"
-  | "mediumturquoise"
-  | "mediumvioletred"
-  | "midnightblue"
-  | "mintcream"
-  | "mistyrose"
-  | "moccasin"
-  | "navajowhite"
-  | "navy"
-  | "oldlace"
-  | "olivedrab"
-  | "orange"
-  | "orangered"
-  | "orchid"
-  | "palegoldenrod"
-  | "palegreen"
-  | "paleturquoise"
-  | "palevioletred"
-  | "papayawhip"
-  | "peachpuff"
-  | "peru"
-  | "pink"
-  | "plum"
-  | "powderblue"
-  | "rebeccapurple"
-  | "rosybrown"
-  | "royalblue"
-  | "saddlebrown"
-  | "salmon"
-  | "sandybrown"
-  | "seagreen"
-  | "seashell"
-  | "sienna"
-  | "silver"
-  | "skyblue"
-  | "slateblue"
-  | "slategray"
-  | "slategrey"
-  | "snow"
-  | "springgreen"
-  | "steelblue"
-  | "tan"
-  | "thistle"
-  | "tomato"
-  | "turquoise"
-  | "violet"
-  | "wheat"
-  | "whitesmoke"
-  | "yellowgreen";
+import { TypeColorVAL } from "./colors";
 
 export class Utils {
   private static _colorMap = skia.SkiaUtils.colorMap();
-  public static string2RGBA(color: string): {
+  public static string2RGBA(color: string | TypeColorVAL): {
     value: number;
-    type: "RGBA" | "RGB" | "SHADER" | "HEX" | VAL;
+    type: "COLOR" | "SHADER";
   } {
     const value = String(color).toUpperCase();
     const result: {
       value: number | null;
-      type: "RGBA" | "RGB" | "SHADER" | "HEX";
-    } = { value: null, type: "RGBA" };
+      type: "COLOR" | "SHADER";
+    } = { value: null, type: "COLOR" };
 
     if (Object.keys(Utils._colorMap).includes(value.toLowerCase())) {
       return {
         value: Utils._colorMap[value.toLowerCase()],
-        type: "RGBA"
+        type: "COLOR"
       };
     }
 
     if (value.startsWith("RGBA")) {
-      result.type = "RGBA";
-      const temp = value.match(/\d+/g);
+      result.type = "COLOR";
+      const temp = value.replaceAll(/(?<!\d)\./g, "0.").match(/\d+/g);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
@@ -189,7 +36,7 @@ export class Utils {
 
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
-      result.type = "RGB";
+      result.type = "COLOR";
       const temp = value.match(/\d+/g);
       if (!temp || temp!.length < 3) {
         throw new Error("Invalid color format");
@@ -202,7 +49,7 @@ export class Utils {
       result.type = "SHADER";
       result.value = parseInt(value.replace("#SHADER", ""));
     } else if (value.startsWith("#")) {
-      result.type = "HEX";
+      result.type = "COLOR";
       const temp = value.slice(1);
       let middleValue;
       if (temp.length === 3) {
@@ -224,13 +71,13 @@ export class Utils {
       }
     }
 
-    if (result.value == null && result.type == "RGBA") {
+    if (result.value == null && result.type == "COLOR") {
       throw new Error(
         "Invalid color format, color names are currently not supported"
       );
     }
 
-    return result as { value: number; type: "RGBA" | "RGB" | "SHADER" | "HEX" };
+    return result as { value: number; type: "COLOR" | "SHADER" };
   }
 
   public static string2Font(font: string): any {

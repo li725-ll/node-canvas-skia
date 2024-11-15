@@ -1,13 +1,14 @@
 import Utils from "./utils";
 import Gradient from "./gradient";
 import Canvas from "./canvas";
+import { TypeColorVAL } from "./colors";
 
 export class CanvasContext {
   private context: any;
   public canvas: Canvas;
-  public fillStyle: string | Gradient = "#000000"; // color|gradient|pattern
-  public strokeStyle: string | Gradient = "#000000"; // color|gradient|pattern
-  public shadowColor: string = "#000000"; // color
+  public fillStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
+  public strokeStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
+  public shadowColor: string | TypeColorVAL = "#000000"; // color
   public lineJoin: "bevel" | "round" | "miter" = "miter"; // bevel斜角round圆角miter尖角
   public shadowBlur: number = 0;
   public shadowOffsetX: number = 0;
@@ -283,13 +284,7 @@ export class CanvasContext {
         : this.strokeStyle;
     const color = Utils.string2RGBA(value);
     switch (color.type) {
-      case "RGBA":
-        this.context.strokeStyle(color.value);
-        break;
-      case "RGB":
-        this.context.strokeStyle(color.value);
-        break;
-      case "HEX":
+      case "COLOR":
         this.context.strokeStyle(color.value);
         break;
       case "SHADER":
@@ -303,13 +298,7 @@ export class CanvasContext {
       this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
     const color = Utils.string2RGBA(value);
     switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.fillStyle(color.value);
-        break;
-      case "HEX":
+      case "COLOR":
         this.context.fillStyle(color.value);
         break;
       case "SHADER":
