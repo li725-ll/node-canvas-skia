@@ -7,7 +7,7 @@
     "pretest": "tsc",
     "build": "node-gyp rebuild",
     "test": "pnpm run pretest && jest",
-    "prettier": "pnpm exec prettier . --write",
+    "prettier": "pnpm exec prettier --write .",
     "prepare": "husky",
     "lint": "eslint --fix",
     "publish": "npm publish"

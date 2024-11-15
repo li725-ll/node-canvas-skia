@@ -152,26 +152,30 @@ describe("Colors", () => {
       "white",
       "whitesmoke",
       "yellow",
-      "yellowgreen",
+      "yellowgreen"
     ];
-    const canvas = new skia.Canvas(10 * 100, Math.ceil(colors.length / 10) * 100, false);
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
     const ctx = canvas.getContext("2d", { antialias: true });
 
     for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
       for (let j = 0; j < 10; j++) {
         const index = i * 10 + j;
-        if(index >= colors.length) {
+        if (index >= colors.length) {
           break;
         }
 
         ctx.fillStyle = colors[index];
         ctx.fillRect(j * 100, i * 100, 100, 100);
-        if (colors[index] === "black"){
+        if (colors[index] === "black") {
           ctx.fillStyle = "white";
-        } else{
+        } else {
           ctx.fillStyle = "black";
         }
-        ctx.fillText(colors[index], j * 100 + 20, i * 100 +55);
+        ctx.fillText(colors[index], j * 100 + 20, i * 100 + 55);
       }
     }
 
@@ -192,7 +196,11 @@ describe("Colors", () => {
       "#FF0",
       "#00f"
     ];
-    const canvas = new skia.Canvas(10 * 100, Math.ceil(colors.length / 10) * 100, false);
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
     const ctx = canvas.getContext("2d", { antialias: true });
 
     for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
@@ -212,7 +220,9 @@ describe("Colors", () => {
         ctx.fillText(colors[index], j * 100 + 20, i * 100 + 55);
       }
     }
-    canvas.saveAsImage(path.join(__dirname, "output", "Hexadecimal format color value test.png"));
+    canvas.saveAsImage(
+      path.join(__dirname, "output", "Hexadecimal format color value test.png")
+    );
   });
 
   test("RGB format color value test", () => {
@@ -228,7 +238,11 @@ describe("Colors", () => {
       "rgb(255,0,0)",
       "rgb(0,255,255)"
     ];
-    const canvas = new skia.Canvas(10 * 100, Math.ceil(colors.length / 10) * 100, false);
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
     const ctx = canvas.getContext("2d", { antialias: true });
 
     for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
@@ -240,7 +254,10 @@ describe("Colors", () => {
 
         ctx.fillStyle = colors[index];
         ctx.fillRect(j * 100, i * 100, 100, 100);
-        if (colors[index] === "rgb(0,0,0)" || colors[index] === "RGB(0, 0, 0)") {
+        if (
+          colors[index] === "rgb(0,0,0)" ||
+          colors[index] === "RGB(0, 0, 0)"
+        ) {
           ctx.fillStyle = "white";
         } else {
           ctx.fillStyle = "black";
@@ -248,7 +265,9 @@ describe("Colors", () => {
         ctx.fillText(colors[index], j * 100 + 20, i * 100 + 55);
       }
     }
-    canvas.saveAsImage(path.join(__dirname, "output", "RGB format color value test.png"));
+    canvas.saveAsImage(
+      path.join(__dirname, "output", "RGB format color value test.png")
+    );
   });
 
   test("RGBA format color value test", () => {
@@ -264,7 +283,11 @@ describe("Colors", () => {
       "rgbA(255,0,0, 1)",
       "rgba(0,255,255, 0.3)"
     ];
-    const canvas = new skia.Canvas(10 * 100, Math.ceil(colors.length / 10) * 100, false);
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
     const ctx = canvas.getContext("2d", { antialias: true });
 
     for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
@@ -276,7 +299,11 @@ describe("Colors", () => {
 
         ctx.fillStyle = colors[index];
         ctx.fillRect(j * 100, i * 100, 100, 100);
-        if (colors[index] === "rgba(0,0,0, 1)" || colors[index] === "RGBa(0, 0, 0, 0.5)" || colors[index].endsWith("0)")) {
+        if (
+          colors[index] === "rgba(0,0,0, 1)" ||
+          colors[index] === "RGBa(0, 0, 0, 0.5)" ||
+          colors[index].endsWith("0)")
+        ) {
           ctx.fillStyle = "white";
         } else {
           ctx.fillStyle = "black";
@@ -284,6 +311,8 @@ describe("Colors", () => {
         ctx.fillText(colors[index], j * 100 + 10, i * 100 + 55);
       }
     }
-    canvas.saveAsImage(path.join(__dirname, "output", "RGBA format color value test.png"));
+    canvas.saveAsImage(
+      path.join(__dirname, "output", "RGBA format color value test.png")
+    );
   });
 });

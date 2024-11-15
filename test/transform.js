@@ -19,7 +19,6 @@ function testSetTransform() {
   ctx.fillRect(1, 1, 100, 50);
 }
 
-
 function testTransform(outputPath) {
   drawRotateRect();
   // testSetTransform();
