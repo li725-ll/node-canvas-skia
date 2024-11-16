@@ -30,6 +30,7 @@ Canvas::Canvas(const Napi::CallbackInfo &info)
     if(GPU == 0 ) {
         _surface = SkSurface::MakeRasterN32Premul(width, height);
     } else if (GPU == 1) {
+#ifdef _WIN32   
         CreateOpenGLContext();
 
         sk_sp<GrDirectContext> context = GrDirectContext::MakeGL();
@@ -45,6 +46,12 @@ Canvas::Canvas(const Napi::CallbackInfo &info)
         Napi::TypeError::New(env, "SkSurface::MakeRenderTarget returned null").ThrowAsJavaScriptException();
         return;
         }
+#endif
+
+#ifdef __APPLE__
+    Napi::Error::New(env, "GPU not supported on this platform").ThrowAsJavaScriptException();
+    return;
+#endif
     }
 }
 

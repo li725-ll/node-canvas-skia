@@ -2,7 +2,9 @@
 #include "opengl.h"
 
 void CreateOpenGLContext(){
-    GLFWwindow *window;
+
+#ifdef __WIN32
+  GLFWwindow *window;
 
     if (!glfwInit())
     {
@@ -19,4 +21,7 @@ void CreateOpenGLContext(){
     glfwMakeContextCurrent(window);
 
   // glfwTerminate();
+#endif
+#ifdef __APPLE__
+#endif    
 }
