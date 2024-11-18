@@ -54,6 +54,7 @@
     "typescript-eslint": "^8.11.0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "node-addon-api": "^8.2.1"
   },
   "lint-staged": {
