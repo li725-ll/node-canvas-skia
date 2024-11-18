@@ -3,6 +3,7 @@
   "version": "1.0.0-alpha.4",
   "main": "dist/index.js",
   "scripts": {
+    "postinstall": "node scripts/install.js",
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
@@ -21,8 +22,12 @@
   ],
   "types": "dist/index.d.ts",
   "files": [
+    "lib",
+    "src",
+    "dist",
     "build",
-    "dist"
+    "library",
+    "binding.gyp"
   ],
   "type": "commonjs",
   "engines": {
