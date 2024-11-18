@@ -1,9 +1,9 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "node scripts/install.js",
+    "postinstall": "node scripts/install.js && npm run build",
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
@@ -26,7 +26,7 @@
     "src",
     "dist",
     "build",
-    "library",
+    "scripts",
     "binding.gyp"
   ],
   "type": "commonjs",
@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
+    "axios": "^1.7.7",
     "node-addon-api": "^8.2.1"
   },
   "lint-staged": {

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const os = require("os");
-const http = require("http");
 const path = require("path");
+const axois = require("axios");
 const AdmZip = require("adm-zip");
 
 function getPlatform() {
@@ -17,6 +17,7 @@ function getPlatform() {
 }
 
 function downloadFile(url, dest) {
+  console.log("Downloading: " + url);
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest);
   }
@@ -24,18 +25,22 @@ function downloadFile(url, dest) {
   const file = fs.createWriteStream(dest + "/" + fileName);
 
   return new Promise((resolve, reject) => {
-    http
-      .get(url, (response) => {
-        response.pipe(file);
-        file.on("finish", () => {
-          file.close();
-          resolve(dest + "/" + fileName);
-        });
+    axois
+      .get(url, {
+        responseType: "stream"
       })
-      .on("error", (err) => {
-        fs.unlink(dest + "/" + fileName);
-        reject(err.message);
+      .then((response) => {
+        response.data.pipe(file);
+      })
+      .catch((error) => {
+        reject(error);
       });
+    file.on("finish", () => {
+      const libraryPath = createLibraryFolder();
+      unpackZip(dest + "/" + fileName, libraryPath);
+      console.log(`${fileName} Download complete`);
+      resolve();
+    });
   });
 }
 
