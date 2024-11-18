@@ -3,8 +3,8 @@
 
 void CreateOpenGLContext(){
 
-#ifdef __WIN32
-  GLFWwindow *window;
+#ifdef _WIN32
+    GLFWwindow *window;
 
     if (!glfwInit())
     {
@@ -23,5 +23,5 @@ void CreateOpenGLContext(){
   // glfwTerminate();
 #endif
 #ifdef __APPLE__
-#endif    
+#endif
 }
