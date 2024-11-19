@@ -1,8 +1,9 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.9",
   "main": "dist/index.js",
   "scripts": {
+    "install": "node scripts/preinstall.js",
     "postinstall": "node scripts/install.js && npm run build",
     "commit": "git add . && czg",
     "pretest": "tsc",
