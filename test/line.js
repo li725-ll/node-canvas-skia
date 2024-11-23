@@ -150,6 +150,21 @@ function drawRectFill() {
   ctx.fill();
 }
 
+function drawRoundRectStroke() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,0,0,1)";
+  ctx.roundRect(310, 210, 90, 90, [10, 20]);
+  ctx.stroke();
+}
+
+function drawRoundRectFill() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,0,0,1)";
+  ctx.roundRect(20, 207, 3, 3, [1, 1, 1, 1]); // 99999997573997
+  ctx.closePath();
+  ctx.fill();
+}
+
 function testLine(outputPath) {
   drawHeptagram(); // draw a heptagram
   drawStraightLine(); // draw a straight line
@@ -162,6 +177,8 @@ function testLine(outputPath) {
   drawHeptagramFill(); // draw a heptagram with fill
   drawTriangleFill(); // draw a triangle with fill
   drawRectFill(); // draw a rectangle with fill
+  drawRoundRectStroke(); // draw a round rectangle
+  drawRoundRectFill(); // draw a round rectangle with fill
   canvas.saveAsImage(path.resolve(outputPath, "line.jpg"));
 }
 

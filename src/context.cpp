@@ -5,45 +5,46 @@
 Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
 {
     return DefineClass(
-        env,
-        "CanvasContext",
-        {InstanceMethod("beginPath", &CanvasContext::BeginPath, napi_enumerable),
-        InstanceMethod("moveTo", &CanvasContext::MoveTo, napi_enumerable),
-        InstanceMethod("lineTo", &CanvasContext::LineTo, napi_enumerable),
-        InstanceMethod("closePath", &CanvasContext::ClosePath, napi_enumerable),
-        InstanceMethod("stroke", &CanvasContext::Stroke, napi_enumerable),
-        InstanceMethod("clear", &CanvasContext::Clear, napi_enumerable),
-        InstanceMethod("translate", &CanvasContext::Translate, napi_enumerable),
-        InstanceMethod("setTransform", &CanvasContext::SetTransform, napi_enumerable),
-        InstanceMethod("strokeStyle", &CanvasContext::StrokeStyle, napi_enumerable),
-        InstanceMethod("fillStyle", &CanvasContext::StrokeStyle, napi_enumerable),
-        InstanceMethod("lineWidth", &CanvasContext::LineWidth, napi_enumerable),
-        InstanceMethod("rotate", &CanvasContext::Rotate, napi_enumerable),
-        InstanceMethod("arc", &CanvasContext::Arc, napi_enumerable),
-        InstanceMethod("strokeRect", &CanvasContext::StrokeRect, napi_enumerable),
-        InstanceMethod("lineCap", &CanvasContext::LineCap, napi_enumerable),
-        InstanceMethod("lineJoin", &CanvasContext::SetStrokeJoin, napi_enumerable),
-        InstanceMethod("rect", &CanvasContext::Rect, napi_enumerable),
-        InstanceMethod("fill", &CanvasContext::Fill, napi_enumerable),
-        InstanceMethod("isPointInPath", &CanvasContext::IsPointInPath, napi_enumerable),
-        InstanceMethod("scale", &CanvasContext::Scale, napi_enumerable),
-        InstanceMethod("arcTo", &CanvasContext::ArcTo, napi_enumerable),
-        InstanceMethod("setFont", &CanvasContext::SetFont, napi_enumerable),
-        InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
-        InstanceMethod("loadFont", &CanvasContext::LoadFont, napi_enumerable),
-        InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
-        InstanceMethod("fillRect", &CanvasContext::FillRect, napi_enumerable),
-        InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
-        InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable),
-        InstanceMethod("setShader", &CanvasContext::SetShader, napi_enumerable),
-        InstanceMethod("setTextAlign", &CanvasContext::SetTextAlign, napi_enumerable),
-        InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
-        InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
-        InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
-        InstanceMethod("DrawImageBuffer", &CanvasContext::DrawImageBuffer, napi_enumerable),
-        InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
-        InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
-        InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable)})
+               env,
+               "CanvasContext",
+               {InstanceMethod("beginPath", &CanvasContext::BeginPath, napi_enumerable),
+                InstanceMethod("moveTo", &CanvasContext::MoveTo, napi_enumerable),
+                InstanceMethod("lineTo", &CanvasContext::LineTo, napi_enumerable),
+                InstanceMethod("closePath", &CanvasContext::ClosePath, napi_enumerable),
+                InstanceMethod("stroke", &CanvasContext::Stroke, napi_enumerable),
+                InstanceMethod("clear", &CanvasContext::Clear, napi_enumerable),
+                InstanceMethod("translate", &CanvasContext::Translate, napi_enumerable),
+                InstanceMethod("setTransform", &CanvasContext::SetTransform, napi_enumerable),
+                InstanceMethod("strokeStyle", &CanvasContext::StrokeStyle, napi_enumerable),
+                InstanceMethod("fillStyle", &CanvasContext::StrokeStyle, napi_enumerable),
+                InstanceMethod("lineWidth", &CanvasContext::LineWidth, napi_enumerable),
+                InstanceMethod("rotate", &CanvasContext::Rotate, napi_enumerable),
+                InstanceMethod("arc", &CanvasContext::Arc, napi_enumerable),
+                InstanceMethod("strokeRect", &CanvasContext::StrokeRect, napi_enumerable),
+                InstanceMethod("lineCap", &CanvasContext::LineCap, napi_enumerable),
+                InstanceMethod("lineJoin", &CanvasContext::SetStrokeJoin, napi_enumerable),
+                InstanceMethod("rect", &CanvasContext::Rect, napi_enumerable),
+                InstanceMethod("fill", &CanvasContext::Fill, napi_enumerable),
+                InstanceMethod("isPointInPath", &CanvasContext::IsPointInPath, napi_enumerable),
+                InstanceMethod("scale", &CanvasContext::Scale, napi_enumerable),
+                InstanceMethod("arcTo", &CanvasContext::ArcTo, napi_enumerable),
+                InstanceMethod("setFont", &CanvasContext::SetFont, napi_enumerable),
+                InstanceMethod("strokeText", &CanvasContext::StrokeText, napi_enumerable),
+                InstanceMethod("loadFont", &CanvasContext::LoadFont, napi_enumerable),
+                InstanceMethod("fillText", &CanvasContext::FillText, napi_enumerable),
+                InstanceMethod("fillRect", &CanvasContext::FillRect, napi_enumerable),
+                InstanceMethod("measureText", &CanvasContext::MeasureText, napi_enumerable),
+                InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable),
+                InstanceMethod("setShader", &CanvasContext::SetShader, napi_enumerable),
+                InstanceMethod("setTextAlign", &CanvasContext::SetTextAlign, napi_enumerable),
+                InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
+                InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
+                InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
+                InstanceMethod("DrawImageBuffer", &CanvasContext::DrawImageBuffer, napi_enumerable),
+                InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
+                InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
+                InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable),
+                InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable)})
         .New({});
 }
 
@@ -669,5 +670,24 @@ Napi::Value CanvasContext::DrawImageWH(const Napi::CallbackInfo &info)
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
     _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::RoundRect(const Napi::CallbackInfo &info)
+{
+    SkScalar x = info[0].As<Napi::Number>().FloatValue();
+    SkScalar y = info[1].As<Napi::Number>().FloatValue();
+    SkScalar w = info[2].As<Napi::Number>().FloatValue();
+    SkScalar h = info[3].As<Napi::Number>().FloatValue();
+
+    Napi::Array radiiArray = info[4].As<Napi::Array>();
+    SkScalar radii[8];
+
+    for (size_t i = 0; i < 8; i++)
+    {
+        radii[i] = radiiArray.Get(i).As<Napi::Number>().FloatValue();
+    }
+    _path.addRoundRect(SkRect::MakeXYWH(x, y, w, h), radii);
+
     return Napi::Value();
 }

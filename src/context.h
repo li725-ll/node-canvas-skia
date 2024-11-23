@@ -94,6 +94,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
     Napi::Value DrawImage(const Napi::CallbackInfo &info);
     Napi::Value DrawImageBuffer(const Napi::CallbackInfo &info);
     Napi::Value DrawImageWH(const Napi::CallbackInfo &info);
+    Napi::Value RoundRect(const Napi::CallbackInfo &info);
 };
 
 #endif

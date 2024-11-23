@@ -153,6 +153,58 @@ export class CanvasContext {
   public isPointInPath(x: number, y: number) {
     this.context.isPointInPath(x, y);
   }
+  public roundRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radii: number | number[]
+  ) {
+    if (typeof radii === "number") {
+      radii = Array.from({ length: 8 }, () => radii) as number[];
+    } else {
+      if (radii.length === 1) {
+        radii = Array.from({ length: 8 }, () => (radii as number[])[0]);
+      } else if (radii.length === 2) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1]
+        ];
+      } else if (radii.length === 3) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[2],
+          radii[2],
+          radii[1],
+          radii[1]
+        ];
+      } else if (radii.length === 4) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[2],
+          radii[2],
+          radii[3],
+          radii[3]
+        ];
+      } else {
+        throw new Error("Invalid radii length");
+      }
+    }
+
+    return this.context.roundRect(x, y, width, height, radii);
+  }
   public scale(scalewidth: number, scaleheight: number) {
     this.context.scale(scalewidth, scaleheight);
   }
