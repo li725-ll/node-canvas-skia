@@ -1,13 +1,14 @@
 import Utils from "./utils";
 import Gradient from "./gradient";
 import Canvas from "./canvas";
+import { TypeColorVAL } from "./colors";
 
 export class CanvasContext {
   private context: any;
   public canvas: Canvas;
-  public fillStyle: string | Gradient = "#000000"; // color|gradient|pattern
-  public strokeStyle: string | Gradient = "#000000"; // color|gradient|pattern
-  public shadowColor: string = "#000000"; // color
+  public fillStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
+  public strokeStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
+  public shadowColor: string | TypeColorVAL = "#000000"; // color
   public lineJoin: "bevel" | "round" | "miter" = "miter"; // bevel斜角round圆角miter尖角
   public shadowBlur: number = 0;
   public shadowOffsetX: number = 0;
@@ -40,9 +41,13 @@ export class CanvasContext {
 
   constructor(ctx: any, canvas: Canvas) {
     this.canvas = canvas;
-    const initColor = Utils.string2RGBA("rgba(255,255,255,1)");
+    const initColor = Utils.string2RGBA("rgba(0,0,0,0)");
     this.context = ctx;
     this.context.clear(initColor.value);
+  }
+
+  public clear(color: string) {
+    this.context.clear(color);
   }
   public createLinearGradient(
     x0: number,
@@ -96,6 +101,14 @@ export class CanvasContext {
     this.context.stroke();
   }
 
+  public save() {
+    this.canvas.save();
+  }
+
+  public restore() {
+    this.canvas.restore();
+  }
+
   public beginPath() {
     this.context.beginPath();
   }
@@ -140,6 +153,58 @@ export class CanvasContext {
   public isPointInPath(x: number, y: number) {
     this.context.isPointInPath(x, y);
   }
+  public roundRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radii: number | number[]
+  ) {
+    if (typeof radii === "number") {
+      radii = Array.from({ length: 8 }, () => radii) as number[];
+    } else {
+      if (radii.length === 1) {
+        radii = Array.from({ length: 8 }, () => (radii as number[])[0]);
+      } else if (radii.length === 2) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1]
+        ];
+      } else if (radii.length === 3) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[2],
+          radii[2],
+          radii[1],
+          radii[1]
+        ];
+      } else if (radii.length === 4) {
+        radii = [
+          radii[0],
+          radii[0],
+          radii[1],
+          radii[1],
+          radii[2],
+          radii[2],
+          radii[3],
+          radii[3]
+        ];
+      } else {
+        throw new Error("Invalid radii length");
+      }
+    }
+
+    return this.context.roundRect(x, y, width, height, radii);
+  }
   public scale(scalewidth: number, scaleheight: number) {
     this.context.scale(scalewidth, scaleheight);
   }
@@ -167,7 +232,7 @@ export class CanvasContext {
     e: number,
     f: number
   ) {
-    return { a, b, c, d, e, f };
+    this.context.setTransform(a, b, c, d, e, f);
   }
 
   public fillText(text: string, x: number, y: number, maxWidth?: number) {
@@ -271,13 +336,7 @@ export class CanvasContext {
         : this.strokeStyle;
     const color = Utils.string2RGBA(value);
     switch (color.type) {
-      case "RGBA":
-        this.context.strokeStyle(color.value);
-        break;
-      case "RGB":
-        this.context.strokeStyle(color.value);
-        break;
-      case "HEX":
+      case "COLOR":
         this.context.strokeStyle(color.value);
         break;
       case "SHADER":
@@ -291,13 +350,7 @@ export class CanvasContext {
       this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
     const color = Utils.string2RGBA(value);
     switch (color.type) {
-      case "RGBA":
-        this.context.fillStyle(color.value);
-        break;
-      case "RGB":
-        this.context.fillStyle(color.value);
-        break;
-      case "HEX":
+      case "COLOR":
         this.context.fillStyle(color.value);
         break;
       case "SHADER":

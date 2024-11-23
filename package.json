@@ -1,13 +1,15 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.9",
   "main": "dist/index.js",
   "scripts": {
+    "install": "node scripts/preinstall.js",
+    "postinstall": "node scripts/install.js && npm run build",
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
     "test": "pnpm run pretest && jest",
-    "prettier": "pnpm exec prettier . --write",
+    "prettier": "pnpm exec prettier --write .",
     "prepare": "husky",
     "lint": "eslint --fix",
     "publish": "npm publish"
@@ -21,8 +23,12 @@
   ],
   "types": "dist/index.d.ts",
   "files": [
+    "lib",
+    "src",
+    "dist",
     "build",
-    "dist"
+    "scripts",
+    "binding.gyp"
   ],
   "type": "commonjs",
   "engines": {
@@ -49,6 +55,8 @@
     "typescript-eslint": "^8.11.0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
+    "axios": "^1.7.7",
     "node-addon-api": "^8.2.1"
   },
   "lint-staged": {

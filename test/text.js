@@ -43,7 +43,6 @@ function drawFontAlignText() {
   ctx.strokeText("中国智造", 800, 500);
 }
 
-
 function measureText() {
   ctx.font = "60px Reejipinbo";
   const result = ctx.measureText("Hello Skia");
