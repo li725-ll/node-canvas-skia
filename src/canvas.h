@@ -17,17 +17,17 @@
 class Canvas : public Napi::ObjectWrap<Canvas>
 {
 private:
-  sk_sp<SkSurface> _surface;
-  Napi::ObjectReference _context;
+    sk_sp<SkSurface> _surface;
+    Napi::ObjectReference _context;
 
-  Napi::Value GetContext(const Napi::CallbackInfo &info);
-  Napi::Value SaveAsImage(const Napi::CallbackInfo &info);
-  Napi::Value ToBuffer(const Napi::CallbackInfo &info);
-  Napi::Value Save(const Napi::CallbackInfo &info);
-  Napi::Value Restore(const Napi::CallbackInfo &info);
+    Napi::Value GetContext(const Napi::CallbackInfo &info);
+    Napi::Value SaveAsImage(const Napi::CallbackInfo &info);
+    Napi::Value ToBuffer(const Napi::CallbackInfo &info);
+    Napi::Value Save(const Napi::CallbackInfo &info);
+    Napi::Value Restore(const Napi::CallbackInfo &info);
 public:
-  static Napi::Function Init(Napi::Env env);
-  Canvas(const Napi::CallbackInfo &info);
+    static Napi::Function Init(Napi::Env env);
+    Canvas(const Napi::CallbackInfo &info);
 };
 
 #endif

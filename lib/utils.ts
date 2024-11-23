@@ -1,19 +1,28 @@
 import skia from "./binding";
+import { TypeColorVAL } from "./colors";
 
 export class Utils {
-  public static string2RGBA(color: string): {
+  private static _colorMap = skia.SkiaUtils.colorMap();
+  public static string2RGBA(color: string | TypeColorVAL): {
     value: number;
-    type: "RGBA" | "RGB" | "SHADER" | "HEX";
+    type: "COLOR" | "SHADER";
   } {
     const value = String(color).toUpperCase();
     const result: {
-      value: number;
-      type: "RGBA" | "RGB" | "SHADER" | "HEX";
-    } = { value: 0, type: "RGBA" };
+      value: number | null;
+      type: "COLOR" | "SHADER";
+    } = { value: null, type: "COLOR" };
+
+    if (Object.keys(Utils._colorMap).includes(value.toLowerCase())) {
+      return {
+        value: Utils._colorMap[value.toLowerCase()],
+        type: "COLOR"
+      };
+    }
 
     if (value.startsWith("RGBA")) {
-      result.type = "RGBA";
-      const temp = value.match(/\d+/g);
+      result.type = "COLOR";
+      const temp = value.replaceAll(/(?<!\d)\./g, "0.").match(/\d+/g);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
@@ -27,7 +36,7 @@ export class Utils {
 
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
-      result.type = "RGB";
+      result.type = "COLOR";
       const temp = value.match(/\d+/g);
       if (!temp || temp!.length < 3) {
         throw new Error("Invalid color format");
@@ -40,7 +49,7 @@ export class Utils {
       result.type = "SHADER";
       result.value = parseInt(value.replace("#SHADER", ""));
     } else if (value.startsWith("#")) {
-      result.type = "HEX";
+      result.type = "COLOR";
       const temp = value.slice(1);
       let middleValue;
       if (temp.length === 3) {
@@ -62,13 +71,13 @@ export class Utils {
       }
     }
 
-    if (result.value == 0 && result.type == "RGBA") {
+    if (result.value == null && result.type == "COLOR") {
       throw new Error(
         "Invalid color format, color names are currently not supported"
       );
     }
 
-    return result;
+    return result as { value: number; type: "COLOR" | "SHADER" };
   }
 
   public static string2Font(font: string): any {

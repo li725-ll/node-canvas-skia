@@ -8,6 +8,6 @@ indent_style = space
 indent_size = 2
 max_line_length = 80
 
-[*.gyp]
+[*{.gyp,.cpp,.h,.cc}]
 tab_width = 4
 indent_size = 4

@@ -7,7 +7,7 @@ const { testRect } = require("./rect");
 const { drawText } = require("./text");
 const { testImage } = require("./images");
 const { testGradinent } = require("./gradient");
-const { setInterval } = require("timers");
+const { testTransform } = require("./transform");
 
 const outputPath = path.resolve(__dirname, "output");
 
@@ -37,6 +37,10 @@ test("gradient", () => {
 
 test("image", () => {
   testImage(outputPath);
+});
+
+test("transform", () => {
+  testTransform(outputPath);
 });
 
 test("gpu", () => {

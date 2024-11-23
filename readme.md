@@ -38,8 +38,8 @@ const TAU = 6.2831853;
 ctx.beginPath();
 ctx.moveTo(R, 0);
 for (let i = 1; i < 7; ++i) {
-    const theta = (3 * i * TAU) / 7;
-    ctx.lineTo(R * Math.cos(theta), R * Math.sin(theta));
+  const theta = (3 * i * TAU) / 7;
+  ctx.lineTo(R * Math.cos(theta), R * Math.sin(theta));
 }
 ctx.closePath();
 ctx.translate(0.5 * scale, 0.5 * scale);
@@ -93,8 +93,9 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - strokeRect
    - drawImage
    - loadFont
+   - roundRect
 3. Gradient
-   + addColorStop
+   - addColorStop
 
 # license
 
@@ -104,13 +105,11 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
 > modification, are permitted provided that the following conditions are
 > met:
 >
->   \* Redistributions of source code must retain the above copyright
-> notice, this list of conditions and the following disclaimer.
->   \* Redistributions in binary form must reproduce the above
+> \* Redistributions of source code must retain the above copyright
+> notice, this list of conditions and the following disclaimer. \* Redistributions in binary form must reproduce the above
 > copyright notice, this list of conditions and the following disclaimer
 > in the documentation and/or other materials provided with the
-> distribution.
->   \* Neither the name of Google Inc. nor the names of its
+> distribution. \* Neither the name of Google Inc. nor the names of its
 > contributors may be used to endorse or promote products derived from
 > this software without specific prior written permission.
 >
