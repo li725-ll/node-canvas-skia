@@ -44,6 +44,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
                 InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
                 InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
                 InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable),
+                InstanceMethod("setLineDash", &CanvasContext::SetLineDash, napi_enumerable),
                 InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable)})
         .New({});
 }
@@ -689,5 +690,19 @@ Napi::Value CanvasContext::RoundRect(const Napi::CallbackInfo &info)
     }
     _path.addRoundRect(SkRect::MakeXYWH(x, y, w, h), radii);
 
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetLineDash(const Napi::CallbackInfo &info)
+{
+    Napi::Array segments = info[0].As<Napi::Array>();
+    SkScalar* dashSegments = new SkScalar[segments.Length()];
+    for (size_t i = 0; i < segments.Length(); i++)
+    {
+        dashSegments[i] = segments.Get(i).As<Napi::Number>().FloatValue();
+    }
+    sk_sp<SkPathEffect> skDashPathEffect = SkDashPathEffect::Make(dashSegments, segments.Length(), 0);
+    _paint.setPathEffect(skDashPathEffect);
+    delete[] dashSegments;
     return Napi::Value();
 }

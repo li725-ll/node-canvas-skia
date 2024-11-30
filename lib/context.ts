@@ -93,6 +93,11 @@ export class CanvasContext {
     this.handleFillColor();
     this.context.fill();
   }
+
+  public setLineDash(segments: number[]) {
+    this.context.setLineDash(segments);
+  }
+
   public stroke() {
     this.handleStrokeColor();
     this.context.lineCap(this.lineCap);

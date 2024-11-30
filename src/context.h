@@ -17,6 +17,7 @@
 #include <include/core/SkTextBlob.h>
 #include <include/core/SkSamplingOptions.h>
 #include <include/effects/SkGradientShader.h>
+#include <include/effects/SkDashPathEffect.h>
 #include <include/effects/SkDiscretePathEffect.h>
 
 #include "gradient.h"
@@ -95,6 +96,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
     Napi::Value DrawImageBuffer(const Napi::CallbackInfo &info);
     Napi::Value DrawImageWH(const Napi::CallbackInfo &info);
     Napi::Value RoundRect(const Napi::CallbackInfo &info);
+    Napi::Value SetLineDash(const Napi::CallbackInfo &info);
 };
 
 #endif
