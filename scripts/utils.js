@@ -6,14 +6,28 @@ const axois = require("axios");
 const AdmZip = require("adm-zip");
 
 function getPlatform() {
+  const arch = os.arch();
   switch (os.platform()) {
     case "win32":
-      return "windows";
+      return ["windows", arch];
     case "darwin":
-      return "macos";
+      return ["macos", arch];
     default:
       throw new Error("Unsupported platform");
   }
+}
+
+function checkNetwork() {
+  return new Promise((resolve) => {
+    axois
+      .get("https://www.google.com", { timeout: 3000 })
+      .then(() => {
+        resolve(true);
+      })
+      .catch(() => {
+        resolve(false);
+      });
+  });
 }
 
 function downloadFile(url, dest) {
@@ -69,5 +83,6 @@ module.exports = {
   unpackZip,
   getPlatform,
   downloadFile,
+  checkNetwork,
   createLibraryFolder
 };

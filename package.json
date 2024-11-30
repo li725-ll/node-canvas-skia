@@ -1,6 +1,6 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.10",
   "main": "dist/index.js",
   "scripts": {
     "install": "node scripts/preinstall.js",
