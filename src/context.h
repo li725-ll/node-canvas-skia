@@ -97,6 +97,8 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
     Napi::Value DrawImageWH(const Napi::CallbackInfo &info);
     Napi::Value RoundRect(const Napi::CallbackInfo &info);
     Napi::Value SetLineDash(const Napi::CallbackInfo &info);
+    Napi::Value BezierCurveTo(const Napi::CallbackInfo &info);
+    Napi::Value QuadraticCurveTo(const Napi::CallbackInfo &info);
 };
 
 #endif

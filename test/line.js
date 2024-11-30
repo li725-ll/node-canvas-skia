@@ -125,6 +125,25 @@ function drawLineDash() {
   ctx.stroke();
 }
 
+function drawBezierCurveTo() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,255,0,1)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(390, 180);
+  ctx.bezierCurveTo(410, 130, 440, 130, 470, 150);
+  ctx.setLineDash([]);
+  ctx.stroke();
+}
+
+function drawQuadraticCurveTo() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,255,0,1)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(490, 180);
+  ctx.quadraticCurveTo(510, 130, 510, 150);
+  ctx.stroke();
+}
+
 function drawHeptagramFill() {
   const scale = 100;
   const R = 0.45 * scale;
@@ -186,6 +205,8 @@ function testLine(outputPath) {
   drawRect(); // draw a rectangle
   drawJoinLine(); // draw a join line
   drawLineDash(); // draw a line dash
+  drawBezierCurveTo(); // draw a bezier curve
+  drawQuadraticCurveTo(); // draw a quadratic curve
   drawHeptagramFill(); // draw a heptagram with fill
   drawTriangleFill(); // draw a triangle with fill
   drawRectFill(); // draw a rectangle with fill

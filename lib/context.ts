@@ -126,10 +126,14 @@ export class CanvasContext {
   public lineTo(x: number, y: number) {
     this.context.lineTo(x, y);
   }
-  public clip() {}
-  public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
-    return { cpx, cpy, x, y };
+
+  public clip() {
+    throw new Error("Not implemented");
   }
+  public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
+    this.context.quadraticCurveTo(cpx, cpy, x, y);
+  }
+
   public bezierCurveTo(
     cp1x: number,
     cp1y: number,
@@ -138,7 +142,7 @@ export class CanvasContext {
     x: number,
     y: number
   ) {
-    return { cp1x, cp1y, cp2x, cp2y, x, y };
+    this.context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
   }
   public arc(
     x: number,
