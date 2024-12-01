@@ -44,6 +44,9 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
                 InstanceMethod("createConicGradient", &CanvasContext::CreateConicGradient, napi_enumerable),
                 InstanceMethod("createLinearGradient", &CanvasContext::CreateLinearGradient, napi_enumerable),
                 InstanceMethod("createRadialGradient", &CanvasContext::CreateRadialGradient, napi_enumerable),
+                InstanceMethod("setLineDash", &CanvasContext::SetLineDash, napi_enumerable),
+                InstanceMethod("quadraticCurveTo", &CanvasContext::QuadraticCurveTo, napi_enumerable),
+                InstanceMethod("bezierCurveTo", &CanvasContext::BezierCurveTo, napi_enumerable),
                 InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable)})
         .New({});
 }
@@ -689,5 +692,41 @@ Napi::Value CanvasContext::RoundRect(const Napi::CallbackInfo &info)
     }
     _path.addRoundRect(SkRect::MakeXYWH(x, y, w, h), radii);
 
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetLineDash(const Napi::CallbackInfo &info)
+{
+    Napi::Array segments = info[0].As<Napi::Array>();
+    SkScalar* dashSegments = new SkScalar[segments.Length()];
+    for (size_t i = 0; i < segments.Length(); i++)
+    {
+        dashSegments[i] = segments.Get(i).As<Napi::Number>().FloatValue();
+    }
+    sk_sp<SkPathEffect> skDashPathEffect = SkDashPathEffect::Make(dashSegments, segments.Length(), 0);
+    _paint.setPathEffect(skDashPathEffect);
+    delete[] dashSegments;
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::QuadraticCurveTo(const Napi::CallbackInfo &info) {
+    SkScalar cpx = info[0].As<Napi::Number>().FloatValue();
+    SkScalar cpy = info[1].As<Napi::Number>().FloatValue();
+    SkScalar x = info[2].As<Napi::Number>().FloatValue();
+    SkScalar y = info[3].As<Napi::Number>().FloatValue();
+
+    _path.quadTo(cpx, cpy, x, y);
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::BezierCurveTo(const Napi::CallbackInfo &info)
+{
+    SkScalar cp1x = info[0].As<Napi::Number>().FloatValue();
+    SkScalar cp1y = info[1].As<Napi::Number>().FloatValue();
+    SkScalar cp2x = info[2].As<Napi::Number>().FloatValue();
+    SkScalar cp2y = info[3].As<Napi::Number>().FloatValue();
+    SkScalar x = info[4].As<Napi::Number>().FloatValue();
+    SkScalar y = info[5].As<Napi::Number>().FloatValue();
+    _path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
     return Napi::Value();
 }

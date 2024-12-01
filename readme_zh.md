@@ -94,6 +94,9 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - drawImage
    - loadFont
    - roundRect
+   - setLineDash
+   - quadraticCurveTo
+   - bezierCurveTo
 3. Gradient
    - addColorStop
 
