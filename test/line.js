@@ -115,6 +115,35 @@ function drawJoinLine() {
   ctx.stroke();
 }
 
+function drawLineDash() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,255,0,1)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(280, 130);
+  ctx.lineTo(380, 130);
+  ctx.setLineDash([2, 2]);
+  ctx.stroke();
+}
+
+function drawBezierCurveTo() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,255,0,1)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(390, 180);
+  ctx.bezierCurveTo(410, 130, 440, 130, 470, 150);
+  ctx.setLineDash([]);
+  ctx.stroke();
+}
+
+function drawQuadraticCurveTo() {
+  ctx.beginPath();
+  ctx.strokeStyle = "RGBA(255,255,0,1)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(490, 180);
+  ctx.quadraticCurveTo(510, 130, 510, 150);
+  ctx.stroke();
+}
+
 function drawHeptagramFill() {
   const scale = 100;
   const R = 0.45 * scale;
@@ -153,6 +182,7 @@ function drawRectFill() {
 function drawRoundRectStroke() {
   ctx.beginPath();
   ctx.strokeStyle = "RGBA(255,0,0,1)";
+  ctx.setLineDash([]);
   ctx.roundRect(310, 210, 90, 90, [10, 20]);
   ctx.stroke();
 }
@@ -160,7 +190,7 @@ function drawRoundRectStroke() {
 function drawRoundRectFill() {
   ctx.beginPath();
   ctx.strokeStyle = "RGBA(255,0,0,1)";
-  ctx.roundRect(20, 207, 3, 3, [1, 1, 1, 1]); // 99999997573997
+  ctx.roundRect(410, 207, 90, 90, [10, 10, 10, 10]); // 99999997573997
   ctx.closePath();
   ctx.fill();
 }
@@ -174,6 +204,9 @@ function testLine(outputPath) {
   drawArcLine(); // draw an arc line
   drawRect(); // draw a rectangle
   drawJoinLine(); // draw a join line
+  drawLineDash(); // draw a line dash
+  drawBezierCurveTo(); // draw a bezier curve
+  drawQuadraticCurveTo(); // draw a quadratic curve
   drawHeptagramFill(); // draw a heptagram with fill
   drawTriangleFill(); // draw a triangle with fill
   drawRectFill(); // draw a rectangle with fill

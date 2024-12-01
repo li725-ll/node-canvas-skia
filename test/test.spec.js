@@ -8,6 +8,7 @@ const { drawText } = require("./text");
 const { testImage } = require("./images");
 const { testGradinent } = require("./gradient");
 const { testTransform } = require("./transform");
+const { saveAndResotre } = require("./other");
 
 const outputPath = path.resolve(__dirname, "output");
 
@@ -45,4 +46,8 @@ test("transform", () => {
 
 test("gpu", () => {
   testGPU(outputPath);
+});
+
+test("other", () => {
+  saveAndResotre
 });
