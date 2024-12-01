@@ -16,9 +16,9 @@
                 # '<!(echo %WINDOWSSDKDIR%)\\Lib\\10.0.17134.0\\um\\x64\\d3d12.lib', # Windows SDK 10.0.17134.0
                 # '<!(echo %WINDOWSSDKDIR%)\\Lib\\10.0.17134.0\\um\\x64\\d3dcompiler.lib',
                 # '<!(echo %WINDOWSSDKDIR%)\\Lib\\10.0.17134.0\\um\\x64\\OpenGL32.lib',
-                '..\\Windows kits\\WindowsSDK-x64\\d3d12.lib',
-                '..\\Windows kits\\WindowsSDK-x64\\d3dcompiler.lib',
-                '..\\Windows kits\\WindowsSDK-x64\\OpenGL32.lib',
+                '..\\Windows Kits\\WindowsSDK-x64\\d3d12.lib',
+                '..\\Windows Kits\\WindowsSDK-x64\\d3dcompiler.lib',
+                '..\\Windows Kits\\WindowsSDK-x64\\OpenGL32.lib',
                 '..\\library\\glfw-3.4.bin.WIN64\\glfw-3.4.bin.WIN64\\lib-vc2022\\glfw3_mt.lib',
                 '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\d3d12allocator.lib',
                 '..\\library\\Skia-m93-87e8842e8c-windows-Release-x64\\out\\Release-x64\\expat.lib',
