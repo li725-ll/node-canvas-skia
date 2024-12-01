@@ -1,7 +1,11 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.0-alpha.10",
+  "version": "1.0.0-alpha.11",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/li725-ll/node-canvas-skia.git"
+  },
   "scripts": {
     "install": "node scripts/preinstall.js",
     "postinstall": "node scripts/install.js && npm run build",
@@ -26,9 +30,10 @@
     "lib",
     "src",
     "dist",
-    "build",
     "scripts",
-    "binding.gyp"
+    "binding.gyp",
+    "!scripts/.tmp",
+    "Windows Kits"
   ],
   "type": "commonjs",
   "engines": {
