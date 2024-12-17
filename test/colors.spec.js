@@ -315,4 +315,49 @@ describe("Colors", () => {
       path.join(__dirname, "output", "RGBA format color value test.png")
     );
   });
+
+  test("GlobalAlpha test", () => {
+    const colors = [
+      "rgb(0,0,0)",
+      "RGb(0, 255, 0)",
+      "RGB(0, 0, 0)",
+      "RGB(255,0,0)",
+      "RGB(0,0, 255)",
+      "rgb(255,255,0)",
+      "rgb(255,0,0)",
+      "rGb(255,0,255)",
+      "rgb(255,0,0)",
+      "rgb(0,255,255)"
+    ];
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
+    const ctx = canvas.getContext("2d", { antialias: true });
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const index = i * 10 + j;
+        if (index >= colors.length) {
+          break;
+        }
+
+        ctx.fillStyle = colors[index];
+        ctx.fillRect(j * 100, i * 100, 100, 100);
+        if (
+          colors[index] === "rgb(0,0,0)" ||
+          colors[index] === "RGB(0, 0, 0)"
+        ) {
+          ctx.fillStyle = "white";
+        } else {
+          ctx.fillStyle = "black";
+        }
+        ctx.fillText(colors[index], j * 100 + 20, i * 100 + 55);
+      }
+    }
+    canvas.saveAsImage(
+      path.join(__dirname, "output", "GlobalAlpha test.png")
+    );
+  });
 });

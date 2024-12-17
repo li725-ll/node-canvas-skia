@@ -60,6 +60,7 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - save
    - restore
 2. CanvasContext
+   - globalAlpha
    - beginPath
    - moveTo
    - lineTo
@@ -97,6 +98,7 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - setLineDash
    - quadraticCurveTo
    - bezierCurveTo
+   - clip
 3. Gradient
    - addColorStop
 
