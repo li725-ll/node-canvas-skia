@@ -47,10 +47,11 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
                 InstanceMethod("setLineDash", &CanvasContext::SetLineDash, napi_enumerable),
                 InstanceMethod("quadraticCurveTo", &CanvasContext::QuadraticCurveTo, napi_enumerable),
                 InstanceMethod("bezierCurveTo", &CanvasContext::BezierCurveTo, napi_enumerable),
-                InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable)})
+                InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable),
+                InstanceMethod("clip", &CanvasContext::Clip, napi_enumerable),
+                InstanceMethod("setGlobalAlpha", &CanvasContext::SetGlobalAlpha, napi_enumerable)})
         .New({});
 }
-
 CanvasContext::CanvasContext(const Napi::CallbackInfo &info)
   : Napi::ObjectWrap<CanvasContext>(info), _gradient(Napi::Persistent(Gradient::Init(info.Env())))
 {
@@ -636,6 +637,7 @@ Napi::Value CanvasContext::FillRect(const Napi::CallbackInfo &info)
 
 Napi::Value CanvasContext::DrawImage(const Napi::CallbackInfo &info)
 {
+    // TODO: Waiting for Writing
     std::string path = info[0].As<Napi::String>().Utf8Value();
     SkScalar x = info[1].As<Napi::Number>().FloatValue();
     SkScalar y = info[2].As<Napi::Number>().FloatValue();
@@ -658,7 +660,7 @@ Napi::Value CanvasContext::DrawImageBuffer(const Napi::CallbackInfo &info) {
     sk_sp<SkData> skdata = SkData::MakeWithCopy(data, size);
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(skdata);
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
+    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
     return Napi::Value();
 }
 
@@ -672,7 +674,7 @@ Napi::Value CanvasContext::DrawImageWH(const Napi::CallbackInfo &info)
 
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
+    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
     return Napi::Value();
 }
 
@@ -728,5 +730,18 @@ Napi::Value CanvasContext::BezierCurveTo(const Napi::CallbackInfo &info)
     SkScalar x = info[4].As<Napi::Number>().FloatValue();
     SkScalar y = info[5].As<Napi::Number>().FloatValue();
     _path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::Clip(const Napi::CallbackInfo &info)
+{
+    _canvas->clipPath(_path, true);
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetGlobalAlpha(const Napi::CallbackInfo &info)
+{
+    float alpha = info[0].As<Napi::Number>().FloatValue();
+    _paint.setAlphaf(alpha);
     return Napi::Value();
 }

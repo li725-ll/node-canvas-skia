@@ -111,6 +111,10 @@ export class CanvasContext {
   }
 
   public restore() {
+    this.strokeStyle = "#000000";
+    this.fillStyle = "#000000";
+    this.shadowColor = "#000000";
+    this.globalAlpha = 1.0;
     this.canvas.restore();
   }
 
@@ -128,8 +132,9 @@ export class CanvasContext {
   }
 
   public clip() {
-    throw new Error("Not implemented");
+    this.context.clip();
   }
+
   public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
     this.context.quadraticCurveTo(cpx, cpy, x, y);
   }
@@ -302,6 +307,7 @@ export class CanvasContext {
     y: number,
     ...arg: any
   ): void {
+    this.context.setGlobalAlpha(this.globalAlpha);
     if (arg.length === 0) {
       this.context.drawImage(image, x, y);
     } else if (arg.length === 2) {
@@ -352,6 +358,7 @@ export class CanvasContext {
         this.context.setShader(color.value);
         break;
     }
+    this.context.setGlobalAlpha(this.globalAlpha);
   }
 
   private handleFillColor() {
@@ -366,6 +373,7 @@ export class CanvasContext {
         this.context.setShader(color.value);
         break;
     }
+    this.context.setGlobalAlpha(this.globalAlpha);
   }
 }
 
