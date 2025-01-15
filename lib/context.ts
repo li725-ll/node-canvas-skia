@@ -260,6 +260,7 @@ export class CanvasContext {
   public strokeText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleStrokeColor();
     const font = Utils.string2Font(this.font);
+    this.context.lineWidth(this.lineWidth);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
     this.context.strokeText(text, x, y, maxWidth);
@@ -272,6 +273,7 @@ export class CanvasContext {
 
   public strokeRect(x: number, y: number, width: number, height: number) {
     this.handleStrokeColor();
+    this.context.lineWidth(this.lineWidth);
     this.context.strokeRect(x, y, width, height);
   }
 
