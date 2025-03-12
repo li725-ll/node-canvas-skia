@@ -29,11 +29,14 @@ export class Canvas {
     return new CanvasContext(ctx, this);
   }
 
-  public toDataURL() {
+  public toDataURL(): string {
     return "data:image/png;base64,";
   }
 
-  public toBuffer(type: "png" | "jpg" | "webp" = "png", quality: number = 30) {
+  public toBuffer(
+    type: "png" | "jpg" | "webp" | "bmp" = "png",
+    quality: number = 30
+  ): Buffer {
     return this.skiaCanvas.toBuffer(type, quality);
   }
 
@@ -47,7 +50,7 @@ export class Canvas {
 
   public saveAsImage(
     path: string,
-    type: "png" | "jpg" | "webp" = "png",
+    type: "png" | "jpg" | "webp" | "bmp" = "png",
     quality: number = 30
   ) {
     this.skiaCanvas.saveAsImage(path, type, quality);

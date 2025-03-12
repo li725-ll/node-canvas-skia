@@ -1,5 +1,9 @@
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <iostream>
 #include "canvas.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
 
 Napi::Function Canvas::Init(Napi::Env env)
 {
@@ -30,7 +34,7 @@ Canvas::Canvas(const Napi::CallbackInfo &info)
     if(GPU == 0 ) {
         _surface = SkSurface::MakeRasterN32Premul(width, height);
     } else if (GPU == 1) {
-#ifdef _WIN32   
+#ifdef _WIN32
         CreateOpenGLContext();
 
         sk_sp<GrDirectContext> context = GrDirectContext::MakeGL();
@@ -100,37 +104,7 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 
     SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
 
-    if (format == "png") {
-        imageFormat = SkEncodedImageFormat::kPNG;
-    } else if (format == "jpg") {
-        imageFormat = SkEncodedImageFormat::kJPEG;
-    } else if (format == "webp") {
-        imageFormat = SkEncodedImageFormat::kWEBP;
-    } else
-    {
-        Napi::Error::New(env, "Unsupported image format").ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-
-    sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
-    sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
-
-    FILE *f = fopen(path.c_str(), "wb");
-    fwrite(data->data(), data->size(), 1, f);
-    fclose(f);
-    return Napi::Boolean::New(env, true);
-}
-
-Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
-{
-    Napi::Env env = info.Env();
-
-    std::string format = info[0].As<Napi::String>().Utf8Value();
-    int quality = info[1].As<Napi::Number>().Int32Value();
-
-    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
-
-    if (format == "png")
+    if (format == "png" || format == "bmp")
     {
         imageFormat = SkEncodedImageFormat::kPNG;
     }
@@ -151,9 +125,76 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
     sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
     sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
 
+    if (format == "bmp")
+    {
+        int width, height, channels;
+        unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
+        stbi_write_bmp(path.c_str(), width, height, channels, image_data);
+        stbi_image_free(image_data);
+        return Napi::Boolean::New(env, true);
+    }
+
+    FILE *f = fopen(path.c_str(), "wb");
+    fwrite(data->data(), data->size(), 1, f);
+    fclose(f);
+    return Napi::Boolean::New(env, true);
+}
+
+void write_to_memory(void *context, void *data, int size)
+{
+    std::vector<uint8_t> *buffer = static_cast<std::vector<uint8_t> *>(context);
+    unsigned char *byte = static_cast<unsigned char *>(data);
+    buffer->insert(buffer->end(), byte, byte + size);
+}
+
+Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    std::string format = info[0].As<Napi::String>().Utf8Value();
+    int quality = info[1].As<Napi::Number>().Int32Value();
+
+    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+
+    if (format == "png" || format == "bmp")
+    {
+        imageFormat = SkEncodedImageFormat::kPNG;
+    }
+    else if (format == "jpg")
+    {
+        imageFormat = SkEncodedImageFormat::kJPEG;
+    }
+    else if (format == "webp")
+    {
+        imageFormat = SkEncodedImageFormat::kWEBP;
+    }
+    else
+    {
+        Napi::Error::New(env, "Unsupported image format").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+
+    sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
+    sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
+
     Napi::Buffer<uint8_t> buffer = Napi::Buffer<uint8_t>::New(env, data->size());
+
+    if (format == "bmp")
+    {
+        int width, height, channels;
+        std::vector buffer = std::vector<unsigned char>();
+        unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
+        stbi_write_bmp_to_func(write_to_memory, &buffer, width, height, channels, image_data);
+
+        Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, buffer.size());
+        memcpy(result.Data(), buffer.data(), buffer.size());
+        stbi_image_free(image_data);
+
+        return result;
+    }
+
     buffer.Set("length", data->size());
     memcpy(buffer.Data(), data->data(), data->size());
-
     return buffer;
 }
