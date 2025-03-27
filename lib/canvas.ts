@@ -34,7 +34,7 @@ export class Canvas {
   }
 
   public toBuffer(
-    type: "png" | "jpg" | "webp" | "bmp" = "png",
+    type: "png" | "jpg" | "webp" | "bmp" | "matrix" = "png",
     quality: number = 30
   ): Buffer {
     return this.skiaCanvas.toBuffer(type, quality);

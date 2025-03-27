@@ -15,6 +15,12 @@ test("buffer bmp", () => {
   const temp = canvas.toBuffer("bmp");
 });
 
+test("buffer matrix", () => {
+  ctx.drawImage(path.resolve(__dirname, "./images/cat.jpg"), 0, 0, 500, 500);
+  const temp = canvas.toBuffer("matrix");
+  console.log(temp);
+});
+
 test("read bmp", () => {
   const data = fs.readFileSync(path.resolve(__dirname, "./output/cat.bmp"));
   console.log(data.length);

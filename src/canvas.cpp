@@ -160,7 +160,7 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
     {
         imageFormat = SkEncodedImageFormat::kPNG;
     }
-    else if (format == "jpg")
+    else if (format == "jpg" || format == "matrix")
     {
         imageFormat = SkEncodedImageFormat::kJPEG;
     }
@@ -180,18 +180,49 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
 
     Napi::Buffer<uint8_t> buffer = Napi::Buffer<uint8_t>::New(env, data->size());
 
-    if (format == "bmp")
+    if (format == "bmp" || format == "matrix")
     {
         int width, height, channels;
         std::vector buffer = std::vector<unsigned char>();
         unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
-        stbi_write_bmp_to_func(write_to_memory, &buffer, width, height, channels, image_data);
+        if (format == "matrix") {
+            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, width * height * 3);
 
-        Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, buffer.size());
-        memcpy(result.Data(), buffer.data(), buffer.size());
-        stbi_image_free(image_data);
+            if (channels == 4)
+            {
+                std::vector<uint8_t> buffer;
+                for (long i = 0; i < width * height; i++)
+                {
+                    if (i == 0 || i % 3 != 0)
+                    {
+                        buffer.push_back(image_data[i]);
+                    }
+                }
 
-        return result;
+                memcpy(result.Data(), buffer.data(), width * height * 3);
+                stbi_image_free(image_data);
+                return result;
+            }
+            else if (channels != 3)
+            {
+                stbi_image_free(image_data);
+                Napi::TypeError::New(env, "Invalid channels").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+
+            memcpy(result.Data(), image_data, width * height * 3);
+            stbi_image_free(image_data);
+            
+            return result;
+        } else {
+            stbi_write_bmp_to_func(write_to_memory, &buffer, width, height, channels, image_data);
+
+            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, buffer.size());
+            memcpy(result.Data(), buffer.data(), buffer.size());
+            stbi_image_free(image_data);
+
+            return result;
+        }
     }
 
     buffer.Set("length", data->size());
