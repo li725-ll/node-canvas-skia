@@ -37,6 +37,7 @@ Napi::Object CanvasContext::CanvasContext2Object(Napi::Env env)
                 InstanceMethod("getFonts", &CanvasContext::GetFonts, napi_enumerable),
                 InstanceMethod("setShader", &CanvasContext::SetShader, napi_enumerable),
                 InstanceMethod("setTextAlign", &CanvasContext::SetTextAlign, napi_enumerable),
+                InstanceMethod("setTextBaseline", &CanvasContext::SetTextBaseline, napi_enumerable),
                 InstanceMethod("clearRect", &CanvasContext::ClearRect, napi_enumerable),
                 InstanceMethod("drawImage", &CanvasContext::DrawImage, napi_enumerable),
                 InstanceMethod("drawImageWH", &CanvasContext::DrawImageWH, napi_enumerable),
@@ -342,7 +343,8 @@ Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
 
     _paint.setStyle(SkPaint::kStroke_Style);
     SkScalar start = ApplyTextAlign(text, x);
-    _canvas->drawString(text.c_str(), start, y, _font, _paint);
+    SkScalar baseline = ApplyTextBaseline(text, y);
+    _canvas->drawString(text.c_str(), start, baseline, _font, _paint);
     return Napi::Value();
 }
 
@@ -355,7 +357,8 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
 
     _paint.setStyle(SkPaint::kFill_Style);
     SkScalar start = ApplyTextAlign(text, x);
-    _canvas->drawString(text.c_str(), start, y, _font, _paint);
+    SkScalar baseline = ApplyTextBaseline(text, y);
+    _canvas->drawString(text.c_str(), start, baseline, _font, _paint);
     return Napi::Value();
 }
 
@@ -591,33 +594,101 @@ Napi::Value CanvasContext::SetTextAlign(const Napi::CallbackInfo &info)
     return Napi::Value();
 }
 
+Napi::Value CanvasContext::SetTextBaseline(const Napi::CallbackInfo &info)
+{
+    std::string textBaseline = info[0].As<Napi::String>().Utf8Value();
+    if (textBaseline == "top")
+    {
+        _textBaseline = TextBaseline::TOP;
+    }
+    else if (textBaseline == "hanging")
+    {
+        _textBaseline = TextBaseline::HANGING;
+    }
+    else if (textBaseline == "middle")
+    {
+        _textBaseline = TextBaseline::MIDDLE;
+    }
+    else if (textBaseline == "alphabetic")
+    {
+        _textBaseline = TextBaseline::ALPHABETIC;
+    }
+    else if (textBaseline == "ideographic")
+    {
+        _textBaseline = TextBaseline::IDEOGRAPHIC;
+    }
+    else if (textBaseline == "bottom")
+    {
+        _textBaseline = TextBaseline::BOTTOM;
+    }
+    else
+    {
+        _textBaseline = TextBaseline::ALPHABETIC;
+    }
+
+    return Napi::Value();
+}
+
 SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
 {
     switch (_textAlign)
     {
         case TextAlign::START:
         {
-        return x;
+            return x;
         }
         case TextAlign::LEFT:
         {
-        return x;
+            return x;
         }
         case TextAlign::END:
         {
-        return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+            return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
         }
         case TextAlign::RIGHT:
         {
-        return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+            return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
         }
         case TextAlign::CENTER:
         {
-        return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) / 2);
+            return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) / 2);
         }
         default:
         {
-        return x;
+            return x;
+        }
+    }
+}
+
+SkScalar CanvasContext::ApplyTextBaseline(std::string text, SkScalar y)
+{
+    SkFontMetrics fontMetrics;
+    _font.getMetrics(&fontMetrics);
+    switch (_textBaseline)
+    {
+        case TextBaseline::TOP:
+        {
+            return y - fontMetrics.fAscent;
+        }
+        case TextBaseline::HANGING:
+        {
+            return y - fontMetrics.fAscent - fontMetrics.fDescent;
+        }
+        case TextBaseline::MIDDLE:
+        {
+            return y - (fontMetrics.fAscent + fontMetrics.fDescent) / 2;
+        }
+        case TextBaseline::IDEOGRAPHIC:
+        {
+            return y - fontMetrics.fDescent;
+        }
+        case TextBaseline::BOTTOM:
+        {
+            return y - fontMetrics.fDescent;
+        }
+        default:
+        {
+            return y;
         }
     }
 }

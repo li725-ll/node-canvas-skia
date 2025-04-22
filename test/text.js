@@ -37,8 +37,10 @@ function drawFillFontText() {
 function drawFontAlignText() {
   ctx.strokeStyle = "rgba(0,255,255,1)";
   ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
   ctx.font = "60px Reejipinbo";
   ctx.fillText("Hello Skia", 400, 400);
+  ctx.textBaseline = "bottom";
   ctx.textAlign = "end";
   ctx.strokeText("中国智造", 800, 500);
 }
