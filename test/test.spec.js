@@ -5,6 +5,7 @@ const { testGPU } = require("./gpu");
 const { testLine } = require("./line");
 const { testRect } = require("./rect");
 const { drawText } = require("./text");
+const { drawBaselineText } = require("./textbaseline");
 const { testImage } = require("./images");
 const { testGradinent } = require("./gradient");
 const { testTransform } = require("./transform");
@@ -26,6 +27,10 @@ test("arc", () => {
 
 test("text", () => {
   drawText(outputPath);
+});
+
+test("textbaseline", () => {
+  drawBaselineText(outputPath);
 });
 
 test("rect", () => {

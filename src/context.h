@@ -15,6 +15,7 @@
 #include <include/core/SkShader.h>
 #include <include/core/SkFontMgr.h>
 #include <include/core/SkTextBlob.h>
+#include <include/core/SkFontMetrics.h>
 #include <include/core/SkSamplingOptions.h>
 #include <include/effects/SkGradientShader.h>
 #include <include/effects/SkDashPathEffect.h>
@@ -37,6 +38,16 @@ enum TextAlign
     CENTER
 };
 
+enum TextBaseline
+{
+    TOP,
+    HANGING,
+    MIDDLE,
+    ALPHABETIC,
+    IDEOGRAPHIC,
+    BOTTOM
+};
+
 class CanvasContext : public Napi::ObjectWrap<CanvasContext>
 {
 private:
@@ -45,12 +56,13 @@ private:
     SkPaint _paint;
     SkCanvas *_canvas;
     TextAlign _textAlign = TextAlign::LEFT;
+    TextBaseline _textBaseline = TextBaseline::ALPHABETIC;
     sk_sp<SkFontMgr> _fontMgr;
     ContextAttributesStruct _contextAttributes;
     std::map<std::string, sk_sp<SkTypeface>> _fontMap;
     Napi::ObjectReference _gradient;
-
     SkScalar ApplyTextAlign(std::string text, SkScalar x);
+    SkScalar ApplyTextBaseline(std::string text, SkScalar y);
 
 public : static Napi::Object CanvasContext2Object(Napi::Env env);
     CanvasContext(const Napi::CallbackInfo &info);
@@ -91,6 +103,7 @@ public : static Napi::Object CanvasContext2Object(Napi::Env env);
     Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
     Napi::Value CreateConicGradient(const Napi::CallbackInfo &info);
     Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
+    Napi::Value SetTextBaseline(const Napi::CallbackInfo &info);
     Napi::Value FillRect(const Napi::CallbackInfo &info);
     Napi::Value DrawImage(const Napi::CallbackInfo &info);
     Napi::Value DrawImageBuffer(const Napi::CallbackInfo &info);

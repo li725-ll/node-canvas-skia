@@ -254,6 +254,7 @@ export class CanvasContext {
     const font = Utils.string2Font(this.font);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
+    this.context.setTextBaseline(this.textBaseline);
     this.context.fillText(text, x, y, maxWidth);
   }
 
@@ -263,6 +264,7 @@ export class CanvasContext {
     this.context.lineWidth(this.lineWidth);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
+    this.context.setTextBaseline(this.textBaseline);
     this.context.strokeText(text, x, y, maxWidth);
   }
   public measureText(text: string): { width: number } {
