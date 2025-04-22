@@ -60,6 +60,8 @@ canvas.saveAsImage(path.resolve(__dirname, "heptagram.jpg"));
    - save
    - restore
 2. CanvasContext
+   - textAlign
+   - textBaseline
    - globalAlpha
    - beginPath
    - moveTo
