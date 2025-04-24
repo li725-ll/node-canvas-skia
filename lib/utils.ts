@@ -5,17 +5,20 @@ export class Utils {
   private static _colorMap = skia.SkiaUtils.colorMap();
   public static string2RGBA(color: string | TypeColorVAL): {
     value: number;
+    alpha: number;
     type: "COLOR" | "SHADER";
   } {
     const value = String(color).toUpperCase();
     const result: {
       value: number | null;
+      alpha: number;
       type: "COLOR" | "SHADER";
-    } = { value: null, type: "COLOR" };
+    } = { value: null, alpha: 1, type: "COLOR" };
 
     if (Object.keys(Utils._colorMap).includes(value.toLowerCase())) {
       return {
         value: Utils._colorMap[value.toLowerCase()],
+        alpha: 1,
         type: "COLOR"
       };
     }
@@ -33,7 +36,7 @@ export class Utils {
       } else {
         middleValue[3] = middleValue[3] * 255;
       }
-
+      result.alpha = middleValue[3] / 255;
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
       result.type = "COLOR";
@@ -42,6 +45,7 @@ export class Utils {
         throw new Error("Invalid color format");
       }
       temp.push("255");
+      result.alpha = 1;
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
 
@@ -77,7 +81,7 @@ export class Utils {
       );
     }
 
-    return result as { value: number; type: "COLOR" | "SHADER" };
+    return result as { value: number; alpha: number; type: "COLOR" | "SHADER" };
   }
 
   public static string2Font(font: string): any {
