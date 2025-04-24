@@ -370,14 +370,17 @@ export class CanvasContext {
       this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
     const color = Utils.string2RGBA(value);
     switch (color.type) {
-      case "COLOR":
+      case "COLOR": {
         this.context.fillStyle(color.value);
+        this.context.setGlobalAlpha(this.globalAlpha * color.alpha);
         break;
-      case "SHADER":
+      }
+      case "SHADER": {
         this.context.setShader(color.value);
+        this.context.setGlobalAlpha(this.globalAlpha);
         break;
+      }
     }
-    this.context.setGlobalAlpha(this.globalAlpha);
   }
 }
 

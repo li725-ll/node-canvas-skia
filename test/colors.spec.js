@@ -1,7 +1,19 @@
 const path = require("path");
 const skia = require("../dist");
+const fs = require("fs");
 
 describe("Colors", () => {
+
+  const outputDir = path.join(__dirname, "output/Colors");
+
+  if (!fs.existsSync(outputDir)) {
+    try {
+      fs.mkdirSync(outputDir, { recursive: true });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   test("Color value test", () => {
     const colors = [
       "aliceblue",
@@ -77,8 +89,8 @@ describe("Colors", () => {
       "lightgoldenrodyellow",
       "lightgray",
       "lightgreen",
-      "lightgrey",
       "lightpink",
+      "lightgrey",
       "lightsalmon",
       "lightseagreen",
       "lightskyblue",
@@ -179,7 +191,7 @@ describe("Colors", () => {
       }
     }
 
-    canvas.saveAsImage(path.join(__dirname, "output", "Color value test.png"));
+    canvas.saveAsImage(path.join(outputDir, "Color value test.png"));
   });
 
   test("Hexadecimal format color value test", () => {
@@ -221,7 +233,7 @@ describe("Colors", () => {
       }
     }
     canvas.saveAsImage(
-      path.join(__dirname, "output", "Hexadecimal format color value test.png")
+      path.join(outputDir, "Hexadecimal format color value test.png")
     );
   });
 
@@ -266,7 +278,7 @@ describe("Colors", () => {
       }
     }
     canvas.saveAsImage(
-      path.join(__dirname, "output", "RGB format color value test.png")
+      path.join(outputDir, "RGB format color value test.png")
     );
   });
 
@@ -312,7 +324,7 @@ describe("Colors", () => {
       }
     }
     canvas.saveAsImage(
-      path.join(__dirname, "output", "RGBA format color value test.png")
+      path.join(outputDir, "RGBA format color value test.png")
     );
   });
 
@@ -357,7 +369,44 @@ describe("Colors", () => {
       }
     }
     canvas.saveAsImage(
-      path.join(__dirname, "output", "GlobalAlpha test.png")
+      path.join(outputDir, "GlobalAlpha test.png")
+    );
+  });
+
+  test("RGBA test", () => {
+    const colors = [
+      "rgba(255, 0, 0, 0.1)",
+      "rgba(255, 0, 0, 0.2)",
+      "rgba(255, 0, 0, 0.3)",
+      "rgba(255, 0, 0, 0.4)",
+      "rgba(255, 0, 0, 0.5)",
+      "rgba(255, 0, 0, 0.6)",
+      "rgba(255, 0, 0, 0.7)",
+      "rgba(255, 0, 0, 0.8)",
+      "rgba(255, 0, 0, 0.9)",
+      "rgba(255, 0, 0, 1)",
+    ];
+    const canvas = new skia.Canvas(
+      10 * 100,
+      Math.ceil(colors.length / 10) * 100,
+      false
+    );
+    const ctx = canvas.getContext("2d", { antialias: true });
+    for (let i = 0; i < Math.ceil(colors.length / 10) * 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const index = i * 10 + j;
+        if (index >= colors.length) {
+          break;
+        }
+
+        ctx.fillStyle = colors[index];
+        ctx.fillRect(j * 100, i * 100, 100, 100);
+        ctx.fillStyle = "white";
+        ctx.fillText(colors[index], j * 100 + 20, i * 100 + 55);
+      }
+    }
+    canvas.saveAsImage(
+      path.join(outputDir, "RGBA test.png"), "png"
     );
   });
 });
