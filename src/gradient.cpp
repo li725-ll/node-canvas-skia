@@ -13,7 +13,6 @@ void Gradient::Init(Napi::Env env)
 }
 
 Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){}
-Gradient::~Gradient(){}
 
 Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
 {
