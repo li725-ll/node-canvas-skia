@@ -1,17 +1,15 @@
 #include "gradient.h"
 #include <iostream>
 
-Napi::Object Gradient::Init(Napi::Env env)
+Napi::FunctionReference *Gradient::constructor = new Napi::FunctionReference();
+void Gradient::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
         env,
         "Gradient",
         {InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
-    Napi::FunctionReference *constructor = new Napi::FunctionReference();
-    *constructor = Napi::Persistent(func);
-    env.SetInstanceData(constructor);
 
-    return func.New({});
+    *Gradient::constructor = Napi::Persistent(func);
 }
 
 Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){}
