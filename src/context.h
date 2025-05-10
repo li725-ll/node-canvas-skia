@@ -64,7 +64,9 @@ private:
     SkScalar ApplyTextAlign(std::string text, SkScalar x);
     SkScalar ApplyTextBaseline(std::string text, SkScalar y);
 
-public : static Napi::Object CanvasContext2Object(Napi::Env env);
+public :
+    static void Init(Napi::Env env);
+    static Napi::FunctionReference *constructor;
     CanvasContext(const Napi::CallbackInfo &info);
     ~CanvasContext() {};
 

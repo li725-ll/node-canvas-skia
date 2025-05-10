@@ -7,14 +7,15 @@
 
 Napi::Function Canvas::Init(Napi::Env env)
 {
+    CanvasContext::Init(env); // Initialize the CanvasContext class
     Napi::Function func = DefineClass(
         env,
         "Canvas",
         {InstanceMethod("getContext", &Canvas::GetContext),
-        InstanceMethod("saveAsImage", &Canvas::SaveAsImage),
-        InstanceMethod("toBuffer", &Canvas::ToBuffer),
-        InstanceMethod("save", &Canvas::Save),
-        InstanceMethod("restore", &Canvas::Restore)});
+            InstanceMethod("saveAsImage", &Canvas::SaveAsImage),
+            InstanceMethod("toBuffer", &Canvas::ToBuffer),
+            InstanceMethod("save", &Canvas::Save),
+            InstanceMethod("restore", &Canvas::Restore)});
 
     Napi::FunctionReference *constructor = new Napi::FunctionReference();
     *constructor = Napi::Persistent(func);
@@ -24,10 +25,10 @@ Napi::Function Canvas::Init(Napi::Env env)
 }
 
 Canvas::Canvas(const Napi::CallbackInfo &info)
-: Napi::ObjectWrap<Canvas>(info), _context(Napi::Persistent(CanvasContext::CanvasContext2Object(info.Env())))
+: Napi::ObjectWrap<Canvas>(info)
 {
     Napi::Env env = info.Env();
-
+    _context = Napi::Persistent(CanvasContext::constructor->Value().New({}));
     int width = info[0].As<Napi::Number>().Int32Value();
     int height = info[1].As<Napi::Number>().Int32Value();
     int GPU = info[2].As<Napi::Number>().Int32Value(); // 0: CPU, 1: GPU, 2: Auto
@@ -212,7 +213,7 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
 
             memcpy(result.Data(), image_data, width * height * 3);
             stbi_image_free(image_data);
-            
+
             return result;
         } else {
             stbi_write_bmp_to_func(write_to_memory, &buffer, width, height, channels, image_data);

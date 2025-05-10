@@ -31,7 +31,8 @@ private:
     std::vector<GradientStop> _ColorStop;
 
 public:
-    static Napi::Object Init(Napi::Env env);
+    static Napi::FunctionReference *constructor;
+    static void Init(Napi::Env env);
     Gradient(const Napi::CallbackInfo &info);
     ~Gradient();
     Napi::Value AddColorStop(const Napi::CallbackInfo &info);
