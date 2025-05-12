@@ -34,7 +34,9 @@ public:
     static Napi::FunctionReference *constructor;
     static void Init(Napi::Env env);
     Gradient(const Napi::CallbackInfo &info);
-    ~Gradient();
+    ~Gradient(){
+        _ColorStop.clear();
+    };
     Napi::Value AddColorStop(const Napi::CallbackInfo &info);
     void SetGradientArea(GradientArea gradientArea);
     GradientArea GetGradientArea();
