@@ -28,6 +28,9 @@ private:
 public:
     static Napi::Function Init(Napi::Env env);
     Canvas(const Napi::CallbackInfo &info);
+    ~Canvas() {
+        _context.Reset();
+    };
 };
 
 #endif
