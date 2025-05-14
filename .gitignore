@@ -8,6 +8,5 @@ dist
 .cache
 .eslintcache
 .build
-.tmp
 test/output
 library
