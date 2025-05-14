@@ -1,13 +1,12 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.3-beta",
+  "version": "1.0.3-beta.1",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/li725-ll/node-canvas-skia.git"
   },
   "scripts": {
-    "install": "node scripts/preinstall.js",
     "postinstall": "node scripts/install.js && npm run build",
     "commit": "git add . && czg",
     "pretest": "tsc",
@@ -32,7 +31,6 @@
     "dist",
     "scripts",
     "binding.gyp",
-    "!scripts/.tmp",
     "Windows Kits"
   ],
   "type": "commonjs",
