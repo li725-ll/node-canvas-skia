@@ -14,12 +14,10 @@ const platform = utils.getPlatform(); // windows / macos
   // utils.downloadFile(skiaURL, path.resolve(__dirname, ".tmp"));
 
   const libraryPath = utils.createLibraryFolder();
-  console.log(
-    path.resolve(__dirname, ".tmp/Skia-m93-87e8842e8c-windows-Release-x64.zip")
-  );
+
   utils.unpackZip(
     path.resolve(__dirname, ".tmp") +
-      "/Skia-m93-87e8842e8c-windows-Release-x64.zip",
+      `/Skia-m93-87e8842e8c-${platform[0]}-Release-${platform[1]}.zip`,
     libraryPath
   );
 
