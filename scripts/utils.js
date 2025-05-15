@@ -41,18 +41,18 @@ function cloneGitRepo(repoUrl, destPath) {
       fs.mkdirSync(destPath, { recursive: true });
     }
 
-    // 执行 git clone 命令
+    // git clone
     const command = `git clone ${repoUrl} ${destPath}`;
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error(`执行命令出错: ${error.message}`);
+        console.error(`Error executing command: ${error.message}`);
         reject(error);
         return;
       }
       if (stderr) {
-        console.warn(`命令执行警告: ${stderr}`);
+        console.warn(`Command execution warning: ${stderr}`);
       }
-      console.log(`仓库克隆成功: ${stdout}`);
+      console.log(`Warehouse cloning successful: ${stdout}`);
       resolve();
     });
   });
@@ -90,6 +90,26 @@ function clone(url, dest) {
   });
 }
 
+/**
+ * Synchronize deletion of folders and their contents at the specified path
+ * @param {string} dirPath - The folder path to be deleted
+ */
+function deleteFolderSync(dirPath) {
+  if (fs.existsSync(dirPath)) {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const entryPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        deleteFolderSync(entryPath);
+      } else {
+        fs.unlinkSync(entryPath);
+      }
+    }
+    // 删除空文件夹
+    fs.rmdirSync(dirPath);
+  }
+}
+
 function unpackZip(path, dest) {
   var zip = new AdmZip(path);
   var zipEntries = zip.getEntries();
@@ -112,8 +132,9 @@ function createLibraryFolder() {
 }
 
 module.exports = {
+  clone,
   unpackZip,
   getPlatform,
-  clone,
+  deleteFolderSync,
   createLibraryFolder
 };
