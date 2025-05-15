@@ -62,13 +62,18 @@ void CanvasContext::Init(Napi::Env env)
 }
 CanvasContext::CanvasContext(const Napi::CallbackInfo &info) : Napi::ObjectWrap<CanvasContext>(info)
 {
-    _gradient = Napi::Weak(Gradient::constructor->Value().New({}));
+    _gradient = Napi::Persistent(Gradient::constructor->Value().New({}));
     _fontMgr = SkFontMgr::RefDefault();
 }
 
 void CanvasContext::SetCanvas(SkCanvas *canvas)
 {
     _canvas = canvas;
+}
+
+void CanvasContext::ReleaseGradient()
+{
+    _gradient.Reset();
 }
 
 void CanvasContext::SetContextAttributes(bool antialias, bool depth)

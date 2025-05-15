@@ -71,10 +71,10 @@ public :
     ~CanvasContext() {
         _gradient.Reset();
         _fontMgr.reset();
-        std::cout << "CanvasContext destructor called" << std::endl;
     };
 
     void SetCanvas(SkCanvas *canvas);
+    void ReleaseGradient();
     void SetContextAttributes(bool antialias, bool depth);
 
     Napi::Value BeginPath(const Napi::CallbackInfo &info);
