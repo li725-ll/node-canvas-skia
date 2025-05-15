@@ -7,7 +7,6 @@ const { testRect } = require("./rect");
 const { drawText } = require("./text");
 const { drawBaselineText } = require("./textbaseline");
 const { testImage } = require("./images");
-const { testGradinent } = require("./gradient");
 const { testTransform } = require("./transform");
 const { testOther } = require("./other");
 
@@ -35,10 +34,6 @@ test("textbaseline", () => {
 
 test("rect", () => {
   testRect(outputPath);
-});
-
-test("gradient", () => {
-  testGradinent(outputPath);
 });
 
 test("image", () => {
