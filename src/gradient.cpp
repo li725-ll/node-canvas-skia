@@ -10,9 +10,11 @@ void Gradient::Init(Napi::Env env)
         {InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
 
     *Gradient::constructor = Napi::Persistent(func);
+    env.SetInstanceData(Gradient::constructor);
 }
 
-Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){}
+Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){
+}
 
 Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
 {

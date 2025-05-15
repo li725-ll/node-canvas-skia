@@ -28,7 +28,7 @@ Canvas::Canvas(const Napi::CallbackInfo &info)
 : Napi::ObjectWrap<Canvas>(info)
 {
     Napi::Env env = info.Env();
-    _context = Napi::Persistent(CanvasContext::constructor->Value().New({}));
+    _context = Napi::Weak(CanvasContext::constructor->Value().New({}));
     int width = info[0].As<Napi::Number>().Int32Value();
     int height = info[1].As<Napi::Number>().Int32Value();
     int GPU = info[2].As<Napi::Number>().Int32Value(); // 0: CPU, 1: GPU, 2: Auto
