@@ -7,31 +7,9 @@ const platform = utils.getPlatform(); // windows / macos
 
 (async () => {
   // TODO: Gitee download link failed due to network attack
-  // const externalNetwork = await utils.checkNetwork();
-  // const skiaURL = externalNetwork
-  //   ? `https://github.com/JetBrains/skia-build/releases/download/m93-87e8842e8c/Skia-m93-87e8842e8c-${platform[0]}-Release-${platform[1]}.zip`
-  //   : `https://gitee.com/li-mingxiao98/node-canvas-skia-dependencies/releases/download/v0.0.0/Skia-m93-87e8842e8c-${platform[0]}-Release-${platform[1]}.zip`;
-  // utils.downloadFile(skiaURL, path.resolve(__dirname, ".tmp"));
-
-  const libraryPath = utils.createLibraryFolder();
-
-  utils.unpackZip(
-    path.resolve(__dirname, ".tmp") +
-      `/Skia-m93-87e8842e8c-${platform[0]}-Release-${platform[1]}.zip`,
-    libraryPath
-  );
-
-  if (platform[0] === "windows") {
-    // const glfwURL = externalNetwork
-    //   ? `https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.bin.WIN64.zip`
-    //   : `https://gitee.com/li-mingxiao98/node-canvas-skia-dependencies/releases/download/v0.0.0/glfw-3.4.bin.WIN64.zip`;
-    // utils.downloadFile(glfwURL, path.resolve(__dirname, ".tmp"));
-    const libraryPath = utils.createLibraryFolder();
-    utils.unpackZip(
-      path.resolve(__dirname, ".tmp") + "/glfw-3.4.bin.WIN64.zip",
-      libraryPath
-    );
-  }
+  const URL =
+    "https://gitee.com/li-mingxiao98/node-canvas-skia-dependencies.git";
+  utils.clone(URL, path.resolve(__dirname, "../node-canvas-skia-dependencies"));
 
   if (platform[0] === "windows") {
     // windows

@@ -2,7 +2,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const axois = require("axios");
+const git = require("@npmcli/git");
 const AdmZip = require("adm-zip");
 
 function getPlatform() {
@@ -17,44 +17,23 @@ function getPlatform() {
   }
 }
 
-function checkNetwork() {
-  return new Promise((resolve) => {
-    axois
-      .get("https://www.google.com", { timeout: 3000 })
-      .then(() => {
-        resolve(true);
-      })
-      .catch(() => {
-        resolve(false);
-      });
-  });
-}
-
-function downloadFile(url, dest) {
+function clone(url, dest) {
+  // change git download url to gitee download url
   console.log("Downloading: " + url);
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest);
   }
-  const fileName = url.split("/").pop();
-  const file = fs.createWriteStream(dest + "/" + fileName);
 
-  return new Promise((resolve, reject) => {
-    axois
-      .get(url, {
-        responseType: "stream"
-      })
-      .then((response) => {
-        response.data.pipe(file);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-    file.on("finish", () => {
-      const libraryPath = createLibraryFolder();
-      unpackZip(dest + "/" + fileName, libraryPath);
-      console.log(`${fileName} Download complete`);
-      resolve();
-    });
+  git.clone(url, "", null).then(() => {
+    const fileNames = fs.readdirSync(dest);
+    for (const fileName of fileNames) {
+      if (fileName.endsWith(".zip")) {
+        const libraryPath = createLibraryFolder();
+        unpackZip(dest + "/" + fileName, libraryPath);
+        console.log(`${fileName} Download complete`);
+      }
+    }
+    return true;
   });
 }
 
@@ -82,7 +61,6 @@ function createLibraryFolder() {
 module.exports = {
   unpackZip,
   getPlatform,
-  downloadFile,
-  checkNetwork,
+  clone,
   createLibraryFolder
 };
