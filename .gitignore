@@ -10,3 +10,4 @@ dist
 .build
 test/output
 library
+node-canvas-skia-dependencies
