@@ -60,7 +60,7 @@ private:
     sk_sp<SkFontMgr> _fontMgr;
     ContextAttributesStruct _contextAttributes;
     std::map<std::string, sk_sp<SkTypeface>> _fontMap;
-    Napi::Object _gradient;
+    Napi::ObjectReference _gradient;
     SkScalar ApplyTextAlign(std::string text, SkScalar x);
     SkScalar ApplyTextBaseline(std::string text, SkScalar y);
 
@@ -69,7 +69,9 @@ public :
     static Napi::FunctionReference *constructor;
     CanvasContext(const Napi::CallbackInfo &info);
     ~CanvasContext() {
+        _gradient.Reset();
         _fontMgr.reset();
+        std::cout << "CanvasContext destructor called" << std::endl;
     };
 
     void SetCanvas(SkCanvas *canvas);

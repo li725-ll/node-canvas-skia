@@ -2,6 +2,7 @@
 #define __GRADIENT_H__
 
 #include <napi.h>
+#include <iostream>
 #include <vector>
 #include <include/core/SkScalar.h>
 #include <include/core/SkShader.h>

@@ -58,10 +58,11 @@ void CanvasContext::Init(Napi::Env env)
             });
 
     *CanvasContext::constructor = Napi::Persistent(func);
+    env.SetInstanceData(constructor);
 }
 CanvasContext::CanvasContext(const Napi::CallbackInfo &info) : Napi::ObjectWrap<CanvasContext>(info)
 {
-    _gradient = Gradient::constructor->Value().New({}); // TODO: Check if this is correct
+    _gradient = Napi::Weak(Gradient::constructor->Value().New({}));
     _fontMgr = SkFontMgr::RefDefault();
 }
 
@@ -433,11 +434,11 @@ Napi::Value CanvasContext::CreateLinearGradient(const Napi::CallbackInfo &info)
 
     GradientArea gradientArea = {0, x0, y0, 0, x1, y1, 0};
 
-    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient);
+    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value());
     gradientUnWrap->Reset();
     gradientUnWrap->SetGradientArea(gradientArea);
 
-    return _gradient;
+    return _gradient.Value();
 }
 
 Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
@@ -454,11 +455,11 @@ Napi::Value CanvasContext::CreateRadialGradient(const Napi::CallbackInfo &info)
 
     GradientArea gradientArea = {1, x0, y0, r0, x1, y1, r1};
 
-    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient);
+    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value());
     gradientUnWrap->Reset();
     gradientUnWrap->SetGradientArea(gradientArea);
 
-    return _gradient;
+    return _gradient.Value();
 }
 
 Napi::Value CanvasContext::CreateConicGradient(const Napi::CallbackInfo &info)
@@ -471,11 +472,11 @@ Napi::Value CanvasContext::CreateConicGradient(const Napi::CallbackInfo &info)
     SkScalar y = info[2].As<Napi::Number>().FloatValue();
     GradientArea gradientArea = {2, startAngle, x, y};
 
-    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient);
+    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value());
     gradientUnWrap->Reset();
     gradientUnWrap->SetGradientArea(gradientArea);
 
-    return _gradient;
+    return _gradient.Value();
 }
 
 Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
@@ -496,7 +497,7 @@ Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
 {
     int shader = info[0].As<Napi::Number>().Int32Value();
-    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient);
+    Gradient *gradientUnWrap = Gradient::Unwrap(_gradient.Value());
     GradientArea gradientArea = gradientUnWrap->GetGradientArea();
 
     if (gradientArea.type == 0)
@@ -534,8 +535,8 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
         std::vector<SkScalar> stops;
         for (auto &stop : gradientStop)
         {
-        colors.push_back(stop.color);
-        stops.push_back(stop.offset);
+            colors.push_back(stop.color);
+            stops.push_back(stop.offset);
         }
 
         sk_sp<SkShader> skShader = SkGradientShader::MakeTwoPointConical(
