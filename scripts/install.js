@@ -9,7 +9,7 @@ const platform = utils.getPlatform(); // windows / macos
   // TODO: Gitee download link failed due to network attack
   const URL =
     "https://gitee.com/li-mingxiao98/node-canvas-skia-dependencies.git";
-  utils.clone(URL, path.resolve(__dirname, "../node-canvas-skia-dependencies"));
+  utils.clone(URL, path.resolve(__dirname, ".temp"));
 
   if (platform[0] === "windows") {
     // windows

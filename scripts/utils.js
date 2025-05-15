@@ -2,8 +2,61 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const git = require("@npmcli/git");
 const AdmZip = require("adm-zip");
+const { exec, execSync } = require("child_process");
+
+/**
+ * Check if the system has Git installed.
+ * @returns {boolean} If git is installed, return true; otherwise, return false
+ */
+function isGitInstalled() {
+  try {
+    execSync("git --version", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Clone Git repository
+ * @param {string} repoUrl - The URL of the Git repository to be cloned
+ * @param {string} destPath - Target path for cloning repository
+ * @returns {Promise<void>} A Promise, resolve upon successful cloning and reject upon failure
+ */
+function cloneGitRepo(repoUrl, destPath) {
+  return new Promise((resolve, reject) => {
+    // Check if git is installed
+    if (!isGitInstalled()) {
+      reject(
+        new Error(
+          "The system does not have Git installed. Please install Git before running this script."
+        )
+      );
+      return;
+    }
+
+    // Check if the target directory exists, create if it does not exist
+    if (!fs.existsSync(destPath)) {
+      fs.mkdirSync(destPath, { recursive: true });
+    }
+
+    // 执行 git clone 命令
+    const command = `git clone ${repoUrl} ${destPath}`;
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`执行命令出错: ${error.message}`);
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        console.warn(`命令执行警告: ${stderr}`);
+      }
+      console.log(`仓库克隆成功: ${stdout}`);
+      resolve();
+    });
+  });
+}
 
 function getPlatform() {
   const arch = os.arch();
@@ -24,7 +77,7 @@ function clone(url, dest) {
     fs.mkdirSync(dest);
   }
 
-  git.clone(url, "", null).then(() => {
+  cloneGitRepo(url, dest).then(() => {
     const fileNames = fs.readdirSync(dest);
     for (const fileName of fileNames) {
       if (fileName.endsWith(".zip")) {
