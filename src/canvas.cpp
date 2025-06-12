@@ -78,7 +78,7 @@ Napi::Value Canvas::GetContext(const Napi::CallbackInfo &info)
     }
 
     CanvasContext *context = CanvasContext::Unwrap(_context.Value().ToObject());
-    context->SetCanvas(_surface->getCanvas());
+    context->SetSurface(_surface);
     context->SetContextAttributes(contextAttributes.antialias, contextAttributes.depth);
 
     return _context.Value();

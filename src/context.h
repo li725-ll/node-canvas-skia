@@ -12,6 +12,7 @@
 #include <include/core/SkImage.h>
 #include <include/core/SkColor.h>
 #include <include/core/SkCanvas.h>
+#include <include/core/SkSurface.h>
 #include <include/core/SkShader.h>
 #include <include/core/SkFontMgr.h>
 #include <include/core/SkTextBlob.h>
@@ -54,7 +55,7 @@ private:
     SkFont _font;
     SkPath _path;
     SkPaint _paint;
-    SkCanvas *_canvas;
+    sk_sp<SkSurface> _surface;
     TextAlign _textAlign = TextAlign::LEFT;
     TextBaseline _textBaseline = TextBaseline::ALPHABETIC;
     sk_sp<SkFontMgr> _fontMgr;
@@ -73,7 +74,8 @@ public :
         _fontMgr.reset();
     };
 
-    void SetCanvas(SkCanvas *canvas);
+    void SetSurface(sk_sp<SkSurface> surface);
+
     void ReleaseGradient();
     void SetContextAttributes(bool antialias, bool depth);
 

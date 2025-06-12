@@ -76,6 +76,7 @@
     "xmemory0": "cpp",
     "xstddef": "cpp",
     "xtr1common": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "*.inc": "cpp"
   }
 }
