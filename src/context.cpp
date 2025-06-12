@@ -66,9 +66,9 @@ CanvasContext::CanvasContext(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
     _fontMgr = SkFontMgr::RefDefault();
 }
 
-void CanvasContext::SetCanvas(SkCanvas *canvas)
+void CanvasContext::SetSurface(sk_sp<SkSurface> surface)
 {
-    _canvas = canvas;
+    _surface = surface;
 }
 
 void CanvasContext::ReleaseGradient()
@@ -114,14 +114,14 @@ Napi::Value CanvasContext::ClosePath(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::Stroke(const Napi::CallbackInfo &info)
 {
     _paint.setStyle(SkPaint::kStroke_Style);
-    _canvas->drawPath(_path, _paint);
+    _surface->getCanvas()->drawPath(_path, _paint);
     return Napi::Value();
 }
 
 Napi::Value CanvasContext::Clear(const Napi::CallbackInfo &info)
 {
     SkColor color = info[0].As<Napi::Number>().Uint32Value();
-    _canvas->clear(color);
+    _surface->getCanvas()->clear(color);
     return Napi::Value();
 }
 
@@ -129,7 +129,7 @@ Napi::Value CanvasContext::Translate(const Napi::CallbackInfo &info)
 {
     SkScalar x = info[0].As<Napi::Number>().FloatValue();
     SkScalar y = info[1].As<Napi::Number>().FloatValue();
-    _canvas->translate(x, y);
+    _surface->getCanvas()->translate(x, y);
     return Napi::Value();
 }
 
@@ -144,7 +144,7 @@ Napi::Value CanvasContext::SetTransform(const Napi::CallbackInfo &info)
 
     SkMatrix matrix;
     matrix.setAll(a, b, e, c, d, f, 0, 0, 1);
-    _canvas->setMatrix(matrix);
+    _surface->getCanvas()->setMatrix(matrix);
 
     return Napi::Value();
 }
@@ -152,7 +152,7 @@ Napi::Value CanvasContext::SetTransform(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::Rotate(const Napi::CallbackInfo &info)
 {
     SkScalar angle = info[0].As<Napi::Number>().FloatValue();
-    _canvas->rotate(angle);
+    _surface->getCanvas()->rotate(angle);
     return Napi::Value();
 }
 
@@ -191,7 +191,7 @@ Napi::Value CanvasContext::StrokeRect(const Napi::CallbackInfo &info)
     SkScalar h = info[3].As<Napi::Number>().FloatValue();
     _paint.setStyle(SkPaint::kStroke_Style);
     SkRect rect = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->drawRect(rect, _paint);
+    _surface->getCanvas()->drawRect(rect, _paint);
     return Napi::Value();
 }
 
@@ -236,7 +236,7 @@ Napi::Value CanvasContext::LineCap(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::Fill(const Napi::CallbackInfo &info)
 {
     _paint.setStyle(SkPaint::kFill_Style);
-    _canvas->drawPath(_path, _paint);
+    _surface->getCanvas()->drawPath(_path, _paint);
     return Napi::Value();
 }
 
@@ -311,7 +311,7 @@ Napi::Value CanvasContext::Scale(const Napi::CallbackInfo &info)
 {
     SkScalar x = info[0].As<Napi::Number>().FloatValue();
     SkScalar y = info[1].As<Napi::Number>().FloatValue();
-    _canvas->scale(x, y);
+    _surface->getCanvas()->scale(x, y);
     return Napi::Value();
 }
 
@@ -356,7 +356,7 @@ Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
     _paint.setStyle(SkPaint::kStroke_Style);
     SkScalar start = ApplyTextAlign(text, x);
     SkScalar baseline = ApplyTextBaseline(text, y);
-    _canvas->drawString(text.c_str(), start, baseline, _font, _paint);
+    _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
     return Napi::Value();
 }
 
@@ -370,7 +370,7 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
     _paint.setStyle(SkPaint::kFill_Style);
     SkScalar start = ApplyTextAlign(text, x);
     SkScalar baseline = ApplyTextBaseline(text, y);
-    _canvas->drawString(text.c_str(), start, baseline, _font, _paint);
+    _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
     return Napi::Value();
 }
 
@@ -490,11 +490,11 @@ Napi::Value CanvasContext::ClearRect(const Napi::CallbackInfo &info)
     SkScalar y = info[1].As<Napi::Number>().FloatValue();
     SkScalar w = info[2].As<Napi::Number>().FloatValue();
     SkScalar h = info[3].As<Napi::Number>().FloatValue();
-    _canvas->save();
+    _surface->getCanvas()->save();
     SkRect rectToClear = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->clipRect(rectToClear, SkClipOp::kIntersect);
-    _canvas->drawColor(0, SkBlendMode::kClear);
-    _canvas->restore();
+    _surface->getCanvas()->clipRect(rectToClear, SkClipOp::kIntersect);
+    _surface->getCanvas()->drawColor(0, SkBlendMode::kClear);
+    _surface->getCanvas()->restore();
 
     return Napi::Value();
 }
@@ -713,7 +713,7 @@ Napi::Value CanvasContext::FillRect(const Napi::CallbackInfo &info)
     SkScalar h = info[3].As<Napi::Number>().FloatValue();
 
     _paint.setStyle(SkPaint::kFill_Style);
-    _canvas->drawRect(SkRect::MakeXYWH(x, y, w, h), _paint);
+    _surface->getCanvas()->drawRect(SkRect::MakeXYWH(x, y, w, h), _paint);
 
     return Napi::Value();
 }
@@ -727,7 +727,7 @@ Napi::Value CanvasContext::DrawImage(const Napi::CallbackInfo &info)
 
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
 
-    _canvas->drawImage(image, x, y);
+    _surface->getCanvas()->drawImage(image, x, y);
     return Napi::Value();
 }
 
@@ -743,7 +743,7 @@ Napi::Value CanvasContext::DrawImageBuffer(const Napi::CallbackInfo &info) {
     sk_sp<SkData> skdata = SkData::MakeWithCopy(data, size);
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(skdata);
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
+    _surface->getCanvas()->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
     return Napi::Value();
 }
 
@@ -757,7 +757,7 @@ Napi::Value CanvasContext::DrawImageWH(const Napi::CallbackInfo &info)
 
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
-    _canvas->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
+    _surface->getCanvas()->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
     return Napi::Value();
 }
 
@@ -818,7 +818,7 @@ Napi::Value CanvasContext::BezierCurveTo(const Napi::CallbackInfo &info)
 
 Napi::Value CanvasContext::Clip(const Napi::CallbackInfo &info)
 {
-    _canvas->clipPath(_path, true);
+    _surface->getCanvas()->clipPath(_path, true);
     return Napi::Value();
 }
 
