@@ -55,7 +55,7 @@ export class CanvasContext {
     x1: number,
     y1: number
   ): Gradient {
-    return Gradient.createLinearGradient(x0, y0, x1, y1, this.context);
+    return Gradient.createLinearGradient(x0, y0, x1, y1);
   }
   public createPattern(
     image: unknown,
@@ -71,11 +71,11 @@ export class CanvasContext {
     y1: number,
     r1: number
   ): Gradient {
-    return Gradient.createRadialGradient(x0, y0, r0, x1, y1, r1, this.context);
+    return Gradient.createRadialGradient(x0, y0, r0, x1, y1, r1);
   }
 
   public createConicGradient(startAngle: number, x: number, y: number) {
-    return Gradient.createConicGradient(startAngle, x, y, this.context);
+    return Gradient.createConicGradient(startAngle, x, y);
   }
 
   public rect(x: number, y: number, width: number, height: number) {
@@ -349,37 +349,25 @@ export class CanvasContext {
   }
 
   private handleStrokeColor() {
-    const value =
-      this.strokeStyle instanceof Gradient
-        ? this.strokeStyle.id
-        : this.strokeStyle;
-    const color = Utils.string2RGBA(value);
-    switch (color.type) {
-      case "COLOR":
-        this.context.strokeStyle(color.value);
-        break;
-      case "SHADER":
-        this.context.setShader(color.value);
-        break;
+    if (this.strokeStyle instanceof Gradient) {
+      this.context.setShader(this.strokeStyle.gradient);
+      this.context.setGlobalAlpha(this.globalAlpha);
+    } else {
+      const color = Utils.string2RGBA(this.strokeStyle);
+      this.context.strokeStyle(color.value);
+      this.context.setGlobalAlpha(this.globalAlpha);
     }
-    this.context.setGlobalAlpha(this.globalAlpha);
   }
 
   private handleFillColor() {
-    const value =
-      this.fillStyle instanceof Gradient ? this.fillStyle.id : this.fillStyle;
-    const color = Utils.string2RGBA(value);
-    switch (color.type) {
-      case "COLOR": {
-        this.context.fillStyle(color.value);
-        this.context.setGlobalAlpha(this.globalAlpha * color.alpha);
-        break;
-      }
-      case "SHADER": {
-        this.context.setShader(color.value);
-        this.context.setGlobalAlpha(this.globalAlpha);
-        break;
-      }
+    if (this.fillStyle instanceof Gradient) {
+      this.context.setShader(this.fillStyle.gradient);
+      this.context.setGlobalAlpha(this.globalAlpha);
+    } else {
+      const color = Utils.string2RGBA(this.fillStyle);
+
+      this.context.fillStyle(color.value);
+      this.context.setGlobalAlpha(this.globalAlpha * color.alpha);
     }
   }
 }
