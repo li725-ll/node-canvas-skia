@@ -13,6 +13,7 @@
     "pretest": "tsc",
     "build": "node-gyp rebuild",
     "test": "pnpm run pretest && jest",
+    "test:coverage": "pnpm run pretest && jest --coverage",
     "prettier": "pnpm exec prettier --write .",
     "prepare": "husky",
     "lint": "eslint --fix",
