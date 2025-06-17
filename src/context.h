@@ -107,9 +107,6 @@ public :
     Napi::Value MeasureText(const Napi::CallbackInfo &info);
     Napi::Value GetFonts(const Napi::CallbackInfo &info);
     Napi::Value SetShader(const Napi::CallbackInfo &info);
-    Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
-    Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
-    Napi::Value CreateConicGradient(const Napi::CallbackInfo &info);
     Napi::Value SetTextAlign(const Napi::CallbackInfo &info);
     Napi::Value SetTextBaseline(const Napi::CallbackInfo &info);
     Napi::Value FillRect(const Napi::CallbackInfo &info);
