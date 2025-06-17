@@ -29,8 +29,6 @@ public:
     static Napi::Function Init(Napi::Env env);
     Canvas(const Napi::CallbackInfo &info);
     ~Canvas() {
-        CanvasContext *context = CanvasContext::Unwrap(_context.Value().ToObject());
-        context->ReleaseGradient();
         _context.Reset();
     };
 };

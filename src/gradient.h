@@ -32,17 +32,20 @@ private:
     std::vector<GradientStop> _ColorStop;
 
 public:
-    static Napi::FunctionReference *constructor;
-    static void Init(Napi::Env env);
+    static Napi::Function Init(Napi::Env env);
     Gradient(const Napi::CallbackInfo &info);
     ~Gradient(){
         _ColorStop.clear();
     };
-    Napi::Value AddColorStop(const Napi::CallbackInfo &info);
-    void SetGradientArea(GradientArea gradientArea);
-    GradientArea GetGradientArea();
-    std::vector<GradientStop> GetGradientStops();
+
     void Reset();
+    GradientArea GetGradientArea();
+    void SetGradientArea(GradientArea gradientArea);
+    std::vector<GradientStop> GetGradientStops();
+    Napi::Value AddColorStop(const Napi::CallbackInfo &info);
+    Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
+    Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
+    Napi::Value CreateConicGradient(const Napi::CallbackInfo &info);
 };
 
 #endif

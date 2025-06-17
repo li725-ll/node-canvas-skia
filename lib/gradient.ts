@@ -2,14 +2,14 @@ import Utils from "./utils";
 import skia from "./binding";
 
 export class Gradient {
-  private type: "radial" | "linear" | "conic";
+  public type: "radial" | "linear" | "conic";
+  public gradient: any;
   private x0: number;
   private y0: number;
   private r0: number;
   private x1: number;
   private y1: number;
   private r1: number;
-  public gradient: any;
 
   static createRadialGradient(
     x0: number,

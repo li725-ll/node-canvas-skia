@@ -1,40 +1,26 @@
 #include "gradient.h"
 #include <iostream>
 
-Napi::FunctionReference *Gradient::constructor = new Napi::FunctionReference();
-void Gradient::Init(Napi::Env env)
+Napi::Function Gradient::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
         env,
         "Gradient",
-        {InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable)});
+        {
+            InstanceMethod("addColorStop", &Gradient::AddColorStop, napi_enumerable),
+            InstanceMethod("createLinearGradient", &Gradient::CreateLinearGradient, napi_enumerable),
+            InstanceMethod("createRadialGradient", &Gradient::CreateRadialGradient, napi_enumerable),
+            InstanceMethod("createConicGradient", &Gradient::CreateConicGradient, napi_enumerable)
+        });
 
-    *Gradient::constructor = Napi::Persistent(func);
-    env.SetInstanceData(Gradient::constructor);
+    Napi::FunctionReference *constructor = new Napi::FunctionReference();
+    *constructor = Napi::Persistent(func);
+    env.SetInstanceData(constructor);
+    return func;
 }
 
-Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info){
-}
+Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info) {}
 
-Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
-{
-    Napi::Env env = info.Env();
-    if (info.Length() != 2)
-    {
-        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-
-    SkScalar offset = info[0].As<Napi::Number>().FloatValue();
-    SkColor color = info[1].As<Napi::Number>().Uint32Value();
-
-    GradientStop stop;
-    stop.color = color;
-    stop.offset = offset;
-
-    _ColorStop.push_back(stop);
-    return Napi::Value();
-}
 
 void Gradient::SetGradientArea(GradientArea gradientArea)
 {
@@ -57,7 +43,6 @@ void Gradient::Reset()
     _ColorStop.clear();
 }
 
-Gradient::Gradient(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Gradient>(info) {}
 
 Napi::Value Gradient::AddColorStop(const Napi::CallbackInfo &info)
 {
