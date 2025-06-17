@@ -1,8 +1,26 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
 
 const canvas = new skia.Canvas(800, 800);
 const ctx = canvas.getContext("2d", { antialias: false });
+
+const outputDir = path.join(__dirname, "output/BaseLine");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+describe("Baseline Test", () => {
+  test("Draw Baseline Test", () => {
+    drawBaselineText();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw Baseline Test.jpg"));
+  });
+});
 
 function drawBaselineText() {
   const baselines = [
@@ -29,7 +47,3 @@ function drawBaselineText() {
 
   canvas.saveAsImage(path.resolve(__dirname, "output", "textbaseline.jpg"));
 }
-
-module.exports = {
-  drawBaselineText
-};

@@ -1,8 +1,26 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
 
+
 const canvas = new skia.Canvas(600, 400, true);
 const ctx = canvas.getContext("2d", { antialias: true });
+
+const outputDir = path.join(__dirname, "output/GPU");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+describe("GPU Test", () => {
+  test("GPU Test", () => {
+    testGPU(outputDir);
+  });
+});
 
 function drawHeptagram() {
   const scale = 100;
@@ -26,7 +44,3 @@ function testGPU(outputPath) {
   drawHeptagram(); // draw a heptagram
   canvas.saveAsImage(path.resolve(outputPath, "gpu.jpg"));
 }
-
-module.exports = {
-  testGPU
-};

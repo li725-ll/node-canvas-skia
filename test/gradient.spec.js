@@ -21,9 +21,14 @@ describe("Gradient Test", () => {
     canvas.saveAsImage(path.resolve(outputDir, "Linear Gradient Test.jpg"));
   });
 
-  test("drawLinearGradientRect", () => {
-    drawLinearGradientRect(outputPath);
-    canvas.saveAsImage(path.resolve(outputPath, "linear-gradient.jpg"));
+  test("Radial Gradient Test", () => {
+    drawRadialGradientRect();
+    canvas.saveAsImage(path.resolve(outputDir, "Radial Gradient Test.jpg"));
+  });
+
+  test("Conic Gradient Test", () => {
+    drawConicGradientRect();
+    canvas.saveAsImage(path.resolve(outputDir, "Conic Gradient Test.jpg"));
   });
 });
 

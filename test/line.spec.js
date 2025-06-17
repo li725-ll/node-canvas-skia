@@ -1,8 +1,101 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
 
 const canvas = new skia.Canvas(600, 400);
 const ctx = canvas.getContext("2d", { antialias: true });
+
+const outputDir = path.join(__dirname, "output/Line");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+describe("Line Test", () => {
+  test("Draw Heptagram Test", () => {
+    drawHeptagram();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw Heptagram Test.jpg"));
+  });
+
+  test("Draw A Straight Line Test", () => {
+    drawStraightLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Straight Line Test.jpg"));
+  });
+
+  test("Draw A Vertical Line Test", () => {
+    drawVerticalLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Vertical Line Test.jpg"));
+  });
+
+  test("Draw An Arc Line Test", () => {
+    drawArcLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw An Arc Line Test.jpg"));
+  });
+
+  test("Draw A Cap Line Test", () => {
+    drawCapLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Cap Line Test.jpg"));
+  });
+
+  test("Draw A Rect Test", () => {
+    drawRect();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Rect Test.jpg"));
+  });
+
+  test("Draw A Triangle Line Test", () => {
+    drawTriangleLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Triangle Line Test.jpg"));
+  });
+
+  test("Draw A Join Line Test", () => {
+    drawJoinLine();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Join Line Test.jpg"));
+  });
+
+  test("Draw A Line Dash Test", () => {
+    drawLineDash();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Line Dash Test.jpg"));
+  });
+
+  test("Draw A Bezier Curve Test", () => {
+    drawBezierCurveTo();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Bezier Curve Test.jpg"));
+  });
+
+  test("Draw A Quadratic Curve Test", () => {
+    drawQuadraticCurveTo();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Quadratic Curve Test.jpg"));
+  });
+
+  test("Draw A Heptagram With Fill Test", () => {
+    drawHeptagramFill();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Heptagram With Fill Test.jpg"));
+  });
+
+  test("Draw A Triangle With Fill Test", () => {
+    drawTriangleFill();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Triangle With Fill Test.jpg"));
+  });
+
+  test("Draw A Rectangle With Fill Test", () => {
+    drawRectFill();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Rectangle With Fill Test.jpg"));
+  });
+
+  test("Draw A Round Rectangle With Fill Test", () => {
+    drawRoundRectFill();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Round Rectangle With Fill Test.jpg"));
+  });
+
+  test("Draw A Round Rectangle With Stroke Test", () => {
+    drawRoundRectStroke();
+    canvas.saveAsImage(path.resolve(outputDir, "Draw A Round Rectangle With Stroke Test.jpg"));
+  });
+});
 
 function drawHeptagram() {
   const scale = 100;
@@ -194,27 +287,3 @@ function drawRoundRectFill() {
   ctx.closePath();
   ctx.fill();
 }
-
-function testLine(outputPath) {
-  drawHeptagram(); // draw a heptagram
-  drawStraightLine(); // draw a straight line
-  drawVerticalLine(); // draw a vertical line
-  drawCapLine(); // draw a cap line
-  drawTriangleLine(); // draw a triangle line
-  drawArcLine(); // draw an arc line
-  drawRect(); // draw a rectangle
-  drawJoinLine(); // draw a join line
-  drawLineDash(); // draw a line dash
-  drawBezierCurveTo(); // draw a bezier curve
-  drawQuadraticCurveTo(); // draw a quadratic curve
-  drawHeptagramFill(); // draw a heptagram with fill
-  drawTriangleFill(); // draw a triangle with fill
-  drawRectFill(); // draw a rectangle with fill
-  drawRoundRectStroke(); // draw a round rectangle
-  drawRoundRectFill(); // draw a round rectangle with fill
-  canvas.saveAsImage(path.resolve(outputPath, "line.jpg"));
-}
-
-module.exports = {
-  testLine
-};

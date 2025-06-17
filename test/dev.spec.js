@@ -1,8 +1,25 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
 
 const canvas = new skia.Canvas(800, 800);
 const ctx = canvas.getContext("2d", { antialias: true });
+
+const outputDir = path.join(__dirname, "output/Dev");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+describe("Dev Test", () => {
+  test("Dev Test", () => {
+    drawText(outputDir);
+  });
+});
 
 function loadFont() {
   const fontPath = path.join(__dirname, "./fonts/REEJI-PinboGB-Flash.ttf");
@@ -61,7 +78,3 @@ function drawText(outputPath) {
   drawFontAlignText();
   canvas.saveAsImage(path.resolve(outputPath, "text.jpg"));
 }
-
-module.exports = {
-  drawText
-};

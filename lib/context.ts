@@ -316,7 +316,7 @@ export class CanvasContext {
       this.context.drawImage(image, x, y);
     } else if (arg.length === 2) {
       if (image instanceof Buffer) {
-        this.context.DrawImageBuffer(image, x, y, arg[0], arg[1]);
+        this.context.drawImageBuffer(image, x, y, arg[0], arg[1]);
       } else {
         this.context.drawImageWH(image, x, y, arg[0], arg[1]);
       }
