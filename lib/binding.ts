@@ -15,5 +15,6 @@ switch (platform) {
 
 export default {
   SkiaCanvas: skia.Canvas as any,
-  SkiaUtils: skia.Utils as any
+  SkiaUtils: skia.Utils as any,
+  SkiaGradient: skia.Gradient as any
 };

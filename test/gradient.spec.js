@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
+const { Console } = require("console");
 
 const canvas = new skia.Canvas(512, 512, false);
 const ctx = canvas.getContext("2d", { antialias: true });
@@ -33,6 +34,8 @@ function drawLinearGradientRect() {
   gradient.addColorStop(0.61, "rgba(113,217,217,0.5)");
   gradient.addColorStop(0.88, "rgba(255,122,1,0.6)");
   gradient.addColorStop(0.95, "rgba(255,122,1 ,1)");
+
+  console.log(gradient);
 
   ctx.fillStyle = gradient;
   ctx.beginPath();

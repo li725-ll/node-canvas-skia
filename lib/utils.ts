@@ -6,25 +6,21 @@ export class Utils {
   public static string2RGBA(color: string | TypeColorVAL): {
     value: number;
     alpha: number;
-    type: "COLOR" | "SHADER";
   } {
     const value = String(color).toUpperCase();
     const result: {
       value: number | null;
       alpha: number;
-      type: "COLOR" | "SHADER";
-    } = { value: null, alpha: 1, type: "COLOR" };
+    } = { value: null, alpha: 1 };
 
     if (Object.keys(Utils._colorMap).includes(value.toLowerCase())) {
       return {
         value: Utils._colorMap[value.toLowerCase()],
-        alpha: 1,
-        type: "COLOR"
+        alpha: 1
       };
     }
 
     if (value.startsWith("RGBA")) {
-      result.type = "COLOR";
       const temp = value.replaceAll(/(?<!\d)\./g, "0.").match(/\d+/g);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
@@ -39,7 +35,6 @@ export class Utils {
       result.alpha = middleValue[3] / 255;
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
-      result.type = "COLOR";
       const temp = value.match(/\d+/g);
       if (!temp || temp!.length < 3) {
         throw new Error("Invalid color format");
@@ -49,11 +44,7 @@ export class Utils {
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
     }
 
-    if (value.startsWith("#SHADER")) {
-      result.type = "SHADER";
-      result.value = parseInt(value.replace("#SHADER", ""));
-    } else if (value.startsWith("#")) {
-      result.type = "COLOR";
+    if (value.startsWith("#")) {
       const temp = value.slice(1);
       let middleValue;
       if (temp.length === 3) {
@@ -75,13 +66,13 @@ export class Utils {
       }
     }
 
-    if (result.value == null && result.type == "COLOR") {
+    if (result.value == null) {
       throw new Error(
         "Invalid color format, color names are currently not supported"
       );
     }
 
-    return result as { value: number; alpha: number; type: "COLOR" | "SHADER" };
+    return result as { value: number; alpha: number };
   }
 
   public static string2Font(font: string): any {
