@@ -1,19 +1,18 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
-const fs = require("fs");
+
+const outputDir = path.join(__dirname, "output/Colors");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 describe("Colors", () => {
-
-  const outputDir = path.join(__dirname, "output/Colors");
-
-  if (!fs.existsSync(outputDir)) {
-    try {
-      fs.mkdirSync(outputDir, { recursive: true });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   test("Color value test", () => {
     const colors = [
       "aliceblue",

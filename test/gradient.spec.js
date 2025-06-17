@@ -1,14 +1,24 @@
+const fs = require("fs");
 const path = require("path");
 const skia = require("../dist");
 
-const outputPath = path.resolve(__dirname, "output");
 const canvas = new skia.Canvas(512, 512, false);
 const ctx = canvas.getContext("2d", { antialias: true });
 
-describe("gradient", () => {
-  test ("testGradinent", () => {
-    testGradinent(outputPath);
-    canvas.saveAsImage(path.resolve(outputPath, "gradient.jpg"));
+const outputDir = path.join(__dirname, "output/Gradient");
+
+if (!fs.existsSync(outputDir)) {
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+describe("Gradient Test", () => {
+  test ("Linear Gradient Test", () => {
+    drawLinearGradientRect();
+    canvas.saveAsImage(path.resolve(outputDir, "Linear Gradient Test.jpg"));
   });
 
   test("drawLinearGradientRect", () => {
@@ -59,10 +69,4 @@ function drawConicGradientRect() {
   ctx.beginPath();
   ctx.fillRect(0, 256, 256, 256);
   ctx.fill();
-}
-
-function testGradinent(outputPath) {
-  drawRadialGradientRect();
-  drawLinearGradientRect();
-  drawConicGradientRect();
 }
