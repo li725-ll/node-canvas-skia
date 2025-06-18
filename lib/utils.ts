@@ -86,6 +86,10 @@ export class Utils {
         return value;
       }); // TODO: The string conversion requires optimization of the needed font.
   }
+
+  public static string2LetterSpacing(letterSpacing: string): number {
+    return +letterSpacing.replace("px", "");
+  }
 }
 
 export default Utils;

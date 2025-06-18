@@ -44,6 +44,4 @@ function drawBaselineText() {
     ctx.stroke();
     ctx.fillText(`Abcdefghijklmnop (${baseline})`, 0, y);
   });
-
-  canvas.saveAsImage(path.resolve(__dirname, "output", "textbaseline.jpg"));
 }

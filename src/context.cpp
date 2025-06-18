@@ -51,7 +51,8 @@ void CanvasContext::Init(Napi::Env env)
                 InstanceMethod("bezierCurveTo", &CanvasContext::BezierCurveTo, napi_enumerable),
                 InstanceMethod("roundRect", &CanvasContext::RoundRect, napi_enumerable),
                 InstanceMethod("clip", &CanvasContext::Clip, napi_enumerable),
-                InstanceMethod("setGlobalAlpha", &CanvasContext::SetGlobalAlpha, napi_enumerable)
+                InstanceMethod("setGlobalAlpha", &CanvasContext::SetGlobalAlpha, napi_enumerable),
+                InstanceMethod("setLetterSpacing", &CanvasContext::SetLetterSpacing, napi_enumerable)
             });
 
     *CanvasContext::constructor = Napi::Persistent(func);
@@ -77,6 +78,27 @@ void CanvasContext::SetContextAttributes(bool antialias, bool depth)
     _contextAttributes.antialias = antialias;
     _contextAttributes.depth = depth;
     _paint.setAntiAlias(_contextAttributes.antialias);
+}
+
+int CanvasContext::GetUTF8CharLength(char firstByte)
+{
+    if ((firstByte & 0x80) == 0)
+    {
+        return 1; // 1 字节字符
+    }
+    else if ((firstByte & 0xE0) == 0xC0)
+    {
+        return 2; // 2 字节字符
+    }
+    else if ((firstByte & 0xF0) == 0xE0)
+    {
+        return 3; // 3 字节字符
+    }
+    else if ((firstByte & 0xF8) == 0xF0)
+    {
+        return 4; // 4 字节字符
+    }
+    return 0; // 无效的 UTF-8 起始字节
 }
 
 Napi::Value CanvasContext::BeginPath(const Napi::CallbackInfo &info)
@@ -352,7 +374,22 @@ Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
     _paint.setStyle(SkPaint::kStroke_Style);
     SkScalar start = ApplyTextAlign(text, x);
     SkScalar baseline = ApplyTextBaseline(text, y);
-    _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
+
+    if (_letterSpacing != 0)
+    {
+        int fontCount = 0;
+        for (size_t i = 0; i < text.length(); i++)
+        {
+            int length = GetUTF8CharLength(text[i]);
+            SkScalar width = _font.measureText(text.c_str(), fontCount, SkTextEncoding::kUTF8);
+            SkScalar x = start + fontCount * _letterSpacing + width;
+            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, x, baseline, _font, _paint);
+            i += length - 1;
+            fontCount += length;
+        }
+    } else {
+        _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
+    }
     return Napi::Value();
 }
 
@@ -366,7 +403,25 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
     _paint.setStyle(SkPaint::kFill_Style);
     SkScalar start = ApplyTextAlign(text, x);
     SkScalar baseline = ApplyTextBaseline(text, y);
-    _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
+
+    if (_letterSpacing != 0)
+    {
+        int fontCount = 0;
+        for (size_t i = 0; i < text.length(); i++)
+        {
+            int length = GetUTF8CharLength(text[i]);
+            SkScalar width = _font.measureText(text.c_str(), fontCount, SkTextEncoding::kUTF8);
+            SkScalar x = start + fontCount * _letterSpacing + width;
+            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, x, baseline, _font, _paint);
+            i += length - 1;
+            fontCount += length;
+        }
+    }
+    else
+    {
+        _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
+    }
+
     return Napi::Value();
 }
 
@@ -376,8 +431,19 @@ Napi::Value CanvasContext::MeasureText(const Napi::CallbackInfo &info)
 
     std::string text = info[0].As<Napi::String>().Utf8Value();
     _paint.setStyle(SkPaint::kFill_Style);
+
+    int fontCount = 0;
+    if (_letterSpacing != 0) {
+        for (size_t i = 0; i < text.length(); i++)
+        {
+            int length = GetUTF8CharLength(text[i]);
+            i += length - 1;
+            fontCount += length;
+        }
+    }
+
     SkScalar width = _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
-    result.Set("width", Napi::Number::New(info.Env(), width));
+    result.Set("width", Napi::Number::New(info.Env(), width + (fontCount - 1) * _letterSpacing));
 
     return result;
 }
@@ -409,15 +475,16 @@ Napi::Value CanvasContext::GetFonts(const Napi::CallbackInfo &info)
         int N = styleSet->count();
         for (int j = 0; j < N; ++j)
         {
-        SkFontStyle fontStyle;
-        SkString style;
-        styleSet->getStyle(j, &fontStyle, &style);
+            SkFontStyle fontStyle;
+            SkString style;
+            styleSet->getStyle(j, &fontStyle, &style);
 
-        font.Set("family", familyName.c_str());
-        font.Set("weight", fontStyle.weight());
-        font.Set("style", style.c_str());
+            font.Set("family", familyName.c_str());
+            font.Set("weight", fontStyle.weight());
+            font.Set("style", style.c_str());
+            font.Set("letterSpacing", _letterSpacing);
 
-        result.Set(i, font);
+            result.Set(i, font);
         }
     }
     return result;
@@ -765,5 +832,11 @@ Napi::Value CanvasContext::SetGlobalAlpha(const Napi::CallbackInfo &info)
 {
     float alpha = info[0].As<Napi::Number>().FloatValue();
     _paint.setAlphaf(alpha);
+    return Napi::Value();
+}
+
+Napi::Value CanvasContext::SetLetterSpacing(const Napi::CallbackInfo &info)
+{
+    _letterSpacing = info[0].As<Napi::Number>().FloatValue();
     return Napi::Value();
 }
