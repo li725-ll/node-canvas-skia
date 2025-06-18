@@ -9,10 +9,11 @@ export class CanvasContext {
   public fillStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
   public strokeStyle: string | Gradient | TypeColorVAL = "#000000"; // color|gradient|pattern
   public shadowColor: string | TypeColorVAL = "#000000"; // color
-  public lineJoin: "bevel" | "round" | "miter" = "miter"; // bevel斜角round圆角miter尖角
+  public lineJoin: "bevel" | "round" | "miter" = "miter"; // bevel斜角 round圆角 miter尖角
   public shadowBlur: number = 0;
   public shadowOffsetX: number = 0;
   public shadowOffsetY: number = 0;
+  public letterSpacing: string = "0px";
   public lineCap: "butt" | "round" | "square" = "butt";
   public lineWidth: number = 1;
   public miterLimit: number = 10;
@@ -252,7 +253,10 @@ export class CanvasContext {
   public fillText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleFillColor();
     const font = Utils.string2Font(this.font);
+    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
+
     this.context.setFont(...font);
+    this.context.setLetterSpacing(letterSpacing);
     this.context.setTextAlign(this.textAlign);
     this.context.setTextBaseline(this.textBaseline);
     this.context.fillText(text, x, y, maxWidth);
@@ -261,15 +265,22 @@ export class CanvasContext {
   public strokeText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleStrokeColor();
     const font = Utils.string2Font(this.font);
+    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
+
     this.context.lineWidth(this.lineWidth);
+    this.context.setLetterSpacing(letterSpacing);
     this.context.setFont(...font);
     this.context.setTextAlign(this.textAlign);
     this.context.setTextBaseline(this.textBaseline);
     this.context.strokeText(text, x, y, maxWidth);
   }
+
   public measureText(text: string): { width: number } {
     const font = Utils.string2Font(this.font);
+    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
+
     this.context.setFont(...font);
+    this.context.setLetterSpacing(letterSpacing);
     return this.context.measureText(text);
   }
 
@@ -339,6 +350,7 @@ export class CanvasContext {
   public getFonts(): {
     family: string;
     weight: string;
+    letterSpacing: number;
     style: "Plain" | "Heavy" | "Regular" | "Bold Italic" | "Bold"; // TODO: add more
   }[] {
     return this.context.getFonts();

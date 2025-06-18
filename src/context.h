@@ -56,6 +56,7 @@ private:
     SkPath _path;
     SkPaint _paint;
     sk_sp<SkSurface> _surface;
+    SkScalar _letterSpacing = 0;
     TextAlign _textAlign = TextAlign::LEFT;
     TextBaseline _textBaseline = TextBaseline::ALPHABETIC;
     sk_sp<SkFontMgr> _fontMgr;
@@ -78,6 +79,7 @@ public :
 
     void ReleaseGradient();
     void SetContextAttributes(bool antialias, bool depth);
+    int GetUTF8CharLength(char firstByte);
 
     Napi::Value BeginPath(const Napi::CallbackInfo &info);
     Napi::Value MoveTo(const Napi::CallbackInfo &info);
@@ -119,6 +121,7 @@ public :
     Napi::Value QuadraticCurveTo(const Napi::CallbackInfo &info);
     Napi::Value Clip(const Napi::CallbackInfo &info);
     Napi::Value SetGlobalAlpha(const Napi::CallbackInfo &info);
+    Napi::Value SetLetterSpacing(const Napi::CallbackInfo &info);
 };
 
 #endif
