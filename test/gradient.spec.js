@@ -16,7 +16,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 describe("Gradient Test", () => {
-  test ("Linear Gradient Test", () => {
+  test("Linear Gradient Test", () => {
     drawLinearGradientRect();
     canvas.saveAsImage(path.resolve(outputDir, "Linear Gradient Test.jpg"));
   });
@@ -34,11 +34,10 @@ describe("Gradient Test", () => {
 
 function drawLinearGradientRect() {
   const gradient = ctx.createLinearGradient(256, 0, 512, 0);
-  gradient.addColorStop(0, "green");
-  gradient.addColorStop(0.5, "cyan");
-  gradient.addColorStop(1, "green");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(20, 20, 200, 100)
+  gradient.addColorStop(0, "rgba(60,115,115,0)");
+  gradient.addColorStop(0.61, "rgba(113,217,217,0.5)");
+  gradient.addColorStop(0.88, "rgba(255,122,1,0.6)");
+  gradient.addColorStop(0.95, "rgba(255,122,1 ,1)");
 
   ctx.fillStyle = gradient;
   ctx.beginPath();
@@ -48,7 +47,6 @@ function drawLinearGradientRect() {
   ctx.beginPath();
   ctx.fillStyle = "#00ff00";
   ctx.fillRect(260, 10, 100, 100);
-
 }
 
 function drawRadialGradientRect() {
@@ -64,15 +62,12 @@ function drawRadialGradientRect() {
 
 // createConicGradient
 function drawConicGradientRect() {
-  const gradient = ctx.createConicGradient(0, 128, 384); // 384
-  gradient.addColorStop(0, "#f00");
-  gradient.addColorStop(0.25, "#f0f");
-  gradient.addColorStop(0.5, "#ff0");
-  gradient.addColorStop(0.75, "#0f0");
-  gradient.addColorStop(1, "#00f");
-
+  const gradient = ctx.createConicGradient(90, 128, 384); // 384
+  gradient.addColorStop(0, "red");
+  gradient.addColorStop(0.25, "orange");
+  gradient.addColorStop(0.5, "yellow");
+  gradient.addColorStop(0.75, "green");
+  gradient.addColorStop(1, "blue");
   ctx.fillStyle = gradient;
-  ctx.beginPath();
   ctx.fillRect(0, 256, 256, 256);
-  ctx.fill();
 }

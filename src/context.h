@@ -15,6 +15,7 @@
 #include <include/core/SkSurface.h>
 #include <include/core/SkShader.h>
 #include <include/core/SkFontMgr.h>
+#include <include/core/SkMatrix.h>
 #include <include/core/SkTextBlob.h>
 #include <include/core/SkFontMetrics.h>
 #include <include/core/SkSamplingOptions.h>

@@ -22,7 +22,6 @@ export class Utils {
 
     if (value.startsWith("RGBA")) {
       const temp = value.replaceAll(/(?<!\d)\./g, "0.").match(/\d+/g);
-      console.log(temp);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
@@ -34,7 +33,6 @@ export class Utils {
       } else {
         middleValue[3] = middleValue[3] * 255;
       }
-      console.log(middleValue);
       result.alpha = middleValue[3] / 255;
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
@@ -45,9 +43,7 @@ export class Utils {
       temp.push("255");
       result.alpha = 1;
       result.value = skia.SkiaUtils.RGBA(...temp!.map(Number));
-    }
-
-    if (value.startsWith("#")) {
+    } else if (value.startsWith("#")) {
       const temp = value.slice(1);
       let middleValue;
       if (temp.length === 3) {
