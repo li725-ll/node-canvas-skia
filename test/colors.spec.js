@@ -292,7 +292,8 @@ describe("Colors", () => {
       "rgbA(255,0,0, 1)",
       "rGba(255,0,255, 1)",
       "rgbA(255,0,0, 1)",
-      "rgba(0,255,255, 0.3)"
+      "rgba(0,255,255, 0.3)",
+      "rgba(255, 0, 0, 1.00)"
     ];
     const canvas = new skia.Canvas(
       10 * 100,

@@ -34,10 +34,11 @@ describe("Gradient Test", () => {
 
 function drawLinearGradientRect() {
   const gradient = ctx.createLinearGradient(256, 0, 512, 0);
-  gradient.addColorStop(0, "rgba(60,115,115,0)");
-  gradient.addColorStop(0.61, "rgba(113,217,217,0.5)");
-  gradient.addColorStop(0.88, "rgba(255,122,1,0.6)");
-  gradient.addColorStop(0.95, "rgba(255,122,1 ,1)");
+  gradient.addColorStop(0, "green");
+  gradient.addColorStop(0.5, "cyan");
+  gradient.addColorStop(1, "green");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(20, 20, 200, 100)
 
   ctx.fillStyle = gradient;
   ctx.beginPath();

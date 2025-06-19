@@ -22,16 +22,19 @@ export class Utils {
 
     if (value.startsWith("RGBA")) {
       const temp = value.replaceAll(/(?<!\d)\./g, "0.").match(/\d+/g);
+      console.log(temp);
       if (!temp || temp!.length < 4) {
         throw new Error("Invalid color format");
       }
       const middleValue = temp!.map(Number);
-      if (temp!.length > 4) {
+      if (temp!.length > 4 && +temp[3] < 1) {
+        // fix rgba(255,0,0,1.00)
         middleValue[3] = Math.round(parseFloat(`0.${middleValue[4]}`) * 255);
         middleValue.pop();
       } else {
         middleValue[3] = middleValue[3] * 255;
       }
+      console.log(middleValue);
       result.alpha = middleValue[3] / 255;
       result.value = skia.SkiaUtils.RGBA(...middleValue);
     } else if (value.startsWith("RGB")) {
