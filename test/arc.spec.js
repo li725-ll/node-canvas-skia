@@ -23,7 +23,7 @@ describe("Path", () => {
   });
 });
 
-function drawArc(outputPath) {
+function drawArc() {
   canvas.save();
   ctx.strokeStyle = "rgba(255,0,0,1)";
   ctx.lineWidth = 2;
