@@ -567,12 +567,15 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
         std::vector<GradientStop> gradientStop = gradientUnWrap->GetGradientStops();
         std::vector<SkColor> colors;
         std::vector<SkScalar> stops;
+        // gradientArea.x0, gradientArea.y0, gradientArea.r0
         for (auto &stop : gradientStop)
         {
-        colors.push_back(stop.color);
-        stops.push_back(stop.offset);
+            colors.push_back(stop.color);
+            stops.push_back(stop.offset);
         }
 
+        SkMatrix rotationMatrix;
+        rotationMatrix.setRotate(gradientArea.x0, gradientArea.y0, gradientArea.r0); // fix Angle issue
         sk_sp<SkShader> skShader = SkGradientShader::MakeSweep(
             gradientArea.y0,
             gradientArea.r0,
@@ -580,10 +583,10 @@ Napi::Value CanvasContext::SetShader(const Napi::CallbackInfo &info)
             stops.data(),
             stops.size(),
             SkTileMode::kClamp,
-            gradientArea.x0,
-            360.0,
             0,
-            nullptr);
+            360,
+            0,
+            &rotationMatrix);
         _paint.setShader(skShader);
     }
 
