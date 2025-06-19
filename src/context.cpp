@@ -195,7 +195,7 @@ Napi::Value CanvasContext::Arc(const Napi::CallbackInfo &info)
     SkScalar y = info[1].As<Napi::Number>().FloatValue();
     SkScalar r = info[2].As<Napi::Number>().FloatValue();
     SkScalar startAngle = info[3].As<Napi::Number>().FloatValue();
-    SkScalar sweepAngle = info[4].As<Napi::Number>().FloatValue();
+    SkScalar sweepAngle = info[4].As<Napi::Number>().FloatValue(); // TODO: 逆时针绘制方向未实现
     SkRect skRect = SkRect::MakeXYWH(x - r, y - r, 2 * r, 2 * r);
     _path.addArc(skRect, startAngle, sweepAngle);
     return Napi::Value();
