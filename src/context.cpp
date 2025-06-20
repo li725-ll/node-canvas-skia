@@ -84,21 +84,21 @@ int CanvasContext::GetUTF8CharLength(char firstByte)
 {
     if ((firstByte & 0x80) == 0)
     {
-        return 1; // 1 字节字符
+        return 1;
     }
     else if ((firstByte & 0xE0) == 0xC0)
     {
-        return 2; // 2 字节字符
+        return 2;
     }
     else if ((firstByte & 0xF0) == 0xE0)
     {
-        return 3; // 3 字节字符
+        return 3;
     }
     else if ((firstByte & 0xF8) == 0xF0)
     {
-        return 4; // 4 字节字符
+        return 4;
     }
-    return 0; // 无效的 UTF-8 起始字节
+    return 0;
 }
 
 Napi::Value CanvasContext::BeginPath(const Napi::CallbackInfo &info)
@@ -656,6 +656,16 @@ Napi::Value CanvasContext::SetTextBaseline(const Napi::CallbackInfo &info)
 
 SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
 {
+    int fontCount = 0;
+    if (_letterSpacing != 0)
+    {
+        for (size_t i = 0; i < text.length(); i++)
+        {
+            int length = GetUTF8CharLength(text[i]);
+            i += length - 1;
+            fontCount += length;
+        }
+    }
     switch (_textAlign)
     {
         case TextAlign::START:
@@ -668,15 +678,15 @@ SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
         }
         case TextAlign::END:
         {
-            return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+            return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) + (fontCount - 1) * _letterSpacing);
         }
         case TextAlign::RIGHT:
         {
-            return x - _font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8);
+            return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) + (fontCount - 1) * _letterSpacing);
         }
         case TextAlign::CENTER:
         {
-            return x - (_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) / 2);
+            return x - ((_font.measureText(text.c_str(), text.length(), SkTextEncoding::kUTF8) + (fontCount - 1) * _letterSpacing) / 2);
         }
         default:
         {
