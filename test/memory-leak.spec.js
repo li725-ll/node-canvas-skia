@@ -6,5 +6,5 @@
 //   console.log(example);
 // }, 0.01)
 describe("Memory Leak Test", () => {
-  
+  test("", () => {});
 });
