@@ -47,8 +47,9 @@ export class CanvasContext {
     this.context.clear(initColor.value);
   }
 
-  public clear(color: string) {
-    this.context.clear(color);
+  public clear(color: string = "rgba(0,0,0,0)") {
+    const temp = Utils.string2RGBA(color);
+    this.context.clear(temp.value);
   }
   public createLinearGradient(
     x0: number,
@@ -76,7 +77,7 @@ export class CanvasContext {
   }
 
   public createConicGradient(startAngle: number, x: number, y: number) {
-    return Gradient.createConicGradient(Utils.deg2rad(startAngle), x, y);
+    return Gradient.createConicGradient(Utils.rad2deg(startAngle), x, y);
   }
 
   public rect(x: number, y: number, width: number, height: number) {
@@ -156,16 +157,14 @@ export class CanvasContext {
     r: number,
     sAngle: number,
     eAngle: number,
-    counterclockwise: boolean = true
+    counterclockwise: boolean = false
   ) {
-    this.context.arc(
-      x,
-      y,
-      r,
-      Utils.deg2rad(sAngle),
-      Utils.deg2rad(eAngle),
-      counterclockwise
-    );
+    const s = Utils.rad2deg(sAngle);
+    const e = Utils.rad2deg(eAngle);
+    if (s < 0 && s > 360 && e < 0 && e > 360) {
+      throw new Error("Invalid angle");
+    }
+    this.context.arc(x, y, r, s, e, counterclockwise);
   }
 
   public arcTo(x1: number, y1: number, x2: number, y2: number, r: number) {
@@ -231,7 +230,7 @@ export class CanvasContext {
     this.context.scale(scalewidth, scaleheight);
   }
   public rotate(angle: number) {
-    this.context.rotate(Utils.deg2rad(angle));
+    this.context.rotate(Utils.rad2deg(angle));
   }
   public translate(x: number, y: number) {
     this.context.translate(x, y);
