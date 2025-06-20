@@ -89,6 +89,14 @@ export class Utils {
   public static string2LetterSpacing(letterSpacing: string): number {
     return +letterSpacing.replace("px", "");
   }
+
+  public static deg2rad(angle: number) {
+    return angle * (Math.PI / 180);
+  }
+
+  public static rad2deg(angle: number) {
+    return angle * (180 / Math.PI);
+  }
 }
 
 export default Utils;

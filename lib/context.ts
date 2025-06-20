@@ -76,8 +76,7 @@ export class CanvasContext {
   }
 
   public createConicGradient(startAngle: number, x: number, y: number) {
-    // TODO: 角度单位待确认
-    return Gradient.createConicGradient(startAngle, x, y);
+    return Gradient.createConicGradient(Utils.deg2rad(startAngle), x, y);
   }
 
   public rect(x: number, y: number, width: number, height: number) {
@@ -159,8 +158,14 @@ export class CanvasContext {
     eAngle: number,
     counterclockwise: boolean = true
   ) {
-    // TODO: 角度单位待确认
-    this.context.arc(x, y, r, sAngle, eAngle, counterclockwise);
+    this.context.arc(
+      x,
+      y,
+      r,
+      Utils.deg2rad(sAngle),
+      Utils.deg2rad(eAngle),
+      counterclockwise
+    );
   }
 
   public arcTo(x1: number, y1: number, x2: number, y2: number, r: number) {
@@ -226,8 +231,7 @@ export class CanvasContext {
     this.context.scale(scalewidth, scaleheight);
   }
   public rotate(angle: number) {
-    // TODO: 角度单位待确认
-    this.context.rotate(angle);
+    this.context.rotate(Utils.deg2rad(angle));
   }
   public translate(x: number, y: number) {
     this.context.translate(x, y);
