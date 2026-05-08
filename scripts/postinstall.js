@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 const buildFromSource =
   process.env.npm_config_build_from_source === "true" ||
@@ -19,6 +18,19 @@ function hasPrebuilt() {
 }
 
 function buildFromLocal() {
+  let execSync;
+  try {
+    execSync = require("child_process").execSync;
+    require.resolve("adm-zip");
+    require.resolve("node-addon-api");
+  } catch {
+    console.error(
+      "Source build requires devDependencies (adm-zip, node-addon-api, node-gyp).\n" +
+        "Install them manually or reinstall with: npm install --include=dev"
+    );
+    process.exit(1);
+  }
+
   console.log("Building from source...");
   execSync("node scripts/install.js", {
     stdio: "inherit",

@@ -13,15 +13,23 @@ node-canvas-skia is a skia node binding designed to enable GPU accelerated image
 npm install node-canvas-skia
 ```
 
+安装时会自动使用预编译的 `.node` 文件，无需本地编译环境。
+
+如需从源码编译，可设置环境变量：
+
+```shell
+BUILD_FROM_SOURCE=true npm install node-canvas-skia
+```
+
 ## Platform
 
-|  plateform  | compatible |
-| :---------: | :--------: |
-| Windows-x64 |    true    |
-| Windows-x86 |   false    |
-| Macos-arm64 |    true    |
-|  Macos-x64  |   false    |
-|    Linux    |   false    |
+|  Platform   | Prebuilt | Source Build |
+| :---------: | :------: | :----------: |
+| Windows-x64 |    ✓     |      ✓       |
+| Macos-arm64 |    ✗     |      ✓       |
+| Windows-x86 |    ✗     |      ✗       |
+|  Macos-x64  |    ✗     |      ✗       |
+|    Linux    |    ✗     |      ✗       |
 
 ## Example
 
