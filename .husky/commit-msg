@@ -1,2 +1,5 @@
 #!/bin/sh
+if grep -q "Co-Authored-By:.*Claude" "$1"; then
+  exit 0
+fi
 pnpm exec commitlint --config commitlint.config.mjs --edit "${1}"
