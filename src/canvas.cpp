@@ -4,6 +4,25 @@
 #include "canvas.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+#ifdef _WIN32
+static FILE* fopen_utf8(const char* path, const char* mode) {
+    int wpath_len = MultiByteToWideChar(CP_UTF8, 0, path, -1, NULL, 0);
+    int wmode_len = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0);
+    std::wstring wpath(wpath_len, 0);
+    std::wstring wmode(wmode_len, 0);
+    MultiByteToWideChar(CP_UTF8, 0, path, -1, &wpath[0], wpath_len);
+    MultiByteToWideChar(CP_UTF8, 0, mode, -1, &wmode[0], wmode_len);
+    return _wfopen(wpath.c_str(), wmode.c_str());
+}
+#else
+static FILE* fopen_utf8(const char* path, const char* mode) {
+    return fopen(path, mode);
+}
+#endif
 
 Napi::Function Canvas::Init(Napi::Env env)
 {
@@ -96,6 +115,13 @@ Napi::Value Canvas::Restore(const Napi::CallbackInfo &info)
     return Napi::Value();
 }
 
+void write_to_memory(void *context, void *data, int size)
+{
+    std::vector<uint8_t> *buffer = static_cast<std::vector<uint8_t> *>(context);
+    unsigned char *byte = static_cast<unsigned char *>(data);
+    buffer->insert(buffer->end(), byte, byte + size);
+}
+
 Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
@@ -130,22 +156,27 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
     {
         int width, height, channels;
         unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
-        stbi_write_bmp(path.c_str(), width, height, channels, image_data);
+        std::vector<uint8_t> bmp_buffer;
+        stbi_write_bmp_to_func(write_to_memory, &bmp_buffer, width, height, channels, image_data);
         stbi_image_free(image_data);
+        FILE *f = fopen_utf8(path.c_str(), "wb");
+        if (!f) {
+            Napi::Error::New(env, "Failed to open file: " + path).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+        fwrite(bmp_buffer.data(), bmp_buffer.size(), 1, f);
+        fclose(f);
         return Napi::Boolean::New(env, true);
     }
 
-    FILE *f = fopen(path.c_str(), "wb");
+    FILE *f = fopen_utf8(path.c_str(), "wb");
+    if (!f) {
+        Napi::Error::New(env, "Failed to open file: " + path).ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
     fwrite(data->data(), data->size(), 1, f);
     fclose(f);
     return Napi::Boolean::New(env, true);
-}
-
-void write_to_memory(void *context, void *data, int size)
-{
-    std::vector<uint8_t> *buffer = static_cast<std::vector<uint8_t> *>(context);
-    unsigned char *byte = static_cast<unsigned char *>(data);
-    buffer->insert(buffer->end(), byte, byte + size);
 }
 
 Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
