@@ -1,6 +1,6 @@
 build
 coverage
-prebuild
+scripts/.temp
 node_modules
 dist
 .DS_Store

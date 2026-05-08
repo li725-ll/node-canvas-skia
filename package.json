@@ -1,6 +1,6 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "install": "node scripts/preinstall.js",
-    "postinstall": "node scripts/install.js && npm run build",
+    "postinstall": "node scripts/postinstall.js",
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
@@ -31,6 +31,7 @@
     "lib",
     "src",
     "dist",
+    "prebuilds",
     "scripts",
     "!scripts/.temp",
     "binding.gyp",
