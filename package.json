@@ -1,14 +1,13 @@
 {
   "name": "node-canvas-skia",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/li725-ll/node-canvas-skia.git"
   },
   "scripts": {
-    "install": "node scripts/preinstall.js",
-    "postinstall": "node scripts/postinstall.js",
+    "install": "node scripts/postinstall.js",
     "commit": "git add . && czg",
     "pretest": "tsc",
     "build": "node-gyp rebuild",
