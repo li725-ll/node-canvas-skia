@@ -40,6 +40,21 @@ export class CanvasContext {
     | "copy"
     | "xor" = "source-over";
 
+  private _cachedFillStyle: string | Gradient | TypeColorVAL = "";
+  private _cachedFillColor: { value: number; alpha: number } | null = null;
+  private _cachedStrokeStyle: string | Gradient | TypeColorVAL = "";
+  private _cachedStrokeColor: { value: number; alpha: number } | null = null;
+  private _cachedFontString: string = "";
+  private _cachedFontParsed: any[] | null = null;
+  private _lastSentAlpha: number = -1;
+  private _lastSentFont: string = "";
+  private _lastSentTextAlign: string = "";
+  private _lastSentTextBaseline: string = "";
+  private _lastSentLetterSpacing: number = -1;
+  private _lastSentLineCap: string = "";
+  private _lastSentLineJoin: string = "";
+  private _lastSentLineWidth: number = -1;
+
   constructor(ctx: any, canvas: Canvas) {
     this.canvas = canvas;
     const initColor = Utils.string2RGBA("rgba(0,0,0,0)");
@@ -102,9 +117,18 @@ export class CanvasContext {
 
   public stroke() {
     this.handleStrokeColor();
-    this.context.lineCap(this.lineCap);
-    this.context.lineJoin(this.lineJoin);
-    this.context.lineWidth(this.lineWidth);
+    if (this.lineCap !== this._lastSentLineCap) {
+      this.context.lineCap(this.lineCap);
+      this._lastSentLineCap = this.lineCap;
+    }
+    if (this.lineJoin !== this._lastSentLineJoin) {
+      this.context.lineJoin(this.lineJoin);
+      this._lastSentLineJoin = this.lineJoin;
+    }
+    if (this.lineWidth !== this._lastSentLineWidth) {
+      this.context.lineWidth(this.lineWidth);
+      this._lastSentLineWidth = this.lineWidth;
+    }
     this.context.stroke();
   }
 
@@ -117,6 +141,14 @@ export class CanvasContext {
     this.fillStyle = "#000000";
     this.shadowColor = "#000000";
     this.globalAlpha = 1.0;
+    this._lastSentAlpha = -1;
+    this._lastSentFont = "";
+    this._lastSentTextAlign = "";
+    this._lastSentTextBaseline = "";
+    this._lastSentLetterSpacing = -1;
+    this._lastSentLineCap = "";
+    this._lastSentLineJoin = "";
+    this._lastSentLineWidth = -1;
     this.canvas.restore();
   }
 
@@ -258,41 +290,33 @@ export class CanvasContext {
 
   public fillText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleFillColor();
-    const font = Utils.string2Font(this.font);
-    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
-
-    this.context.setFont(...font);
-    this.context.setLetterSpacing(letterSpacing);
-    this.context.setTextAlign(this.textAlign);
-    this.context.setTextBaseline(this.textBaseline);
+    this.syncFont();
+    this.syncTextAttrs();
     this.context.fillText(text, x, y, maxWidth);
   }
 
   public strokeText(text: string, x: number, y: number, maxWidth?: number) {
     this.handleStrokeColor();
-    const font = Utils.string2Font(this.font);
-    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
-
-    this.context.lineWidth(this.lineWidth);
-    this.context.setLetterSpacing(letterSpacing);
-    this.context.setFont(...font);
-    this.context.setTextAlign(this.textAlign);
-    this.context.setTextBaseline(this.textBaseline);
+    this.syncFont();
+    this.syncTextAttrs();
+    if (this.lineWidth !== this._lastSentLineWidth) {
+      this.context.lineWidth(this.lineWidth);
+      this._lastSentLineWidth = this.lineWidth;
+    }
     this.context.strokeText(text, x, y, maxWidth);
   }
 
   public measureText(text: string): { width: number } {
-    const font = Utils.string2Font(this.font);
-    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
-
-    this.context.setFont(...font);
-    this.context.setLetterSpacing(letterSpacing);
+    this.syncFont();
     return this.context.measureText(text);
   }
 
   public strokeRect(x: number, y: number, width: number, height: number) {
     this.handleStrokeColor();
-    this.context.lineWidth(this.lineWidth);
+    if (this.lineWidth !== this._lastSentLineWidth) {
+      this.context.lineWidth(this.lineWidth);
+      this._lastSentLineWidth = this.lineWidth;
+    }
     this.context.strokeRect(x, y, width, height);
   }
 
@@ -328,7 +352,7 @@ export class CanvasContext {
     y: number,
     ...arg: any
   ): void {
-    this.context.setGlobalAlpha(this.globalAlpha);
+    this.setAlpha(this.globalAlpha);
     if (arg.length === 0) {
       this.context.drawImage(image, x, y);
     } else if (arg.length === 2) {
@@ -366,26 +390,68 @@ export class CanvasContext {
     return this.context.loadFont(fontPath, fontName);
   }
 
+  private syncFont() {
+    if (this.font !== this._cachedFontString) {
+      this._cachedFontParsed = Utils.string2Font(this.font);
+      this._cachedFontString = this.font;
+      this.context.setFont(...this._cachedFontParsed!);
+      this._lastSentFont = this.font;
+    } else if (this.font !== this._lastSentFont) {
+      this.context.setFont(...this._cachedFontParsed!);
+      this._lastSentFont = this.font;
+    }
+    const letterSpacing = Utils.string2LetterSpacing(this.letterSpacing);
+    if (letterSpacing !== this._lastSentLetterSpacing) {
+      this.context.setLetterSpacing(letterSpacing);
+      this._lastSentLetterSpacing = letterSpacing;
+    }
+  }
+
+  private syncTextAttrs() {
+    if (this.textAlign !== this._lastSentTextAlign) {
+      this.context.setTextAlign(this.textAlign);
+      this._lastSentTextAlign = this.textAlign;
+    }
+    if (this.textBaseline !== this._lastSentTextBaseline) {
+      this.context.setTextBaseline(this.textBaseline);
+      this._lastSentTextBaseline = this.textBaseline;
+    }
+  }
+
   private handleStrokeColor() {
     if (this.strokeStyle instanceof Gradient) {
       this.context.setShader(this.strokeStyle.gradient);
-      this.context.setGlobalAlpha(this.globalAlpha);
+      this.setAlpha(this.globalAlpha);
     } else {
-      const color = Utils.string2RGBA(this.strokeStyle);
+      if (this.strokeStyle !== this._cachedStrokeStyle) {
+        this._cachedStrokeColor = Utils.string2RGBA(this.strokeStyle);
+        this._cachedStrokeStyle = this.strokeStyle;
+      }
+      const color = this._cachedStrokeColor!;
       this.context.strokeStyle(color.value);
-      this.context.setGlobalAlpha(this.globalAlpha);
+      this.setAlpha(this.globalAlpha);
     }
   }
 
   private handleFillColor() {
     if (this.fillStyle instanceof Gradient) {
       this.context.setShader(this.fillStyle.gradient);
-      this.context.setGlobalAlpha(this.globalAlpha);
+      this.setAlpha(this.globalAlpha);
     } else {
-      const color = Utils.string2RGBA(this.fillStyle);
-
+      if (this.fillStyle !== this._cachedFillStyle) {
+        this._cachedFillColor = Utils.string2RGBA(this.fillStyle);
+        this._cachedFillStyle = this.fillStyle;
+      }
+      const color = this._cachedFillColor!;
       this.context.fillStyle(color.value);
-      this.context.setGlobalAlpha(this.globalAlpha * color.alpha);
+      this.setAlpha(this.globalAlpha * color.alpha);
+    }
+  }
+
+  private setAlpha(alpha: number) {
+    if (alpha !== this._lastSentAlpha) {
+      this.context.setGlobalAlpha(alpha);
+      this._lastSentAlpha = alpha;
     }
   }
 }
