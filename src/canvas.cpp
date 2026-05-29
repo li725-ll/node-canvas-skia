@@ -129,9 +129,36 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
     std::string format = info[1].As<Napi::String>().Utf8Value();
     int quality = info[2].As<Napi::Number>().Int32Value();
 
-    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+    if (format == "bmp")
+    {
+        SkPixmap pixmap;
+        if (!_surface->peekPixels(&pixmap)) {
+            Napi::Error::New(env, "Failed to read surface pixels").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+        int width = pixmap.width();
+        int height = pixmap.height();
+        std::vector<uint8_t> rgba(width * height * 4);
+        SkImageInfo dstInfo = SkImageInfo::Make(width, height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
+        if (!pixmap.readPixels(dstInfo, rgba.data(), width * 4, 0, 0)) {
+            Napi::Error::New(env, "Failed to convert pixels").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+        std::vector<uint8_t> bmp_buffer;
+        bmp_buffer.reserve(width * height * 4 + 54);
+        stbi_write_bmp_to_func(write_to_memory, &bmp_buffer, width, height, 4, rgba.data());
+        FILE *f = fopen_utf8(path.c_str(), "wb");
+        if (!f) {
+            Napi::Error::New(env, "Failed to open file: " + path).ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+        fwrite(bmp_buffer.data(), bmp_buffer.size(), 1, f);
+        fclose(f);
+        return Napi::Boolean::New(env, true);
+    }
 
-    if (format == "png" || format == "bmp")
+    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+    if (format == "png")
     {
         imageFormat = SkEncodedImageFormat::kPNG;
     }
@@ -152,23 +179,6 @@ Napi::Value Canvas::SaveAsImage(const Napi::CallbackInfo &info)
     sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
     sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
 
-    if (format == "bmp")
-    {
-        int width, height, channels;
-        unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
-        std::vector<uint8_t> bmp_buffer;
-        stbi_write_bmp_to_func(write_to_memory, &bmp_buffer, width, height, channels, image_data);
-        stbi_image_free(image_data);
-        FILE *f = fopen_utf8(path.c_str(), "wb");
-        if (!f) {
-            Napi::Error::New(env, "Failed to open file: " + path).ThrowAsJavaScriptException();
-            return env.Undefined();
-        }
-        fwrite(bmp_buffer.data(), bmp_buffer.size(), 1, f);
-        fclose(f);
-        return Napi::Boolean::New(env, true);
-    }
-
     FILE *f = fopen_utf8(path.c_str(), "wb");
     if (!f) {
         Napi::Error::New(env, "Failed to open file: " + path).ThrowAsJavaScriptException();
@@ -186,13 +196,47 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
     std::string format = info[0].As<Napi::String>().Utf8Value();
     int quality = info[1].As<Napi::Number>().Int32Value();
 
-    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+    if (format == "bmp" || format == "matrix")
+    {
+        SkPixmap pixmap;
+        if (!_surface->peekPixels(&pixmap)) {
+            Napi::Error::New(env, "Failed to read surface pixels").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
+        int width = pixmap.width();
+        int height = pixmap.height();
+        std::vector<uint8_t> rgba(width * height * 4);
+        SkImageInfo dstInfo = SkImageInfo::Make(width, height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
+        if (!pixmap.readPixels(dstInfo, rgba.data(), width * 4, 0, 0)) {
+            Napi::Error::New(env, "Failed to convert pixels").ThrowAsJavaScriptException();
+            return env.Undefined();
+        }
 
-    if (format == "png" || format == "bmp")
+        if (format == "matrix") {
+            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, width * height * 3);
+            uint8_t *dst = result.Data();
+            for (int i = 0; i < width * height; i++) {
+                dst[i * 3]     = rgba[i * 4];
+                dst[i * 3 + 1] = rgba[i * 4 + 1];
+                dst[i * 3 + 2] = rgba[i * 4 + 2];
+            }
+            return result;
+        } else {
+            std::vector<uint8_t> bmp_buffer;
+            bmp_buffer.reserve(width * height * 4 + 54);
+            stbi_write_bmp_to_func(write_to_memory, &bmp_buffer, width, height, 4, rgba.data());
+            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, bmp_buffer.size());
+            memcpy(result.Data(), bmp_buffer.data(), bmp_buffer.size());
+            return result;
+        }
+    }
+
+    SkEncodedImageFormat imageFormat = SkEncodedImageFormat::kPNG;
+    if (format == "png")
     {
         imageFormat = SkEncodedImageFormat::kPNG;
     }
-    else if (format == "jpg" || format == "matrix")
+    else if (format == "jpg")
     {
         imageFormat = SkEncodedImageFormat::kJPEG;
     }
@@ -206,58 +250,9 @@ Napi::Value Canvas::ToBuffer(const Napi::CallbackInfo &info)
         return env.Undefined();
     }
 
-
     sk_sp<SkImage> image = _surface.get()->makeImageSnapshot();
     sk_sp<SkData> data = image->encodeToData(imageFormat, quality);
 
-    Napi::Buffer<uint8_t> buffer = Napi::Buffer<uint8_t>::New(env, data->size());
-
-    if (format == "bmp" || format == "matrix")
-    {
-        int width, height, channels;
-        std::vector buffer = std::vector<unsigned char>();
-        unsigned char *image_data = stbi_load_from_memory((stbi_uc *)data->data(), data->size(), &width, &height, &channels, 0);
-        if (format == "matrix") {
-            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, width * height * 3);
-
-            if (channels == 4)
-            {
-                std::vector<uint8_t> buffer;
-                for (long i = 0; i < width * height; i++)
-                {
-                    if (i == 0 || i % 3 != 0)
-                    {
-                        buffer.push_back(image_data[i]);
-                    }
-                }
-
-                memcpy(result.Data(), buffer.data(), width * height * 3);
-                stbi_image_free(image_data);
-                return result;
-            }
-            else if (channels != 3)
-            {
-                stbi_image_free(image_data);
-                Napi::TypeError::New(env, "Invalid channels").ThrowAsJavaScriptException();
-                return env.Null();
-            }
-
-            memcpy(result.Data(), image_data, width * height * 3);
-            stbi_image_free(image_data);
-
-            return result;
-        } else {
-            stbi_write_bmp_to_func(write_to_memory, &buffer, width, height, channels, image_data);
-
-            Napi::Buffer<uint8_t> result = Napi::Buffer<uint8_t>::New(env, buffer.size());
-            memcpy(result.Data(), buffer.data(), buffer.size());
-            stbi_image_free(image_data);
-
-            return result;
-        }
-    }
-
-    buffer.Set("length", data->size());
-    memcpy(buffer.Data(), data->data(), data->size());
+    Napi::Buffer<uint8_t> buffer = Napi::Buffer<uint8_t>::Copy(env, (uint8_t*)data->data(), data->size());
     return buffer;
 }
