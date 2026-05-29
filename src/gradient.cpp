@@ -32,7 +32,7 @@ GradientArea Gradient::GetGradientArea()
     return _gradientArea;
 }
 
-std::vector<GradientStop> Gradient::GetGradientStops()
+const std::vector<GradientStop>& Gradient::GetGradientStops()
 {
     return _ColorStop;
 }

@@ -41,7 +41,7 @@ public:
     void Reset();
     GradientArea GetGradientArea();
     void SetGradientArea(GradientArea gradientArea);
-    std::vector<GradientStop> GetGradientStops();
+    const std::vector<GradientStop>& GetGradientStops();
     Napi::Value AddColorStop(const Napi::CallbackInfo &info);
     Napi::Value CreateLinearGradient(const Napi::CallbackInfo &info);
     Napi::Value CreateRadialGradient(const Napi::CallbackInfo &info);
