@@ -88,13 +88,26 @@
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
+      'cflags_cc': [ '-O2', '-flto' ],
+      'ldflags': [ '-flto' ],
       'xcode_settings': {
         'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
         'CLANG_CXX_LIBRARY': 'libc++',
-        'MACOSX_DEPLOYMENT_TARGET': '10.7'
+        'MACOSX_DEPLOYMENT_TARGET': '10.7',
+        'OTHER_CFLAGS': [ '-O2', '-flto' ],
+        'OTHER_LDFLAGS': [ '-flto' ]
       },
       'msvs_settings': {
-        'VCCLCompilerTool': { 'ExceptionHandling': 1 },
+        'VCCLCompilerTool': {
+          'ExceptionHandling': 1,
+          'Optimization': 2,
+          'InlineFunctionExpansion': 2,
+          'FavorSizeOrSpeed': 1,
+          'WholeProgramOptimization': 'true'
+        },
+        'VCLinkerTool': {
+          'LinkTimeCodeGeneration': 1
+        }
       },
       'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'NAPI_VERSION=8', "SK_GL" ]
     }
