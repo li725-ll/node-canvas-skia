@@ -239,17 +239,14 @@ Napi::Value CanvasContext::LineCap(const Napi::CallbackInfo &info)
     if (cap == "butt")
     {
         _paint.setStrokeCap(SkPaint::kButt_Cap);
-        _paint.setStrokeCap((SkPaint::Cap)SkPaint::kCapCount);
     }
     else if (cap == "round")
     {
         _paint.setStrokeCap(SkPaint::kRound_Cap);
-        _paint.setStrokeCap((SkPaint::Cap)SkPaint::kCapCount);
     }
     else if(cap == "square")
     {
         _paint.setStrokeCap(SkPaint::kSquare_Cap);
-        _paint.setStrokeCap((SkPaint::Cap)SkPaint::kCapCount);
     }
 
     return Napi::Value();
@@ -283,17 +280,14 @@ Napi::Value CanvasContext::SetStrokeJoin(const Napi::CallbackInfo &info){
     if (join == "miter")
     {
         _paint.setStrokeJoin(SkPaint::kMiter_Join);
-        _paint.setStrokeJoin((SkPaint::Join)SkPaint::kJoinCount);
     }
     else if (join == "round")
     {
         _paint.setStrokeJoin(SkPaint::kRound_Join);
-        _paint.setStrokeJoin((SkPaint::Join)SkPaint::kJoinCount);
     }
     else if (join == "bevel")
     {
         _paint.setStrokeJoin(SkPaint::kBevel_Join);
-        _paint.setStrokeJoin((SkPaint::Join)SkPaint::kJoinCount);
     }
 
     return Napi::Value();
@@ -381,15 +375,16 @@ Napi::Value CanvasContext::StrokeText(const Napi::CallbackInfo &info)
 
     if (_letterSpacing != 0)
     {
-        int fontCount = 0;
-        for (size_t i = 0; i < text.length(); i++)
+        SkScalar xOffset = start;
+        int charIndex = 0;
+        for (size_t i = 0; i < text.length(); )
         {
             int length = GetUTF8CharLength(text[i]);
-            SkScalar width = _font.measureText(text.c_str(), fontCount, SkTextEncoding::kUTF8);
-            SkScalar x = start + fontCount * _letterSpacing + width;
-            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, x, baseline, _font, _paint);
-            i += length - 1;
-            fontCount += length;
+            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, xOffset, baseline, _font, _paint);
+            SkScalar charWidth = _font.measureText(&text[i], length, SkTextEncoding::kUTF8);
+            xOffset += charWidth + _letterSpacing;
+            i += length;
+            charIndex++;
         }
     } else {
         _surface->getCanvas()->drawString(text.c_str(), start, baseline, _font, _paint);
@@ -410,15 +405,14 @@ Napi::Value CanvasContext::FillText(const Napi::CallbackInfo &info)
 
     if (_letterSpacing != 0)
     {
-        int fontCount = 0;
-        for (size_t i = 0; i < text.length(); i++)
+        SkScalar xOffset = start;
+        for (size_t i = 0; i < text.length(); )
         {
             int length = GetUTF8CharLength(text[i]);
-            SkScalar width = _font.measureText(text.c_str(), fontCount, SkTextEncoding::kUTF8);
-            SkScalar x = start + fontCount * _letterSpacing + width;
-            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, x, baseline, _font, _paint);
-            i += length - 1;
-            fontCount += length;
+            _surface->getCanvas()->drawSimpleText(&text[i], length, SkTextEncoding::kUTF8, xOffset, baseline, _font, _paint);
+            SkScalar charWidth = _font.measureText(&text[i], length, SkTextEncoding::kUTF8);
+            xOffset += charWidth + _letterSpacing;
+            i += length;
         }
     }
     else
@@ -654,7 +648,7 @@ Napi::Value CanvasContext::SetTextBaseline(const Napi::CallbackInfo &info)
     return Napi::Value();
 }
 
-SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
+SkScalar CanvasContext::ApplyTextAlign(const std::string &text, SkScalar x)
 {
     int fontCount = 0;
     if (_letterSpacing != 0)
@@ -695,7 +689,7 @@ SkScalar CanvasContext::ApplyTextAlign(std::string text, SkScalar x)
     }
 }
 
-SkScalar CanvasContext::ApplyTextBaseline(std::string text, SkScalar y)
+SkScalar CanvasContext::ApplyTextBaseline(const std::string &text, SkScalar y)
 {
     SkFontMetrics fontMetrics;
     _font.getMetrics(&fontMetrics);
@@ -743,12 +737,18 @@ Napi::Value CanvasContext::FillRect(const Napi::CallbackInfo &info)
 
 Napi::Value CanvasContext::DrawImage(const Napi::CallbackInfo &info)
 {
-    // TODO: Waiting for Writing
     std::string path = info[0].As<Napi::String>().Utf8Value();
     SkScalar x = info[1].As<Napi::Number>().FloatValue();
     SkScalar y = info[2].As<Napi::Number>().FloatValue();
 
-    sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
+    auto it = _imageCache.find(path);
+    sk_sp<SkImage> image;
+    if (it != _imageCache.end()) {
+        image = it->second;
+    } else {
+        image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
+        if (image) _imageCache[path] = image;
+    }
 
     _surface->getCanvas()->drawImage(image, x, y);
     return Napi::Value();
@@ -763,7 +763,7 @@ Napi::Value CanvasContext::DrawImageBuffer(const Napi::CallbackInfo &info) {
     SkScalar w = info[3].As<Napi::Number>().FloatValue();
     SkScalar h = info[4].As<Napi::Number>().FloatValue();
 
-    sk_sp<SkData> skdata = SkData::MakeWithCopy(data, size);
+    sk_sp<SkData> skdata = SkData::MakeWithoutCopy(data, size);
     sk_sp<SkImage> image = SkImage::MakeFromEncoded(skdata);
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
     _surface->getCanvas()->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
@@ -778,7 +778,15 @@ Napi::Value CanvasContext::DrawImageWH(const Napi::CallbackInfo &info)
     SkScalar w = info[3].As<Napi::Number>().FloatValue();
     SkScalar h = info[4].As<Napi::Number>().FloatValue();
 
-    sk_sp<SkImage> image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
+    auto it = _imageCache.find(path);
+    sk_sp<SkImage> image;
+    if (it != _imageCache.end()) {
+        image = it->second;
+    } else {
+        image = SkImage::MakeFromEncoded(SkData::MakeFromFileName(path.c_str()));
+        if (image) _imageCache[path] = image;
+    }
+
     SkRect dst = SkRect::MakeXYWH(x, y, w, h);
     _surface->getCanvas()->drawImageRect(image, dst, SkSamplingOptions(SkFilterMode::kLinear), &_paint);
     return Napi::Value();
@@ -806,14 +814,16 @@ Napi::Value CanvasContext::RoundRect(const Napi::CallbackInfo &info)
 Napi::Value CanvasContext::SetLineDash(const Napi::CallbackInfo &info)
 {
     Napi::Array segments = info[0].As<Napi::Array>();
-    SkScalar* dashSegments = new SkScalar[segments.Length()];
-    for (size_t i = 0; i < segments.Length(); i++)
+    size_t len = segments.Length();
+    SkScalar stackBuf[8];
+    SkScalar* dashSegments = len <= 8 ? stackBuf : new SkScalar[len];
+    for (size_t i = 0; i < len; i++)
     {
         dashSegments[i] = segments.Get(i).As<Napi::Number>().FloatValue();
     }
-    sk_sp<SkPathEffect> skDashPathEffect = SkDashPathEffect::Make(dashSegments, segments.Length(), 0);
+    sk_sp<SkPathEffect> skDashPathEffect = SkDashPathEffect::Make(dashSegments, len, 0);
     _paint.setPathEffect(skDashPathEffect);
-    delete[] dashSegments;
+    if (dashSegments != stackBuf) delete[] dashSegments;
     return Napi::Value();
 }
 

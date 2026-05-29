@@ -5,6 +5,7 @@
 #include <napi.h>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <include/core/SkPath.h>
 #include <include/core/SkRect.h>
 #include <include/core/SkFont.h>
@@ -63,9 +64,10 @@ private:
     sk_sp<SkFontMgr> _fontMgr;
     ContextAttributesStruct _contextAttributes;
     std::map<std::string, sk_sp<SkTypeface>> _fontMap;
+    std::unordered_map<std::string, sk_sp<SkImage>> _imageCache;
     Napi::ObjectReference _gradient;
-    SkScalar ApplyTextAlign(std::string text, SkScalar x);
-    SkScalar ApplyTextBaseline(std::string text, SkScalar y);
+    SkScalar ApplyTextAlign(const std::string &text, SkScalar x);
+    SkScalar ApplyTextBaseline(const std::string &text, SkScalar y);
 
 public :
     static void Init(Napi::Env env);
